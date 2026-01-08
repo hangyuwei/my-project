@@ -40,6 +40,14 @@ const setStatus = (message) => {
   if (statusEl) statusEl.textContent = message || 'Ready';
 };
 
+const showError = (message) => {
+  const text = message || 'Unknown error';
+  setStatus(text);
+  // Use alert to ensure errors are visible in cloud-hosted admin.
+  // eslint-disable-next-line no-alert
+  alert(text);
+};
+
 const showLogin = (message) => {
   qs('#loginOverlay').classList.remove('is-hidden');
   qs('#loginError').textContent = message || '';
@@ -308,43 +316,53 @@ const loadProducts = async () => {
   const q = qs('#productSearch').value.trim();
   const status = qs('#productStatus').value;
   setStatus('Loading products...');
-  const payload = await apiFetch(`/admin/api/products?q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`);
-  const data = unwrap(payload) || {};
-  productState.list = data.list || [];
-  renderProductTable(productState.list);
-  setStatus('Loaded products');
+  try {
+    const payload = await apiFetch(
+      `/admin/api/products?q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`,
+    );
+    const data = unwrap(payload) || {};
+    productState.list = data.list || [];
+    renderProductTable(productState.list);
+    setStatus('Loaded products');
+  } catch (err) {
+    showError(`Load failed: ${err.message}`);
+  }
 };
 
 const loadProductDetail = async (id) => {
   setStatus('Loading product...');
-  const payload = await apiFetch(`/admin/api/products/${id}`);
-  const product = unwrap(payload) || {};
-  productState.editingId = product._id || id;
-  productState.form = {
-    _id: product._id || id,
-    title: product.title || product.name || product.goodsName || '',
-    subTitle: product.subTitle || '',
-    status: product.status || 'ON',
-    price: product.price || 0,
-    linePrice: product.linePrice || 0,
-    stock: product.stock ?? 0,
-    coverFileId: product.coverFileId || '',
-    galleryFileIds: Array.isArray(product.galleryFileIds) ? product.galleryFileIds : [],
-    detailBlocks: Array.isArray(product.detailBlocks) ? product.detailBlocks : [],
-  };
-  productState.coverUrl = product.coverUrl || '';
-  productState.gallery = (product.galleryFileIds || []).map((fileId, index) => ({
-    fileId,
-    url: product.galleryUrls ? product.galleryUrls[index] : '',
-  }));
-  productState.form.detailBlocks = (product.detailBlocks || []).map((block) => {
-    if (block.type === 'image') {
-      return { ...block, url: block.url || '' };
-    }
-    return { ...block };
-  });
-  renderProductForm();
-  setStatus('Editing product');
+  try {
+    const payload = await apiFetch(`/admin/api/products/${id}`);
+    const product = unwrap(payload) || {};
+    productState.editingId = product._id || id;
+    productState.form = {
+      _id: product._id || id,
+      title: product.title || product.name || product.goodsName || '',
+      subTitle: product.subTitle || '',
+      status: product.status || 'ON',
+      price: product.price || 0,
+      linePrice: product.linePrice || 0,
+      stock: product.stock ?? 0,
+      coverFileId: product.coverFileId || '',
+      galleryFileIds: Array.isArray(product.galleryFileIds) ? product.galleryFileIds : [],
+      detailBlocks: Array.isArray(product.detailBlocks) ? product.detailBlocks : [],
+    };
+    productState.coverUrl = product.coverUrl || '';
+    productState.gallery = (product.galleryFileIds || []).map((fileId, index) => ({
+      fileId,
+      url: product.galleryUrls ? product.galleryUrls[index] : '',
+    }));
+    productState.form.detailBlocks = (product.detailBlocks || []).map((block) => {
+      if (block.type === 'image') {
+        return { ...block, url: block.url || '' };
+      }
+      return { ...block };
+    });
+    renderProductForm();
+    setStatus('Editing product');
+  } catch (err) {
+    showError(`Load failed: ${err.message}`);
+  }
 };
 
 const uploadProductFile = async (file) => {
@@ -358,13 +376,13 @@ const uploadProductFile = async (file) => {
     });
     const data = unwrap(payload) || {};
     if (!data.fileId) {
-      setStatus('Upload failed');
+      showError('Upload failed');
       return null;
     }
     setStatus('Uploaded');
     return data;
   } catch (err) {
-    setStatus(`Upload failed: ${err.message}`);
+    showError(`Upload failed: ${err.message}`);
     return null;
   }
 };
@@ -378,15 +396,15 @@ const saveProduct = async () => {
   const stock = Number(qs('#productStock').value.trim());
 
   if (!title) {
-    setStatus('Title required');
+    showError('Title required');
     return;
   }
   if (price === null) {
-    setStatus('Price required');
+    showError('Price required');
     return;
   }
   if (!Number.isFinite(stock)) {
-    setStatus('Stock required');
+    showError('Stock required');
     return;
   }
 
@@ -427,7 +445,7 @@ const saveProduct = async () => {
     setStatus('Saved');
     await loadProducts();
   } catch (err) {
-    setStatus(`Save failed: ${err.message}`);
+    showError(`Save failed: ${err.message}`);
   }
 };
 
