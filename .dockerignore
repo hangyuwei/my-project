@@ -1,0 +1,4 @@
+*
+!Dockerfile
+!ecommerce-management-backend/
+!ecommerce-management-backend/**

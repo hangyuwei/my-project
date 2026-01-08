@@ -74,6 +74,49 @@ const normalizePicture = (value) => {
   return single ? [single] : [];
 };
 
+const isCollectionMissing = (error) => {
+  const message = String(error?.message || '');
+  const code = error?.code || error?.errorCode;
+  return (
+    code === 'DATABASE_COLLECTION_NOT_EXIST' ||
+    message.includes('DATABASE_COLLECTION_NOT_EXIST') ||
+    message.includes('Db or Table not exist')
+  );
+};
+
+const safeCount = async (query) => {
+  try {
+    return await query.count();
+  } catch (error) {
+    if (isCollectionMissing(error)) {
+      return { total: 0 };
+    }
+    throw error;
+  }
+};
+
+const safeGet = async (query) => {
+  try {
+    return await query.get();
+  } catch (error) {
+    if (isCollectionMissing(error)) {
+      return { data: [] };
+    }
+    throw error;
+  }
+};
+
+const safeDocGet = async (collectionName, id) => {
+  try {
+    return await db.collection(collectionName).doc(id).get();
+  } catch (error) {
+    if (isCollectionMissing(error)) {
+      return { data: [] };
+    }
+    throw error;
+  }
+};
+
 const applyWhere = (collection, where) => {
   if (where && Object.keys(where).length > 0) {
     return collection.where(where);
@@ -101,20 +144,21 @@ server.get(
       onlineGoodsCount,
       completedOrdersCount,
     ] = await Promise.all([
-      goodsCollection.count(),
-      userCollection.count(),
-      orderCollection.count(),
-      promotionCollection.count(),
-      goodsCollection.where({ status: 'online' }).count(),
-      orderCollection.where({ status: 'completed' }).count(),
+      safeCount(goodsCollection),
+      safeCount(userCollection),
+      safeCount(orderCollection),
+      safeCount(promotionCollection),
+      safeCount(goodsCollection.where({ status: 'online' })),
+      safeCount(orderCollection.where({ status: 'completed' })),
     ]);
 
-    const recentOrdersResult = await orderCollection
+    const recentOrdersResult = await safeGet(
+      orderCollection
       .orderBy('createTime', 'desc')
       .limit(5)
-      .get();
+    );
 
-    const promotionsResult = await promotionCollection.limit(200).get();
+    const promotionsResult = await safeGet(promotionCollection.limit(200));
     const now = Date.now();
     const activePromotions = (promotionsResult.data || []).filter((item) => {
       const start = new Date(item.startTime).getTime();
@@ -123,10 +167,9 @@ server.get(
       return start <= now && now <= end;
     }).length;
 
-    const completedOrdersResult = await orderCollection
-      .where({ status: 'completed' })
-      .limit(1000)
-      .get();
+    const completedOrdersResult = await safeGet(
+      orderCollection.where({ status: 'completed' }).limit(1000),
+    );
     const totalRevenue = (completedOrdersResult.data || []).reduce(
       (sum, item) => sum + toFloat(item.totalPrice, 0),
       0,
@@ -161,12 +204,13 @@ server.get(
     }
 
     const collection = db.collection('goods');
-    const listResult = await applyWhere(collection, where)
-      .orderBy('createTime', 'desc')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .get();
-    const countResult = await applyWhere(collection, where).count();
+    const listResult = await safeGet(
+      applyWhere(collection, where)
+        .orderBy('createTime', 'desc')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize),
+    );
+    const countResult = await safeCount(applyWhere(collection, where));
 
     sendData(res, {
       list: listResult.data || [],
@@ -237,12 +281,13 @@ server.get(
     }
 
     const collection = db.collection('salesPromotion');
-    const listResult = await applyWhere(collection, where)
-      .orderBy('createTime', 'desc')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .get();
-    const countResult = await applyWhere(collection, where).count();
+    const listResult = await safeGet(
+      applyWhere(collection, where)
+        .orderBy('createTime', 'desc')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize),
+    );
+    const countResult = await safeCount(applyWhere(collection, where));
 
     sendData(res, {
       list: listResult.data || [],
@@ -304,12 +349,13 @@ server.get(
     }
 
     const collection = db.collection('user');
-    const listResult = await applyWhere(collection, where)
-      .orderBy('createTime', 'desc')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .get();
-    const countResult = await applyWhere(collection, where).count();
+    const listResult = await safeGet(
+      applyWhere(collection, where)
+        .orderBy('createTime', 'desc')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize),
+    );
+    const countResult = await safeCount(applyWhere(collection, where));
 
     sendData(res, {
       list: listResult.data || [],
@@ -373,12 +419,13 @@ server.get(
     }
 
     const collection = db.collection('order');
-    const listResult = await applyWhere(collection, where)
-      .orderBy('createTime', 'desc')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .get();
-    const countResult = await applyWhere(collection, where).count();
+    const listResult = await safeGet(
+      applyWhere(collection, where)
+        .orderBy('createTime', 'desc')
+        .skip((page - 1) * pageSize)
+        .limit(pageSize),
+    );
+    const countResult = await safeCount(applyWhere(collection, where));
 
     sendData(res, {
       list: listResult.data || [],
@@ -450,7 +497,7 @@ server.patch(
 server.get(
   '/api/orders/:id/detail',
   asyncHandler(async (req, res) => {
-    const orderResult = await db.collection('order').doc(req.params.id).get();
+    const orderResult = await safeDocGet('order', req.params.id);
     const order = orderResult.data?.[0];
 
     if (!order) {
@@ -460,25 +507,20 @@ server.get(
 
     const [goodsResult, userResult, promotionResult] = await Promise.all([
       order.goodsSku
-        ? db
-            .collection('goods')
-            .where({ sku: order.goodsSku })
-            .limit(1)
-            .get()
+        ? safeGet(
+            db.collection('goods').where({ sku: order.goodsSku }).limit(1),
+          )
         : Promise.resolve({ data: [] }),
       order.userId
-        ? db
-            .collection('user')
-            .where({ id: order.userId })
-            .limit(1)
-            .get()
+        ? safeGet(db.collection('user').where({ id: order.userId }).limit(1))
         : Promise.resolve({ data: [] }),
       order.salesPromotionId
-        ? db
-            .collection('salesPromotion')
-            .where({ id: order.salesPromotionId })
-            .limit(1)
-            .get()
+        ? safeGet(
+            db
+              .collection('salesPromotion')
+              .where({ id: order.salesPromotionId })
+              .limit(1),
+          )
         : Promise.resolve({ data: [] }),
     ]);
 
