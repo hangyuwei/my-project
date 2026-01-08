@@ -223,13 +223,20 @@ server.post(
   '/api/goods',
   asyncHandler(async (req, res) => {
     const payload = req.body || {};
+    const galleryImages = normalizePicture(payload.galleryImages || payload.picture);
+    const detailImages = normalizePicture(payload.detailImages);
+    const coverImage =
+      normalizeString(payload.coverImage) || galleryImages[0] || '';
     const data = {
       sku: normalizeString(payload.sku),
       goodName: normalizeString(payload.goodName),
       price: toFloat(payload.price, 0),
       description: normalizeString(payload.description),
       stock: toInt(payload.stock, 0),
-      picture: normalizePicture(payload.picture),
+      coverImage,
+      galleryImages,
+      detailImages,
+      picture: galleryImages,
       status: payload.status === 'offline' ? 'offline' : 'online',
       updateTime: new Date(),
     };

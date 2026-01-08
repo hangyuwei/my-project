@@ -26,7 +26,9 @@ const GoodsPage = () => {
     price: '',
     description: '',
     stock: '',
-    picture: [''],
+    coverImage: '',
+    galleryImages: [''],
+    detailImages: [''],
     status: 'online'
   });
 
@@ -72,7 +74,9 @@ const GoodsPage = () => {
         price: item.price,
         description: item.description,
         stock: item.stock,
-        picture: item.picture || [''],
+        coverImage: item.coverImage || (item.picture && item.picture[0]) || '',
+        galleryImages: item.galleryImages || item.picture || [''],
+        detailImages: item.detailImages || [''],
         status: item.status
       });
     } else {
@@ -83,7 +87,9 @@ const GoodsPage = () => {
         price: '',
         description: '',
         stock: '',
-        picture: [''],
+        coverImage: '',
+        galleryImages: [''],
+        detailImages: [''],
         status: 'online'
       });
     }
@@ -105,41 +111,52 @@ const GoodsPage = () => {
     }));
   };
 
-  // 处理图片URL输入
-  const handlePictureChange = (index, value) => {
-    const newPictures = [...formData.picture];
-    newPictures[index] = value;
+  const handleCoverImageChange = (value) => {
     setFormData(prev => ({
       ...prev,
-      picture: newPictures
+      coverImage: value
     }));
   };
 
-  // 添加图片URL输入框
-  const addPictureInput = () => {
+  const updateImageList = (key, index, value) => {
+    const nextList = [...(formData[key] || [])];
+    nextList[index] = value;
     setFormData(prev => ({
       ...prev,
-      picture: [...prev.picture, '']
+      [key]: nextList
     }));
   };
 
-  // 删除图片URL输入框
-  const removePictureInput = (index) => {
-    const newPictures = formData.picture.filter((_, i) => i !== index);
+  const addImageInput = (key) => {
     setFormData(prev => ({
       ...prev,
-      picture: newPictures.length > 0 ? newPictures : ['']
+      [key]: [...(prev[key] || []), '']
+    }));
+  };
+
+  const removeImageInput = (key, index) => {
+    const nextList = (formData[key] || []).filter((_, i) => i !== index);
+    setFormData(prev => ({
+      ...prev,
+      [key]: nextList.length > 0 ? nextList : ['']
     }));
   };
 
   // 保存商品
   const handleSaveGoods = async () => {
     try {
+      const galleryImages = (formData.galleryImages || []).filter(url => url.trim() !== '');
+      const detailImages = (formData.detailImages || []).filter(url => url.trim() !== '');
+      const coverImage = (formData.coverImage || '').trim() || galleryImages[0] || '';
+
       const goodsData = {
         ...formData,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
-        picture: formData.picture.filter(url => url.trim() !== ''),
+        coverImage,
+        galleryImages,
+        detailImages,
+        picture: galleryImages,
         updateTime: new Date()
       };
 
@@ -258,10 +275,10 @@ const GoodsPage = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-16 w-16">
-                      {item.picture && item.picture[0] ? (
+                      {(item.coverImage || (item.picture && item.picture[0])) ? (
                         <img
                           className="h-16 w-16 rounded-lg object-cover"
-                          src={item.picture[0]}
+                          src={item.coverImage || (item.picture && item.picture[0])}
                           alt={item.goodName}
                         />
                       ) : (
@@ -423,21 +440,34 @@ const GoodsPage = () => {
 
               <div>
                 <label className="label">
-                  <span className="label-text">商品图片</span>
+                  <span className="label-text">Cover Image</span>
                 </label>
-                {formData.picture.map((url, index) => (
+                <input
+                  type="url"
+                  value={formData.coverImage}
+                  onChange={(e) => handleCoverImageChange(e.target.value)}
+                  className="input input-bordered w-full"
+                  placeholder="Cover image URL"
+                />
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text">Gallery Images</span>
+                </label>
+                {formData.galleryImages.map((url, index) => (
                   <div key={index} className="flex items-center space-x-2 mb-2">
                     <input
                       type="url"
                       value={url}
-                      onChange={(e) => handlePictureChange(index, e.target.value)}
+                      onChange={(e) => updateImageList('galleryImages', index, e.target.value)}
                       className="input input-bordered flex-1"
-                      placeholder="图片URL"
+                      placeholder="Gallery image URL"
                     />
-                    {formData.picture.length > 1 && (
+                    {formData.galleryImages.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => removePictureInput(index)}
+                        onClick={() => removeImageInput('galleryImages', index)}
                         className="btn btn-sm btn-error"
                       >
                         删除
@@ -447,10 +477,43 @@ const GoodsPage = () => {
                 ))}
                 <button
                   type="button"
-                  onClick={addPictureInput}
+                  onClick={() => addImageInput('galleryImages')}
                   className="btn btn-sm btn-outline"
                 >
                   添加图片
+                </button>
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text">Detail Images</span>
+                </label>
+                {formData.detailImages.map((url, index) => (
+                  <div key={index} className="flex items-center space-x-2 mb-2">
+                    <input
+                      type="url"
+                      value={url}
+                      onChange={(e) => updateImageList('detailImages', index, e.target.value)}
+                      className="input input-bordered flex-1"
+                      placeholder="Detail image URL"
+                    />
+                    {formData.detailImages.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeImageInput('detailImages', index)}
+                        className="btn btn-sm btn-error"
+                      >
+                        删除
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addImageInput('detailImages')}
+                  className="btn btn-sm btn-outline"
+                >
+                  添加详情图
                 </button>
               </div>
 
