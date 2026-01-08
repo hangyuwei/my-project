@@ -1,0 +1,19 @@
+{
+  "data": {
+    "isSuccess": true,
+    "tradeNo": "350930961469409099",
+    "payInfo": "{}",
+    "code": null,
+    "transactionId": "E-200915180100299000",
+    "msg": null,
+    "interactId": "15145",
+    "channel": "wechat",
+    "limitGoodsList": null
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "259649.17677505488482712.95911292",
+  "clientIp": "10.26.156.11",
+  "rt": 891,
+  "success": true
+}

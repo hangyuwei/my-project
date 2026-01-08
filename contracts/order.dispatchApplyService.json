@@ -1,0 +1,15 @@
+{
+  "data": {
+    "rightsNo": "123123423",
+    "saasId": "70000001",
+    "uid": "700000011070005",
+    "storeId": "542",
+    "result": null
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "647327.17677505484255992.44697672",
+  "clientIp": "10.129.236.9",
+  "rt": 269,
+  "success": true
+}

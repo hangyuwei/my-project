@@ -1,0 +1,77 @@
+{
+  "data": {
+    "settleType": 0,
+    "userAddress": null,
+    "totalGoodsCount": 3,
+    "packageCount": 1,
+    "totalAmount": "289997",
+    "totalPayAmount": 94700,
+    "totalDiscountAmount": "110000",
+    "totalPromotionAmount": "1100",
+    "totalCouponAmount": 0,
+    "totalSalePrice": 95800,
+    "totalGoodsAmount": "289997",
+    "totalDeliveryFee": "0",
+    "invoiceRequest": null,
+    "skuImages": null,
+    "deliveryFeeList": null,
+    "storeGoodsList": [
+      {
+        "storeId": "1000",
+        "storeName": "云Mall深圳旗舰店",
+        "remark": null,
+        "goodsCount": 1,
+        "deliveryFee": "0",
+        "deliveryWords": null,
+        "storeTotalAmount": "0",
+        "storeTotalPayAmount": "179997",
+        "storeTotalDiscountAmount": "110000",
+        "storeTotalCouponAmount": "0",
+        "skuDetailVos": [
+          {
+            "storeId": "1000",
+            "spuId": "0",
+            "skuId": "135676631",
+            "goodsName": "航天神舟牌鱼蛋白粉固体饮料",
+            "image": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+            "reminderStock": 119,
+            "quantity": 1,
+            "payPrice": 95800,
+            "totalSkuPrice": 95800,
+            "discountSettlePrice": 95800,
+            "realSettlePrice": 95800,
+            "settlePrice": 95800,
+            "oriPrice": 100000,
+            "tagPrice": null,
+            "tagText": null,
+            "skuSpecLst": [],
+            "promotionIds": null,
+            "weight": 0,
+            "unit": "KG",
+            "volume": null,
+            "masterGoodsType": 0,
+            "viceGoodsType": 0,
+            "egoodsName": null
+          }
+        ],
+        "couponList": [
+          {
+            "couponId": 11,
+            "storeId": "1000"
+          }
+        ]
+      }
+    ],
+    "inValidGoodsList": null,
+    "outOfStockGoodsList": null,
+    "limitGoodsList": null,
+    "abnormalDeliveryGoodsList": null,
+    "invoiceSupport": 1
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "878046.17677505486421385.65106309",
+  "clientIp": "10.11.166.223",
+  "rt": 244,
+  "success": true
+}

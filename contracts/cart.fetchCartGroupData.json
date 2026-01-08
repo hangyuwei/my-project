@@ -1,0 +1,11 @@
+{
+  "data": {
+    "isNotEmpty": false,
+    "storeGoods": [],
+    "invalidGoodItems": [],
+    "isAllSelected": false,
+    "selectedGoodsCount": 0,
+    "totalAmount": "0",
+    "totalDiscountAmount": "0"
+  }
+}

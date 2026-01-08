@@ -1,0 +1,12 @@
+<view class="category-wrap">
+  <view class="category-header">
+    <view class="category-title">{{categoryName}}</view>
+  </view>
+  <goods-list
+    wr-class="category-goods-list"
+    goodsList="{{goodsList}}"
+    bind:click="onGoodsClick"
+    bind:addcart="onAddCart"
+  />
+</view>
+<t-toast id="t-toast" />

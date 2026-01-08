@@ -1,0 +1,89 @@
+.page {
+  padding: 24rpx;
+}
+
+.goods-item {
+  display: flex;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  background: #ffffff;
+  margin-bottom: 20rpx;
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.06);
+}
+
+.thumb {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.title {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 600;
+  margin-right: 12rpx;
+  flex: 1;
+}
+
+.status {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}
+
+.status-on {
+  color: #0a7f42;
+  background: #e7f6ec;
+}
+
+.status-off {
+  color: #b42318;
+  background: #fdecea;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.price {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #fa4126;
+}
+
+.price-symbol {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.stock {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.empty {
+  margin-top: 80rpx;
+}

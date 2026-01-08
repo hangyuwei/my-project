@@ -1,0 +1,25 @@
+{
+  "pageNum": 1,
+  "pageSize": 10,
+  "totalCount": 1,
+  "spuList": [
+    {
+      "spuId": "0",
+      "skuId": "135676631",
+      "storeId": "1000",
+      "thumb": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "title": "航天神舟牌鱼蛋白粉固体饮料",
+      "goodsName": "航天神舟牌鱼蛋白粉固体饮料",
+      "skuImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "price": 95800,
+      "originPrice": 100000,
+      "stockQuantity": 510,
+      "tags": [
+        {
+          "title": "限时抢购"
+        }
+      ]
+    }
+  ],
+  "algId": 0
+}

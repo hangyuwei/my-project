@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CloudBase Mock Admin</title>
+    <link rel="stylesheet" href="/admin/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div>
+            <div class="brand-title">CloudBase Mock</div>
+            <div class="brand-subtitle">Local Admin Console</div>
+          </div>
+        </div>
+        <nav class="nav">
+          <button class="nav-btn is-active" data-view="products">Products</button>
+          <button class="nav-btn" data-view="database">Database</button>
+          <button class="nav-btn" data-view="storage">Storage</button>
+          <button class="nav-btn" data-view="functions">Functions</button>
+          <button class="nav-btn" data-view="logs">Logs</button>
+          <button class="nav-btn" data-view="settings">Settings</button>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="label">Base URL</div>
+          <div id="baseUrl" class="mono">-</div>
+          <button id="signOut" class="ghost">Sign out</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <div class="topbar-title">CloudBase Mock</div>
+            <div class="topbar-subtitle">Database, Storage, Functions, Logs</div>
+          </div>
+          <div class="topbar-actions">
+            <span id="statusText" class="status">Ready</span>
+            <button id="refreshAll" class="ghost">Refresh</button>
+          </div>
+        </header>
+
+        <section id="view-products" class="view is-active">
+          <div class="view-header">
+            <div>
+              <h2>Products</h2>
+              <p>Create, edit, and manage products with CloudBase storage.</p>
+            </div>
+            <div class="controls">
+              <input id="productSearch" type="search" placeholder="Search title" />
+              <select id="productStatus">
+                <option value="">All</option>
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+              </select>
+              <button id="productLoad" class="ghost">Load</button>
+              <button id="productNew" class="primary">New</button>
+            </div>
+          </div>
+          <div class="view-grid">
+            <div class="panel">
+              <div class="panel-header">Product List</div>
+              <div class="panel-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Cover</th>
+                      <th>Title</th>
+                      <th>Price</th>
+                      <th>Stock</th>
+                      <th>Status</th>
+                      <th>Updated</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="productTable"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <span>Product Editor</span>
+                <div class="panel-actions">
+                  <button id="productDelete" class="danger">Delete</button>
+                  <button id="productSave" class="primary">Save</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="form-grid">
+                  <label>
+                    <span>Title</span>
+                    <input id="productTitle" type="text" placeholder="Title" />
+                  </label>
+                  <label>
+                    <span>Sub Title</span>
+                    <input id="productSubTitle" type="text" placeholder="Sub title" />
+                  </label>
+                  <label>
+                    <span>Status</span>
+                    <select id="productStatusField">
+                      <option value="ON">ON</option>
+                      <option value="OFF">OFF</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Price (yuan)</span>
+                    <input id="productPrice" type="number" placeholder="0.00" />
+                  </label>
+                  <label>
+                    <span>Line Price (yuan)</span>
+                    <input id="productLinePrice" type="number" placeholder="0.00" />
+                  </label>
+                  <label>
+                    <span>Stock</span>
+                    <input id="productStock" type="number" placeholder="0" />
+                  </label>
+                </div>
+
+                <div class="divider"></div>
+                <div class="section-title">Cover Image</div>
+                <div class="image-row">
+                  <img id="productCoverPreview" alt="cover" />
+                  <input id="productCoverUpload" type="file" />
+                </div>
+
+                <div class="divider"></div>
+                <div class="section-title">Gallery</div>
+                <div class="image-row">
+                  <input id="productGalleryUpload" type="file" multiple />
+                </div>
+                <div id="productGalleryList" class="card-grid"></div>
+
+                <div class="divider"></div>
+                <div class="section-title">Detail Blocks</div>
+                <div class="controls">
+                  <button id="addDetailText" class="ghost">Add Text</button>
+                  <button id="addDetailImage" class="ghost">Add Image</button>
+                  <button id="addDetailRichtext" class="ghost">Add Richtext</button>
+                </div>
+                <div id="detailBlocks" class="detail-blocks"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-database" class="view">
+          <div class="view-header">
+            <div>
+              <h2>Database</h2>
+              <p>Collections, documents, and JSON editing.</p>
+            </div>
+          </div>
+          <div class="view-grid">
+            <div class="panel">
+              <div class="panel-header">Collections</div>
+              <div class="panel-body">
+                <div class="controls">
+                  <select id="collectionSelect"></select>
+                  <input id="collectionInput" type="text" placeholder="Collection name" />
+                  <input id="collectionSearch" type="search" placeholder="Search q=" />
+                  <button id="loadCollection" class="ghost">Load</button>
+                </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Updated</th>
+                      <th>Summary</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="collectionTable"></tbody>
+                </table>
+                <div class="pagination">
+                  <button id="prevPage" class="ghost">Prev</button>
+                  <span id="pageInfo" class="mono">1 / 1</span>
+                  <button id="nextPage" class="ghost">Next</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <span>Document</span>
+                <div class="panel-actions">
+                  <button id="newDoc" class="ghost">New</button>
+                  <button id="saveDoc" class="primary">Save</button>
+                  <button id="deleteDoc" class="danger">Delete</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <textarea id="docEditor" class="editor" rows="18">{}</textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-storage" class="view">
+          <div class="view-header">
+            <div>
+              <h2>Storage</h2>
+              <p>Upload files, preview images, and manage assets.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">Upload</div>
+            <div class="panel-body">
+              <div class="controls">
+                <input id="storageFile" type="file" />
+                <button id="uploadFile" class="primary">Upload</button>
+                <input id="storagePrefix" type="text" placeholder="Prefix filter" />
+                <button id="refreshStorage" class="ghost">Refresh</button>
+              </div>
+              <div id="storageList" class="card-grid"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-functions" class="view">
+          <div class="view-header">
+            <div>
+              <h2>Functions</h2>
+              <p>Execute cloud functions with JSON event payloads.</p>
+            </div>
+          </div>
+          <div class="view-grid">
+            <div class="panel">
+              <div class="panel-header">Run Function</div>
+              <div class="panel-body">
+                <div class="controls">
+                  <select id="functionSelect"></select>
+                  <button id="runFunction" class="primary">Run</button>
+                </div>
+                <textarea id="functionPayload" class="editor" rows="10">{}</textarea>
+                <pre id="functionResult" class="code-block">{}</pre>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header">Recent Logs</div>
+              <div class="panel-body">
+                <div id="functionLogs" class="log-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-logs" class="view">
+          <div class="view-header">
+            <div>
+              <h2>Logs</h2>
+              <p>Inspect recent HTTP and function calls.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="controls">
+                <button class="ghost" data-log-type="functions">Functions</button>
+                <button class="ghost" data-log-type="http">HTTP</button>
+                <button id="refreshLogs" class="ghost">Refresh</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="logs-layout">
+                <div id="logsList" class="log-list"></div>
+                <pre id="logDetail" class="code-block">{}</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="view-header">
+            <div>
+              <h2>Settings</h2>
+              <p>Configure defaults and authentication toggles.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">Environment</div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <label>
+                  <span>Default OpenId</span>
+                  <input id="settingOpenId" type="text" />
+                </label>
+                <label>
+                  <span>AppId</span>
+                  <input id="settingAppId" type="text" />
+                </label>
+                <label>
+                  <span>Env</span>
+                  <input id="settingEnv" type="text" />
+                </label>
+                <label class="toggle">
+                  <span>Require Admin Auth</span>
+                  <input id="settingRequireAdminAuth" type="checkbox" />
+                </label>
+                <label class="toggle">
+                  <span>Require API Auth</span>
+                  <input id="settingRequireApiAuth" type="checkbox" />
+                </label>
+                <label>
+                  <span>Admin Password</span>
+                  <input id="settingAdminPassword" type="password" placeholder="Leave empty to keep" />
+                </label>
+              </div>
+              <button id="saveSettings" class="primary">Save Settings</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="loginOverlay" class="overlay is-hidden">
+      <div class="login-card">
+        <h3>Admin Login</h3>
+        <p>Enter the admin password to continue.</p>
+        <input id="loginPassword" type="password" placeholder="Admin password" />
+        <button id="loginButton" class="primary">Sign in</button>
+        <div id="loginError" class="error"></div>
+      </div>
+    </div>
+
+    <script src="/admin/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "data": {
+    "saasId": "88888888",
+    "uid": "88888888205468",
+    "storeId": "1000",
+    "skuId": "135676631",
+    "numOfSku": 1,
+    "numOfSkuAvailable": 1,
+    "refundableAmount": 0,
+    "refundableDiscountAmount": 0,
+    "shippingFeeIncluded": 0,
+    "paidAmountEach": 0,
+    "boughtQuantity": 1,
+    "orderNo": "132222623132329291",
+    "goodsInfo": {
+      "goodsName": "",
+      "skuImage": "",
+      "specInfo": []
+    }
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "478191.17677531657937734.35968725",
+  "clientIp": "10.25.210.190",
+  "rt": 36,
+  "success": true
+}

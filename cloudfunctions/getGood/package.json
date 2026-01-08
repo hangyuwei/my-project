@@ -1,0 +1,7 @@
+{
+  "name": "getGood",
+  "version": "1.0.0",
+  "dependencies": {
+    "wx-server-sdk": "^2.7.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "spuId": "sample-1",
+  "title": "Sample Goods",
+  "price": 19900,
+  "originPrice": 19900,
+  "stock": 0,
+  "images": [],
+  "detailImages": [],
+  "tags": [],
+  "intro": "",
+  "createdAt": 1767753164667,
+  "isPutOnSale": 1
+}

@@ -1,0 +1,135 @@
+{
+  "data": {
+    "saasId": "88888888",
+    "storeId": "1000",
+    "storeName": "云Mall深圳旗舰店",
+    "uid": "88888888205468",
+    "parentOrderNo": "354021731671873099",
+    "orderId": "354021735982432279",
+    "orderNo": "354021731671873099",
+    "orderType": 0,
+    "orderSubType": 0,
+    "orderStatus": 5,
+    "orderSubStatus": null,
+    "totalAmount": "10010",
+    "goodsAmount": "10000",
+    "goodsAmountApp": "10000",
+    "paymentAmount": "20",
+    "freightFee": "10",
+    "packageFee": "0",
+    "discountAmount": "9990",
+    "channelType": 0,
+    "channelSource": "",
+    "channelIdentity": "",
+    "remark": "买电风扇送电池吗",
+    "cancelType": 0,
+    "cancelReasonType": 0,
+    "cancelReason": "",
+    "rightsType": 0,
+    "createTime": "1600350829288",
+    "orderItemVOs": [
+      {
+        "id": "354021736133427225",
+        "orderNo": null,
+        "spuId": "3",
+        "skuId": "135696670",
+        "roomId": null,
+        "goodsMainType": 0,
+        "goodsViceType": 0,
+        "goodsName": "腾讯极光盒子4智能网络电视机顶盒6K千兆网络机顶盒4K高分辨率",
+        "specifications": [
+          {
+            "specTitle": "颜色",
+            "specValue": "贵族青"
+          },
+          {
+            "specTitle": "类型",
+            "specValue": "尊享礼盒装"
+          }
+        ],
+        "goodsPictureUrl": "https://tdesign.gtimg.com/miniprogram/template/retail/goods/dz-3b.png",
+        "originPrice": "0",
+        "actualPrice": "9999",
+        "buyQuantity": 1,
+        "itemTotalAmount": "9999",
+        "itemDiscountAmount": "9990",
+        "itemPaymentAmount": "10",
+        "goodsPaymentPrice": "10",
+        "tagPrice": null,
+        "tagText": null,
+        "outCode": null,
+        "labelVOs": null,
+        "buttonVOs": [
+          {
+            "primary": false
+          }
+        ]
+      }
+    ],
+    "logisticsVO": {
+      "logisticsType": 1,
+      "logisticsNo": "",
+      "logisticsStatus": null,
+      "logisticsCompanyCode": "",
+      "logisticsCompanyName": "",
+      "receiverAddressId": "14",
+      "provinceCode": "440000",
+      "cityCode": "440300",
+      "countryCode": "440306",
+      "receiverProvince": "广东省",
+      "receiverCity": "深圳市",
+      "receiverCountry": "宝安区",
+      "receiverArea": "",
+      "receiverAddress": "沙井中心路28号丽沙花都xx栋xx号",
+      "receiverPostCode": "",
+      "receiverLongitude": "113.829127",
+      "receiverLatitude": "22.713649",
+      "receiverIdentity": "88888888205468",
+      "receiverPhone": "17612345678",
+      "receiverName": "测试用户",
+      "expectArrivalTime": null,
+      "senderName": "",
+      "senderPhone": "",
+      "senderAddress": "",
+      "sendTime": null,
+      "arrivalTime": null
+    },
+    "paymentVO": {
+      "payStatus": 1,
+      "amount": "20",
+      "currency": null,
+      "payType": null,
+      "payWay": null,
+      "payWayName": null,
+      "interactId": null,
+      "traceNo": null,
+      "channelTrxNo": null,
+      "period": null,
+      "payTime": null,
+      "paySuccessTime": null
+    },
+    "buttonVOs": [
+      {
+        "primary": true,
+        "type": 1,
+        "name": "付款"
+      }
+    ],
+    "labelVOs": null,
+    "invoiceVO": null,
+    "couponAmount": "0",
+    "autoCancelTime": "1823652629288",
+    "orderStatusName": "待付款",
+    "orderStatusRemark": "需支付￥0.20",
+    "logisticsLogVO": null,
+    "invoiceStatus": 3,
+    "invoiceDesc": "暂不开发票",
+    "invoiceUrl": null
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "539274.17677531662506078.67424950",
+  "clientIp": "10.115.131.155",
+  "rt": 89,
+  "success": true
+}

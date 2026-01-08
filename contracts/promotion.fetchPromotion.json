@@ -1,0 +1,20 @@
+{
+  "list": [
+    {
+      "spuId": "0",
+      "thumb": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "title": "航天神舟牌鱼蛋白粉固体饮料",
+      "price": 95800,
+      "originPrice": 100000,
+      "tags": [
+        {
+          "title": "限时抢购"
+        }
+      ]
+    }
+  ],
+  "banner": "https://tdesign.gtimg.com/miniprogram/template/retail/promotion/banner-promotion.png",
+  "time": 72000000,
+  "showBannerDesc": true,
+  "statusTag": "running"
+}

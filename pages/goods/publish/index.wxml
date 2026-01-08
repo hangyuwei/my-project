@@ -1,0 +1,82 @@
+<view class="page">
+  <t-cell-group>
+    <t-cell title="????" bordered="{{false}}">
+      <t-input
+        slot="note"
+        value="{{title}}"
+        placeholder="???????"
+        maxlength="60"
+        bind:change="onTitleChange"
+      />
+    </t-cell>
+    <t-cell title="??" bordered="{{false}}">
+      <t-input
+        slot="note"
+        value="{{price}}"
+        placeholder="?? 99.00"
+        type="digit"
+        bind:change="onPriceChange"
+      />
+    </t-cell>
+    <t-cell title="??" bordered="{{false}}">
+      <t-input
+        slot="note"
+        value="{{originPrice}}"
+        placeholder="??"
+        type="digit"
+        bind:change="onOriginPriceChange"
+      />
+    </t-cell>
+    <t-cell title="??" bordered="{{false}}">
+      <t-input
+        slot="note"
+        value="{{stock}}"
+        placeholder="?????"
+        type="number"
+        bind:change="onStockChange"
+      />
+    </t-cell>
+  </t-cell-group>
+
+  <view class="section">
+    <view class="section-title">????</view>
+    <t-textarea
+      t-class="intro"
+      maxlength="200"
+      indicator
+      placeholder="????????"
+      value="{{intro}}"
+      bind:change="onIntroChange"
+    />
+  </view>
+
+  <view class="section">
+    <view class="section-title">????</view>
+    <t-upload
+      files="{{uploadFiles}}"
+      media-type="{{['image']}}"
+      max="6"
+      gridConfig="{{gridConfig}}"
+      imageProps="{{imageProps}}"
+      bind:success="handleUploadSuccess"
+      bind:remove="handleRemove"
+    >
+      <view slot="add-content" class="upload-add">
+        <t-icon name="add" size="56rpx" />
+        <view class="upload-text">????</view>
+      </view>
+    </t-upload>
+  </view>
+
+  <view class="submit">
+    <t-button
+      content="????"
+      block
+      shape="round"
+      loading="{{submitting}}"
+      disabled="{{!canSubmit}}"
+      bind:tap="onSubmit"
+    />
+  </view>
+</view>
+<t-toast id="t-toast" />
