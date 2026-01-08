@@ -351,17 +351,22 @@ const uploadProductFile = async (file) => {
   const form = new FormData();
   form.append('file', file);
   setStatus('Uploading...');
-  const payload = await apiFetch('/storage/upload', {
-    method: 'POST',
-    body: form,
-  });
-  const data = unwrap(payload) || {};
-  if (!data.fileId) {
-    setStatus('Upload failed');
+  try {
+    const payload = await apiFetch('/storage/upload', {
+      method: 'POST',
+      body: form,
+    });
+    const data = unwrap(payload) || {};
+    if (!data.fileId) {
+      setStatus('Upload failed');
+      return null;
+    }
+    setStatus('Uploaded');
+    return data;
+  } catch (err) {
+    setStatus(`Upload failed: ${err.message}`);
     return null;
   }
-  setStatus('Uploaded');
-  return data;
 };
 
 const saveProduct = async () => {
@@ -414,12 +419,16 @@ const saveProduct = async () => {
     detailBlocks,
   };
 
-  await apiFetch('/admin/api/products', {
-    method: 'POST',
-    body: JSON.stringify(product),
-  });
-  setStatus('Saved');
-  await loadProducts();
+  try {
+    await apiFetch('/admin/api/products', {
+      method: 'POST',
+      body: JSON.stringify(product),
+    });
+    setStatus('Saved');
+    await loadProducts();
+  } catch (err) {
+    setStatus(`Save failed: ${err.message}`);
+  }
 };
 
 const deleteProduct = async () => {

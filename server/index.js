@@ -899,7 +899,11 @@ const server = http.createServer(async (req, res) => {
   const meta = { requestId: generateId(), clientIp: getClientIp(req) };
 
   if (req.url.startsWith('/admin/api/')) {
-    return handleAdminApi(req, res, meta);
+    try {
+      return await handleAdminApi(req, res, meta);
+    } catch (err) {
+      return sendJson(res, 500, wrapError('ServerError', err.message, meta));
+    }
   }
 
   if (req.url === '/admin' || req.url.startsWith('/admin/')) {
@@ -907,19 +911,35 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.url.startsWith('/db/')) {
-    return handleDbApi(req, res, meta);
+    try {
+      return await handleDbApi(req, res, meta);
+    } catch (err) {
+      return sendJson(res, 500, wrapError('ServerError', err.message, meta));
+    }
   }
 
   if (req.url.startsWith('/storage')) {
-    return handleStorageApi(req, res, meta);
+    try {
+      return await handleStorageApi(req, res, meta);
+    } catch (err) {
+      return sendJson(res, 500, wrapError('ServerError', err.message, meta));
+    }
   }
 
   if (req.url.startsWith('/logs')) {
-    return handleLogsApi(req, res, meta);
+    try {
+      return await handleLogsApi(req, res, meta);
+    } catch (err) {
+      return sendJson(res, 500, wrapError('ServerError', err.message, meta));
+    }
   }
 
   if (req.url.startsWith('/settings')) {
-    return handleSettingsApi(req, res, meta);
+    try {
+      return await handleSettingsApi(req, res, meta);
+    } catch (err) {
+      return sendJson(res, 500, wrapError('ServerError', err.message, meta));
+    }
   }
 
   if (req.url.startsWith('/cloudfunctions/') && req.method === 'POST') {
