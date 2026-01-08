@@ -3,8 +3,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-ARG VITE_ENV_ID
-ENV VITE_ENV_ID=$VITE_ENV_ID
 RUN npm run build
 
 FROM node:18-alpine
