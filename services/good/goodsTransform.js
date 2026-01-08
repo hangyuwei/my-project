@@ -15,12 +15,14 @@ const toInt = (value) => {
 const toArray = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
 
 export function normalizeGoodsRecord(record = {}) {
-  const images = toArray(record.images);
-  const detailImages = toArray(record.detailImages);
+  const images = toArray(record.galleryImages || record.picture || record.images);
+  const detailImages = toArray(record.detailImages || record.detail);
   const price = toNumber(record.price);
   let originPrice = toNumber(record.originPrice || price);
   if (!originPrice || originPrice < price) originPrice = price;
   const stock = toInt(record.stock);
+  const coverImage = record.coverImage || record.primaryImage || '';
+  const withCover = coverImage && images[0] !== coverImage ? [coverImage, ...images] : images;
 
   return {
     spuId: record.spuId || '',
@@ -28,8 +30,8 @@ export function normalizeGoodsRecord(record = {}) {
     price,
     originPrice,
     stock: stock < 0 ? 0 : stock,
-    images,
-    detailImages: detailImages.length ? detailImages : images,
+    images: withCover,
+    detailImages: detailImages.length ? detailImages : withCover,
     tags: toArray(record.tags),
     intro: record.intro || '',
     createdAt: record.createdAt || Date.now(),

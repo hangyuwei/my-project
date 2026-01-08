@@ -37,10 +37,21 @@ const normalizeNumber = (value, fallback) => {
 };
 
 const pickImageSource = (product = {}) =>
-  product.coverFileId || product.imageFileId || product.image || product.primaryImage || '';
+  product.coverImage ||
+  product.coverFileId ||
+  product.imageFileId ||
+  product.image ||
+  product.primaryImage ||
+  '';
 
 const pickThumbSource = (product = {}) =>
-  product.coverFileId || product.thumbFileId || product.imageFileId || product.image || product.primaryImage || '';
+  product.coverImage ||
+  product.coverFileId ||
+  product.thumbFileId ||
+  product.imageFileId ||
+  product.image ||
+  product.primaryImage ||
+  '';
 
 const buildSkuList = (product, skuImage, price, linePrice, stock, urlMap) => {
   const skuList = Array.isArray(product.skus) ? product.skus : [];
@@ -97,36 +108,39 @@ exports.main = async (event = {}) => {
 
   let query = {};
   if (spuId && skuId) {
-    query = _.or([{ spuId }, { skuId }]);
+    query = _.or([{ spuId }, { skuId }, { sku: spuId }, { sku: skuId }, { _id: spuId }, { _id: skuId }]);
   } else if (spuId) {
-    query = { spuId };
+    query = _.or([{ spuId }, { sku: spuId }, { _id: spuId }]);
   } else if (skuId) {
-    query = { skuId };
+    query = _.or([{ skuId }, { sku: skuId }, { _id: skuId }]);
   }
 
-  const res = await db.collection('products').where(query).limit(1).get();
+  const res = await db.collection('goods').where(query).limit(1).get();
   const product = res.data && res.data[0];
   if (!product) return null;
 
   const imageSource = pickImageSource(product);
   const thumbSource = pickThumbSource(product);
-  const rawImages = Array.isArray(product.galleryFileIds) && product.galleryFileIds.length
-    ? product.galleryFileIds
-    : Array.isArray(product.imagesFileIds) && product.imagesFileIds.length
-      ? product.imagesFileIds
-      : Array.isArray(product.images) && product.images.length
-        ? product.images
+  const rawImages = Array.isArray(product.galleryImages) && product.galleryImages.length
+    ? product.galleryImages
+    : Array.isArray(product.images) && product.images.length
+      ? product.images
+      : Array.isArray(product.picture) && product.picture.length
+        ? product.picture
         : [];
+  const detailImages = Array.isArray(product.detailImages) ? product.detailImages : [];
   const detailBlocks = Array.isArray(product.detailBlocks)
     ? product.detailBlocks
     : Array.isArray(product.detail)
       ? product.detail
-      : [];
+      : detailImages.length
+        ? detailImages.map((value) => ({ type: 'image', value }))
+        : [];
   const detailImageSources = detailBlocks
     .filter((block) => block && block.type === 'image' && (block.fileId || block.value))
     .map((block) => block.fileId || block.value);
 
-  const fileIds = [imageSource, thumbSource, ...rawImages, ...detailImageSources].filter(isCloudFileId);
+  const fileIds = [imageSource, thumbSource, ...rawImages, ...detailImages, ...detailImageSources].filter(isCloudFileId);
   const urlMap = await buildUrlMap(fileIds);
 
   const primaryImage = resolveUrl(imageSource, urlMap, 750);
@@ -156,10 +170,10 @@ exports.main = async (event = {}) => {
   const stock = normalizeNumber(product.stock, 0);
 
   return {
-    spuId: String(product.spuId || product._id || ''),
-    skuId: String(product.skuId || ''),
-    goodsName: product.title || product.name || '',
-    title: product.title || product.name || '',
+    spuId: String(product.spuId || product.sku || product._id || ''),
+    skuId: String(product.skuId || product.sku || ''),
+    goodsName: product.goodName || product.title || product.name || '',
+    title: product.goodName || product.title || product.name || '',
     image: primaryImage,
     primaryImage,
     skuImage,
@@ -172,7 +186,7 @@ exports.main = async (event = {}) => {
     maxLinePrice: linePrice,
     spuStockQuantity: stock,
     soldNum: normalizeNumber(product.soldNum, 0),
-    isPutOnSale: product.status === 'OFF' ? 0 : 1,
+    isPutOnSale: product.status === 'OFF' || product.status === 'offline' ? 0 : 1,
     specList: Array.isArray(product.specList) ? product.specList : [],
     skuList: buildSkuList(product, skuImage, price, linePrice, stock, urlMap),
     tags: Array.isArray(product.tags) ? product.tags : [],
@@ -180,6 +194,6 @@ exports.main = async (event = {}) => {
     detailImages: desc,
     desc,
     detail,
-    status: product.status || 'ON',
+    status: product.status || 'online',
   };
 };

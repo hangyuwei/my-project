@@ -39,7 +39,13 @@ const mapTags = (tags = []) =>
     : [];
 
 const pickCoverSource = (item = {}) =>
-  item.coverFileId || item.thumbFileId || item.imageFileId || item.image || item.primaryImage || '';
+  item.coverImage ||
+  item.coverFileId ||
+  item.thumbFileId ||
+  item.imageFileId ||
+  item.image ||
+  item.primaryImage ||
+  '';
 
 const mapCard = (item = {}, urlMap = {}) => {
   const fileId = pickCoverSource(item);
@@ -56,8 +62,8 @@ const mapCard = (item = {}, urlMap = {}) => {
 
 exports.main = async () => {
   const products = await db
-    .collection('products')
-    .where({ status: 'ON' })
+    .collection('goods')
+    .where(db.command.or([{ status: 'ON' }, { status: 'online' }]))
     .limit(10)
     .get();
 
