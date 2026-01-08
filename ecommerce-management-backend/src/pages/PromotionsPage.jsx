@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { app, ensureLogin } from '../utils/cloudbase';
+import {
+  getPromotions,
+  savePromotion as savePromotionApi,
+  deletePromotion as deletePromotionApi,
+} from '../utils/api';
 import { useDebounce } from '../hooks/useDebounce';
 
 const PromotionsPage = () => {
@@ -51,31 +55,9 @@ const PromotionsPage = () => {
       } else {
         setSearchLoading(true);
       }
-      await ensureLogin();
-      const db = app.database();
-      
-      let query = db.collection('salesPromotion');
-      
-      if (search) {
-        query = query.where({
-          name: db.RegExp({
-            regexp: search,
-            options: 'i'
-          })
-        });
-      }
-      
-      const countResult = await query.count();
-      const total = countResult.total;
-      setTotalPages(Math.ceil(total / pageSize));
-      
-      const result = await query
-        .orderBy('createTime', 'desc')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .get();
-      
-      setPromotions(result.data);
+      const data = await getPromotions({ page, pageSize, search });
+      setTotalPages(Math.ceil((data.total || 0) / pageSize));
+      setPromotions(data.list || []);
     } catch (error) {
       console.error('获取促销活动列表失败:', error);
     } finally {
@@ -138,11 +120,8 @@ const PromotionsPage = () => {
   };
 
   // 保存促销活动
-  const savePromotion = async () => {
+  const handleSavePromotion = async () => {
     try {
-      await ensureLogin();
-      const db = app.database();
-      
       const promotionData = {
         ...formData,
         startTime: new Date(formData.startTime),
@@ -154,11 +133,11 @@ const PromotionsPage = () => {
 
       if (editingItem) {
         // 更新
-        await db.collection('salesPromotion').doc(editingItem._id).update(promotionData);
+        await savePromotionApi({ ...promotionData, _id: editingItem._id });
       } else {
         // 新增
         promotionData.createTime = new Date();
-        await db.collection('salesPromotion').add(promotionData);
+        await savePromotionApi(promotionData);
       }
       
       closeModal();
@@ -170,13 +149,11 @@ const PromotionsPage = () => {
   };
 
   // 删除促销活动
-  const deletePromotion = async (id) => {
+  const handleDeletePromotion = async (id) => {
     if (!confirm('确定要删除这个促销活动吗？')) return;
     
     try {
-      await ensureLogin();
-      const db = app.database();
-      await db.collection('salesPromotion').doc(id).remove();
+      await deletePromotionApi(id);
       fetchPromotions(currentPage, debouncedSearchTerm);
     } catch (error) {
       console.error('删除促销活动失败:', error);
@@ -292,7 +269,7 @@ const PromotionsPage = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => deletePromotion(item._id)}
+                      onClick={() => handleDeletePromotion(item._id)}
                       className="text-red-600 hover:text-red-900"
                       title="??"
                     >
@@ -444,7 +421,7 @@ const PromotionsPage = () => {
               <button onClick={closeModal} className="btn">
                 取消
               </button>
-              <button onClick={savePromotion} className="btn btn-primary">
+              <button onClick={handleSavePromotion} className="btn btn-primary">
                 ??
               </button>
             </div>

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { app, ensureLogin } from '../utils/cloudbase';
+import {
+  getUsers,
+  saveUser as saveUserApi,
+  deleteUser as deleteUserApi,
+  getUserOrders,
+} from '../utils/api';
 import { useDebounce } from '../hooks/useDebounce';
 
 const UsersPage = () => {
@@ -45,31 +50,9 @@ const UsersPage = () => {
       } else {
         setSearchLoading(true);
       }
-      await ensureLogin();
-      const db = app.database();
-      
-      let query = db.collection('user');
-      
-      if (search) {
-        query = query.where({
-          name: db.RegExp({
-            regexp: search,
-            options: 'i'
-          })
-        });
-      }
-      
-      const countResult = await query.count();
-      const total = countResult.total;
-      setTotalPages(Math.ceil(total / pageSize));
-      
-      const result = await query
-        .orderBy('createTime', 'desc')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .get();
-      
-      setUsers(result.data);
+      const data = await getUsers({ page, pageSize, search });
+      setTotalPages(Math.ceil((data.total || 0) / pageSize));
+      setUsers(data.list || []);
     } catch (error) {
       console.error('获取会员列表失败:', error);
     } finally {
@@ -126,9 +109,6 @@ const UsersPage = () => {
   // 保存会员
   const saveUser = async () => {
     try {
-      await ensureLogin();
-      const db = app.database();
-      
       const userData = {
         ...formData,
         updateTime: new Date()
@@ -136,12 +116,12 @@ const UsersPage = () => {
 
       if (editingItem) {
         // 更新
-        await db.collection('user').doc(editingItem._id).update(userData);
+        await saveUserApi({ ...userData, _id: editingItem._id });
       } else {
         // 新增
         userData.createTime = new Date();
         userData.orderIds = [];
-        await db.collection('user').add(userData);
+        await saveUserApi(userData);
       }
       
       closeModal();
@@ -157,9 +137,7 @@ const UsersPage = () => {
     if (!confirm('确定要删除这个会员吗？')) return;
     
     try {
-      await ensureLogin();
-      const db = app.database();
-      await db.collection('user').doc(id).remove();
+      await deleteUserApi(id);
       fetchUsers(currentPage, debouncedSearchTerm);
     } catch (error) {
       console.error('删除会员失败:', error);
@@ -170,17 +148,8 @@ const UsersPage = () => {
   // 查看会员订单
   const viewUserOrders = async (userId) => {
     try {
-      await ensureLogin();
-      const db = app.database();
-      
-      const result = await db.collection('order')
-        .where({
-          userId: userId
-        })
-        .orderBy('createTime', 'desc')
-        .get();
-      
-      setUserOrders(result.data);
+      const data = await getUserOrders(userId);
+      setUserOrders(data.list || []);
       setShowOrderModal(true);
     } catch (error) {
       console.error('获取会员订单失败:', error);

@@ -7,12 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "@cloudbase/js-sdk": "latest",
+    "@cloudbase/node-sdk": "^3.8.0",
     "@heroicons/react": "^2.2.0",
     "daisyui": "^5.0.35",
+    "express": "^4.19.2",
     "framer-motion": "^12.12.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

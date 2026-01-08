@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { app, ensureLogin } from '../utils/cloudbase';
+import {
+  getGoods,
+  saveGoods as saveGoodsApi,
+  deleteGoods as deleteGoodsApi,
+  updateGoodsStatus,
+} from '../utils/api';
 import { useDebounce } from '../hooks/useDebounce';
 
 const GoodsPage = () => {
@@ -36,31 +41,9 @@ const GoodsPage = () => {
       } else {
         setSearchLoading(true);
       }
-      await ensureLogin();
-      const db = app.database();
-      
-      let query = db.collection('goods');
-      
-      if (search) {
-        query = query.where({
-          goodName: db.RegExp({
-            regexp: search,
-            options: 'i'
-          })
-        });
-      }
-      
-      const countResult = await query.count();
-      const total = countResult.total;
-      setTotalPages(Math.ceil(total / pageSize));
-      
-      const result = await query
-        .orderBy('createTime', 'desc')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .get();
-      
-      setGoods(result.data);
+      const data = await getGoods({ page, pageSize, search });
+      setTotalPages(Math.ceil((data.total || 0) / pageSize));
+      setGoods(data.list || []);
     } catch (error) {
       console.error('获取商品列表失败:', error);
     } finally {
@@ -150,11 +133,8 @@ const GoodsPage = () => {
   };
 
   // 保存商品
-  const saveGoods = async () => {
+  const handleSaveGoods = async () => {
     try {
-      await ensureLogin();
-      const db = app.database();
-      
       const goodsData = {
         ...formData,
         price: parseFloat(formData.price),
@@ -165,11 +145,11 @@ const GoodsPage = () => {
 
       if (editingItem) {
         // 更新
-        await db.collection('goods').doc(editingItem._id).update(goodsData);
+        await saveGoodsApi({ ...goodsData, _id: editingItem._id });
       } else {
         // 新增
         goodsData.createTime = new Date();
-        await db.collection('goods').add(goodsData);
+        await saveGoodsApi(goodsData);
       }
       
       closeModal();
@@ -181,13 +161,11 @@ const GoodsPage = () => {
   };
 
   // 删除商品
-  const deleteGoods = async (id) => {
+  const handleDeleteGoods = async (id) => {
     if (!confirm('确定要删除这个商品吗？')) return;
     
     try {
-      await ensureLogin();
-      const db = app.database();
-      await db.collection('goods').doc(id).remove();
+      await deleteGoodsApi(id);
       fetchGoods(currentPage, debouncedSearchTerm);
     } catch (error) {
       console.error('删除商品失败:', error);
@@ -198,13 +176,8 @@ const GoodsPage = () => {
   // 切换商品状态
   const toggleStatus = async (item) => {
     try {
-      await ensureLogin();
-      const db = app.database();
       const newStatus = item.status === 'online' ? 'offline' : 'online';
-      await db.collection('goods').doc(item._id).update({
-        status: newStatus,
-        updateTime: new Date()
-      });
+      await updateGoodsStatus(item._id, newStatus);
       fetchGoods(currentPage, debouncedSearchTerm);
     } catch (error) {
       console.error('更新状态失败:', error);
@@ -331,7 +304,7 @@ const GoodsPage = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => deleteGoods(item._id)}
+                    onClick={() => handleDeleteGoods(item._id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     <TrashIcon className="h-5 w-5" />
@@ -501,7 +474,7 @@ const GoodsPage = () => {
               <button onClick={closeModal} className="btn">
                 取消
               </button>
-              <button onClick={saveGoods} className="btn btn-primary">
+              <button onClick={handleSaveGoods} className="btn btn-primary">
                 保存
               </button>
             </div>

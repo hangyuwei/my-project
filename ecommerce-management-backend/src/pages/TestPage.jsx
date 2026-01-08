@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { app, ensureLogin } from '../utils/cloudbase';
+import { getGoods } from '../utils/api';
 
 const TestPage = () => {
   const [status, setStatus] = useState('正在测试...');
@@ -8,18 +8,13 @@ const TestPage = () => {
 
   const testCloudBase = async () => {
     try {
-      setStatus('正在连接云开发...');
-      
-      // 测试登录
-      await ensureLogin();
-      setStatus('登录成功，正在获取数据...');
-      
-      // 测试数据库连接
-      const db = app.database();
-      const result = await db.collection('goods').limit(3).get();
-      
-      setGoods(result.data);
-      setStatus(`成功获取到 ${result.data.length} 条商品数据`);
+      setStatus('正在连接后端...');
+
+      const result = await getGoods({ page: 1, pageSize: 3, search: '' });
+      const list = result.list || [];
+
+      setGoods(list);
+      setStatus(`成功获取到 ${list.length} 条商品数据`);
       
     } catch (err) {
       console.error('测试失败:', err);

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, EyeIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { app, ensureLogin } from '../utils/cloudbase';
+import {
+  getOrders,
+  saveOrder as saveOrderApi,
+  deleteOrder as deleteOrderApi,
+  getOrderDetail,
+  batchUpdateOrders,
+} from '../utils/api';
 import { useDebounce } from '../hooks/useDebounce';
 
 const OrdersPage = () => {
@@ -58,44 +64,9 @@ const OrdersPage = () => {
       } else {
         setSearchLoading(true);
       }
-      await ensureLogin();
-      const db = app.database();
-      
-      let query = db.collection('order');
-      
-      // 构建查询条件
-      const conditions = [];
-      if (search) {
-        conditions.push({
-          id: db.RegExp({
-            regexp: search,
-            options: 'i'
-          })
-        });
-      }
-      if (status) {
-        conditions.push({ status: status });
-      }
-      
-      if (conditions.length > 0) {
-        if (conditions.length === 1) {
-          query = query.where(conditions[0]);
-        } else {
-          query = query.where(db.command.and(conditions));
-        }
-      }
-      
-      const countResult = await query.count();
-      const total = countResult.total;
-      setTotalPages(Math.ceil(total / pageSize));
-      
-      const result = await query
-        .orderBy('createTime', 'desc')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .get();
-      
-      setOrders(result.data);
+      const data = await getOrders({ page, pageSize, search, status });
+      setTotalPages(Math.ceil((data.total || 0) / pageSize));
+      setOrders(data.list || []);
     } catch (error) {
       console.error('获取订单列表失败:', error);
     } finally {
@@ -166,9 +137,6 @@ const OrdersPage = () => {
   // 保存订单
   const saveOrder = async () => {
     try {
-      await ensureLogin();
-      const db = app.database();
-      
       const orderData = {
         ...formData,
         num: parseInt(formData.num),
@@ -179,11 +147,11 @@ const OrdersPage = () => {
 
       if (editingItem) {
         // 更新
-        await db.collection('order').doc(editingItem._id).update(orderData);
+        await saveOrderApi({ ...orderData, _id: editingItem._id });
       } else {
         // 新增
         orderData.createTime = new Date();
-        await db.collection('order').add(orderData);
+        await saveOrderApi(orderData);
       }
       
       closeModal();
@@ -199,9 +167,7 @@ const OrdersPage = () => {
     if (!confirm('确定要删除这个订单吗？')) return;
     
     try {
-      await ensureLogin();
-      const db = app.database();
-      await db.collection('order').doc(id).remove();
+      await deleteOrderApi(id);
       fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
     } catch (error) {
       console.error('删除订单失败:', error);
@@ -212,33 +178,8 @@ const OrdersPage = () => {
   // 查看订单详情
   const viewOrderDetail = async (order) => {
     try {
-      await ensureLogin();
-      const db = app.database();
-      
-      // 获取商品信息
-      const goodsResult = await db.collection('goods')
-        .where({ sku: order.goodsSku })
-        .get();
-      
-      // 获取用户信息
-      const userResult = await db.collection('user')
-        .where({ id: order.userId })
-        .get();
-      
-      // 获取促销活动信息（如果有）
-      let promotionResult = null;
-      if (order.salesPromotionId) {
-        promotionResult = await db.collection('salesPromotion')
-          .where({ id: order.salesPromotionId })
-          .get();
-      }
-      
-      setOrderDetail({
-        ...order,
-        goods: goodsResult.data[0] || null,
-        user: userResult.data[0] || null,
-        promotion: promotionResult?.data[0] || null
-      });
+      const detail = await getOrderDetail(order._id);
+      setOrderDetail(detail);
       setShowDetailModal(true);
     } catch (error) {
       console.error('获取订单详情失败:', error);
@@ -262,17 +203,7 @@ const OrdersPage = () => {
     }
     
     try {
-      await ensureLogin();
-      const db = app.database();
-      
-      const promises = selectedOrders.map(order =>
-        db.collection('order').doc(order._id).update({
-          status: newStatus,
-          updateTime: new Date()
-        })
-      );
-      
-      await Promise.all(promises);
+      await batchUpdateOrders(selectedOrders.map((order) => order._id), newStatus);
       fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
       
       // 取消所有选择

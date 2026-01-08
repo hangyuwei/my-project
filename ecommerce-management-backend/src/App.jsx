@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
-import cloudbase from './utils/cloudbase'
 import AdminLayout from './components/AdminLayout'
 import DashboardPage from './pages/DashboardPage'
 import GoodsPage from './pages/GoodsPage'
@@ -15,22 +14,8 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 初始化登录
-    const initAuth = async () => {
-      try {
-        console.log('开始登录...');
-        await cloudbase.ensureLogin()
-        console.log('登录成功');
-        setIsLoggedIn(true)
-      } catch (error) {
-        console.error('登录失败', error)
-      } finally {
-        console.log('设置loading状态为false');
-        setLoading(false)
-      }
-    }
-
-    initAuth()
+    setIsLoggedIn(true)
+    setLoading(false)
   }, [])
 
   if (loading) {

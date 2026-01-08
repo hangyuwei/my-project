@@ -7,7 +7,7 @@ import {
   ChartBarIcon,
   ArrowTrendingUpIcon
 } from '@heroicons/react/24/outline';
-import { app, ensureLogin } from '../utils/cloudbase';
+import { getDashboard } from '../utils/api';
 
 const DashboardPage = () => {
   const [stats, setStats] = useState({
@@ -27,56 +27,9 @@ const DashboardPage = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      await ensureLogin();
-      const db = app.database();
-
-      // 并行获取各种统计数据
-      const [
-        goodsCount,
-        usersCount,
-        ordersCount,
-        promotionsCount,
-        onlineGoodsCount,
-        completedOrdersCount,
-        recentOrdersData
-      ] = await Promise.all([
-        db.collection('goods').count(),
-        db.collection('user').count(),
-        db.collection('order').count(),
-        db.collection('salesPromotion').count(),
-        db.collection('goods').where({ status: 'online' }).count(),
-        db.collection('order').where({ status: 'completed' }).count(),
-        db.collection('order').orderBy('createTime', 'desc').limit(5).get()
-      ]);
-
-      // 计算总收入
-      const completedOrders = await db.collection('order')
-        .where({ status: 'completed' })
-        .get();
-      
-      const totalRevenue = completedOrders.data.reduce((sum, order) => sum + order.totalPrice, 0);
-
-      // 获取活跃促销活动数量
-      const now = new Date();
-      const activePromotions = await db.collection('salesPromotion')
-        .where({
-          startTime: db.command.lte(now),
-          endTime: db.command.gte(now)
-        })
-        .count();
-
-      setStats({
-        totalGoods: goodsCount.total,
-        totalUsers: usersCount.total,
-        totalOrders: ordersCount.total,
-        totalPromotions: promotionsCount.total,
-        onlineGoods: onlineGoodsCount.total,
-        completedOrders: completedOrdersCount.total,
-        activePromotions: activePromotions.total,
-        totalRevenue: totalRevenue
-      });
-
-      setRecentOrders(recentOrdersData.data);
+      const data = await getDashboard();
+      setStats(data.stats);
+      setRecentOrders(data.recentOrders);
     } catch (error) {
       console.error('获取统计数据失败:', error);
     } finally {
