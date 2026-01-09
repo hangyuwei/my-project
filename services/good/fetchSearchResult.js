@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { config } from '../../config/index';
-import { callCloudFunction } from '../_utils/cloud';
+import { call } from '../cloud';
 import { shouldMock } from '../_utils/shouldMock';
 import { adaptSearchResult } from '../../model/search';
 
@@ -48,7 +48,7 @@ export function getSearchResult(params) {
   if (shouldMock('good.getSearchResult')) {
     return mockSearchResult(params);
   }
-  return callCloudFunction('searchGoods', params || {}).then((real) =>
+  return call('getGoodsList', params || {}).then((real) =>
     adaptSearchResult(real, { tagAsObject: true }),
   );
 }

@@ -357,9 +357,15 @@ Page({
   getDetail(spuId) {
     Promise.all([fetchGood(spuId), fetchActivityList()]).then((res) => {
       const [details, activityList] = res;
+      const normalizedDetail = normalizeDetailBlocks(details?.detail || []);
+      const detailText = normalizedDetail
+        .filter((block) => block && block.type === 'text' && typeof block.value === 'string')
+        .map((block) => block.value)
+        .join('\n');
       const nextDetails = {
         ...details,
-        detail: normalizeDetailBlocks(details?.detail || []),
+        detail: normalizedDetail,
+        detailText,
       };
       const skuArray = [];
       const {

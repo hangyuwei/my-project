@@ -13,7 +13,7 @@ exports.main = async (event = {}) => {
   let list = ensureArray(db.products);
   if (keyword) {
     list = list.filter((item) => {
-      const name = String(item.name || item.goodsName || item.title || '').toLowerCase();
+      const name = String(item.goodName || item.goodsName || item.title || item.name || '').toLowerCase();
       return name.includes(keyword);
     });
   }

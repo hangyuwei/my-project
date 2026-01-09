@@ -1,4 +1,4 @@
-const cloud = require('wx-server-sdk');
+﻿const cloud = require('wx-server-sdk');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
@@ -47,16 +47,26 @@ const pickCoverSource = (item = {}) =>
   item.primaryImage ||
   '';
 
+const uniqueList = (values = []) => Array.from(new Set(values.filter(Boolean)));
+
 const mapCard = (item = {}, urlMap = {}) => {
   const fileId = pickCoverSource(item);
   const baseUrl = urlMap[fileId] || item.image || item.primaryImage || '';
+  const coverImage = appendResize(baseUrl, 400);
+  const picture = uniqueList([coverImage]);
+  const price = item.price || 0;
+  const linePrice = item.linePrice;
+  const originPrice = Number(linePrice) > Number(price) ? linePrice : undefined;
   return {
+    mockId: String(item.mockId || item.spuId || item.sku || item._id || ''),
     spuId: String(item.spuId || item._id || ''),
-    title: item.title || item.name || item.goodsName || '',
-    thumb: appendResize(baseUrl, 400),
-    price: item.price || 0,
-    originPrice: item.linePrice || item.price || 0,
-    tags: mapTags(item.tags),
+    title: item.goodName || item.goodsName || item.title || item.name || '',
+    thumb: coverImage,
+    coverImage,
+    picture,
+    price,
+    originPrice,
+    tags: [],
   };
 };
 

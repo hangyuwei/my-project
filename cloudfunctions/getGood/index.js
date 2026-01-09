@@ -1,4 +1,4 @@
-const cloud = require('wx-server-sdk');
+﻿const cloud = require('wx-server-sdk');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
@@ -42,6 +42,9 @@ const pickImageSource = (product = {}) =>
   product.imageFileId ||
   product.image ||
   product.primaryImage ||
+  (Array.isArray(product.galleryImages) && product.galleryImages[0]) ||
+  (Array.isArray(product.gallaryImages) && product.gallaryImages[0]) ||
+  (Array.isArray(product.picture) && product.picture[0]) ||
   '';
 
 const pickThumbSource = (product = {}) =>
@@ -51,6 +54,9 @@ const pickThumbSource = (product = {}) =>
   product.imageFileId ||
   product.image ||
   product.primaryImage ||
+  (Array.isArray(product.galleryImages) && product.galleryImages[0]) ||
+  (Array.isArray(product.gallaryImages) && product.gallaryImages[0]) ||
+  (Array.isArray(product.picture) && product.picture[0]) ||
   '';
 
 const buildSkuList = (product, skuImage, price, linePrice, stock, urlMap) => {
@@ -102,6 +108,8 @@ const buildSkuList = (product, skuImage, price, linePrice, stock, urlMap) => {
   ];
 };
 
+const uniqueList = (values = []) => Array.from(new Set(values.filter(Boolean)));
+
 exports.main = async (event = {}) => {
   const spuId = event.spuId ? String(event.spuId) : '';
   const skuId = event.skuId ? String(event.skuId) : '';
@@ -123,19 +131,25 @@ exports.main = async (event = {}) => {
   const thumbSource = pickThumbSource(product);
   const rawImages = Array.isArray(product.galleryImages) && product.galleryImages.length
     ? product.galleryImages
-    : Array.isArray(product.images) && product.images.length
-      ? product.images
-      : Array.isArray(product.picture) && product.picture.length
-        ? product.picture
-        : [];
+    : Array.isArray(product.gallaryImages) && product.gallaryImages.length
+      ? product.gallaryImages
+      : Array.isArray(product.images) && product.images.length
+        ? product.images
+        : Array.isArray(product.picture) && product.picture.length
+          ? product.picture
+          : [];
   const detailImages = Array.isArray(product.detailImages) ? product.detailImages : [];
-  const detailBlocks = Array.isArray(product.detailBlocks)
+  let detailBlocks = Array.isArray(product.detailBlocks)
     ? product.detailBlocks
     : Array.isArray(product.detail)
       ? product.detail
       : detailImages.length
         ? detailImages.map((value) => ({ type: 'image', value }))
         : [];
+  const descriptionText = typeof product.description === 'string' ? product.description.trim() : '';
+  if (descriptionText) {
+    detailBlocks = [{ type: 'text', value: descriptionText }, ...detailBlocks];
+  }
   const detailImageSources = detailBlocks
     .filter((block) => block && block.type === 'image' && (block.fileId || block.value))
     .map((block) => block.fileId || block.value);
@@ -164,20 +178,26 @@ exports.main = async (event = {}) => {
   const desc = detail
     .filter((block) => block && block.type === 'image' && block.value)
     .map((block) => block.value);
+  const picture = uniqueList([primaryImage, ...images, ...desc]);
 
   const price = normalizeNumber(product.price, 0);
-  const linePrice = normalizeNumber(product.linePrice ?? product.price, price);
+  const linePriceRaw = normalizeNumber(product.linePrice ?? product.price, price);
+  const linePrice = Number(linePriceRaw) > Number(price) ? linePriceRaw : undefined;
   const stock = normalizeNumber(product.stock, 0);
 
   return {
+    mockId: String(product.mockId || product.spuId || product.sku || product._id || ''),
     spuId: String(product.spuId || product.sku || product._id || ''),
     skuId: String(product.skuId || product.sku || ''),
-    goodsName: product.goodName || product.title || product.name || '',
-    title: product.goodName || product.title || product.name || '',
+    goodsName: product.goodName || product.goodsName || product.title || product.name || '',
+    title: product.goodName || product.goodsName || product.title || product.name || '',
     image: primaryImage,
     primaryImage,
+    coverImage: primaryImage,
     skuImage,
     images,
+    galleryImages: images,
+    picture,
     price,
     linePrice,
     minSalePrice: price,
@@ -188,7 +208,7 @@ exports.main = async (event = {}) => {
     soldNum: normalizeNumber(product.soldNum, 0),
     isPutOnSale: product.status === 'OFF' || product.status === 'offline' ? 0 : 1,
     specList: Array.isArray(product.specList) ? product.specList : [],
-    skuList: buildSkuList(product, skuImage, price, linePrice, stock, urlMap),
+    skuList: buildSkuList(product, skuImage, price, linePriceRaw, stock, urlMap),
     tags: Array.isArray(product.tags) ? product.tags : [],
     spuTagList: Array.isArray(product.spuTagList) ? product.spuTagList : [],
     detailImages: desc,

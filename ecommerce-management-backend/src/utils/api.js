@@ -9,7 +9,9 @@ const handleResponse = async (res) => {
 
 const apiFetch = async (path, options = {}) => {
   const headers = { ...(options.headers || {}) };
-  if (options.body && !headers['Content-Type']) {
+  const isFormData =
+    typeof FormData !== 'undefined' && options.body instanceof FormData;
+  if (options.body && !headers['Content-Type'] && !isFormData) {
     headers['Content-Type'] = 'application/json';
   }
   const res = await fetch(path, {
@@ -20,6 +22,12 @@ const apiFetch = async (path, options = {}) => {
 };
 
 export const getDashboard = () => apiFetch('/api/dashboard');
+
+export const uploadFile = (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return apiFetch('/api/upload', { method: 'POST', body: formData });
+};
 
 export const getGoods = ({ page = 1, pageSize = 10, search = '' } = {}) =>
   apiFetch(`/api/goods?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}`);
@@ -70,4 +78,3 @@ export const batchUpdateOrders = (ids, status) =>
 
 export const getOrderDetail = (id) =>
   apiFetch(`/api/orders/${id}/detail`);
-

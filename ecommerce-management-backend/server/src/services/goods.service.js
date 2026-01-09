@@ -1,4 +1,5 @@
 import { fromCents, toCents } from '../utils/money.js';
+import { generateId } from '../utils/id.js';
 import {
   create,
   findPaged,
@@ -25,9 +26,13 @@ const buildPicture = ({ coverImage, galleryImages, detailImages }) =>
 const ensureImages = (record = {}) => {
   const picture = normalizeList(record.picture);
   const coverImage = normalizeString(record.coverImage) || picture[0] || '';
-  const galleryImages = normalizeList(record.galleryImages).length
-    ? normalizeList(record.galleryImages)
-    : picture;
+  const galleryImagesValue = normalizeList(record.galleryImages);
+  const gallaryImagesValue = normalizeList(record.gallaryImages);
+  const galleryImages = galleryImagesValue.length
+    ? galleryImagesValue
+    : gallaryImagesValue.length
+      ? gallaryImagesValue
+      : picture;
   const detailImages = normalizeList(record.detailImages);
   return {
     ...record,
@@ -56,13 +61,16 @@ export const listGoods = async ({ page, pageSize, search }) => {
 };
 
 export const saveGoods = async (payload = {}) => {
-  const galleryImages = normalizeList(payload.galleryImages || payload.picture);
+  const galleryImages = normalizeList(
+    payload.galleryImages || payload.gallaryImages || payload.picture,
+  );
   const detailImages = normalizeList(payload.detailImages);
   const coverImage = normalizeString(payload.coverImage) || galleryImages[0] || '';
   const picture = buildPicture({ coverImage, galleryImages, detailImages });
+  const mockId = normalizeString(payload.mockId);
 
+  const skuValue = normalizeString(payload.sku);
   const data = {
-    sku: normalizeString(payload.sku),
     goodName: normalizeString(payload.goodName),
     price: toCents(payload.price),
     description: normalizeString(payload.description),
@@ -73,14 +81,23 @@ export const saveGoods = async (payload = {}) => {
     picture,
     status: payload.status === 'offline' ? 'offline' : 'online',
     updateTime: new Date(),
+    ...(mockId ? { mockId } : {}),
   };
 
   if (payload._id) {
-    await updateById(payload._id, data);
+    const updateData = {
+      ...data,
+      ...(skuValue ? { sku: skuValue } : {}),
+    };
+    await updateById(payload._id, updateData);
     return { id: payload._id };
   }
 
-  const result = await create({ ...data, createTime: new Date() });
+  const result = await create({
+    ...data,
+    sku: skuValue || generateId('SKU'),
+    createTime: new Date(),
+  });
   return { id: result.id };
 };
 

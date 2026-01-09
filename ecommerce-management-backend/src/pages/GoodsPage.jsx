@@ -5,6 +5,7 @@ import {
   saveGoods as saveGoodsApi,
   deleteGoods as deleteGoodsApi,
   updateGoodsStatus,
+  uploadFile,
 } from '../utils/api';
 import { useDebounce } from '../hooks/useDebounce';
 
@@ -15,6 +16,8 @@ const GoodsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [uploading, setUploading] = useState(false);
+  const [previewMap, setPreviewMap] = useState({});
 
   // 使用防抖，延迟500ms执行搜索
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -140,6 +143,42 @@ const GoodsPage = () => {
       ...prev,
       [key]: nextList.length > 0 ? nextList : ['']
     }));
+  };
+
+  const resolvePreview = (value) => {
+    if (!value) return '';
+    return previewMap[value] || value;
+  };
+
+  const handleUpload = async (file, onSuccess) => {
+    if (!file) return;
+    try {
+      setUploading(true);
+      const result = await uploadFile(file);
+      if (!result?.fileID) {
+        throw new Error('Upload failed');
+      }
+      setPreviewMap((prev) => ({
+        ...prev,
+        [result.fileID]: result.tempFileURL || '',
+      }));
+      if (typeof onSuccess === 'function') {
+        onSuccess(result.fileID);
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please retry.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileChange = (event, onSuccess) => {
+    const file = event.target.files && event.target.files[0];
+    event.target.value = '';
+    if (file) {
+      handleUpload(file, onSuccess);
+    }
   };
 
   // 保存商品
@@ -278,7 +317,7 @@ const GoodsPage = () => {
                       {(item.coverImage || (item.picture && item.picture[0])) ? (
                         <img
                           className="h-16 w-16 rounded-lg object-cover"
-                          src={item.coverImage || (item.picture && item.picture[0])}
+                          src={resolvePreview(item.coverImage || (item.picture && item.picture[0]))}
                           alt={item.goodName}
                         />
                       ) : (
@@ -365,20 +404,7 @@ const GoodsPage = () => {
             </h3>
             
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="label">
-                    <span className="label-text">SKU</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="sku"
-                    value={formData.sku}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full"
-                    placeholder="商品SKU"
-                  />
-                </div>
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="label">
                     <span className="label-text">商品名称</span>
@@ -391,6 +417,7 @@ const GoodsPage = () => {
                     className="input input-bordered w-full"
                     placeholder="商品名称"
                   />
+                  <p className="text-xs text-gray-500 mt-1">SKU 自动生成，无需填写。</p>
                 </div>
               </div>
 
@@ -426,29 +453,39 @@ const GoodsPage = () => {
 
               <div>
                 <label className="label">
-                  <span className="label-text">商品描述</span>
+                  <span className="label-text">详情介绍文字</span>
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
                   className="textarea textarea-bordered w-full"
-                  placeholder="商品描述"
-                  rows="3"
+                  placeholder="填写后显示在小程序详情介绍下方，支持换行"
+                  rows="4"
                 />
+                <p className="text-xs text-gray-500 mt-1">留空则不显示详情文字。</p>
               </div>
 
               <div>
                 <label className="label">
                   <span className="label-text">Cover Image</span>
                 </label>
-                <input
-                  type="url"
-                  value={formData.coverImage}
-                  onChange={(e) => handleCoverImageChange(e.target.value)}
-                  className="input input-bordered w-full"
-                  placeholder="Cover image URL"
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="url"
+                    value={formData.coverImage}
+                    onChange={(e) => handleCoverImageChange(e.target.value)}
+                    className="input input-bordered w-full"
+                    placeholder="Cover image URL"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, (value) => handleCoverImageChange(value))}
+                    className="file-input file-input-bordered file-input-sm w-32"
+                    disabled={uploading}
+                  />
+                </div>
               </div>
 
               <div>
@@ -463,6 +500,15 @@ const GoodsPage = () => {
                       onChange={(e) => updateImageList('galleryImages', index, e.target.value)}
                       className="input input-bordered flex-1"
                       placeholder="Gallery image URL"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileChange(e, (value) => updateImageList('galleryImages', index, value))
+                      }
+                      className="file-input file-input-bordered file-input-sm w-32"
+                      disabled={uploading}
                     />
                     {formData.galleryImages.length > 1 && (
                       <button
@@ -496,6 +542,15 @@ const GoodsPage = () => {
                       onChange={(e) => updateImageList('detailImages', index, e.target.value)}
                       className="input input-bordered flex-1"
                       placeholder="Detail image URL"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        handleFileChange(e, (value) => updateImageList('detailImages', index, value))
+                      }
+                      className="file-input file-input-bordered file-input-sm w-32"
+                      disabled={uploading}
                     />
                     {formData.detailImages.length > 1 && (
                       <button

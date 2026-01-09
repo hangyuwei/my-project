@@ -1,0 +1,16 @@
+﻿{
+  "mockId": "1",
+  "sku": "SKU-001",
+  "goodName": "航天神舟牌鱼蛋白粉固体饮料",
+  "price": 95800,
+  "description": "产品卖点/说明...",
+  "stock": 999,
+  "coverImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+  "galleryImages": [
+    "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png"
+  ],
+  "detailImages": [
+    "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png"
+  ],
+  "status": "online"
+}

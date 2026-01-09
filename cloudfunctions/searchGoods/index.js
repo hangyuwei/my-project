@@ -102,6 +102,11 @@ exports.main = async (event = {}) => {
   const skip = (pageNum - 1) * pageSize;
 
   const keyword = typeof event.keyword === 'string' ? event.keyword.trim() : '';
+  const minPrice = Number.isFinite(Number(event.minPrice)) ? Number(event.minPrice) : null;
+  const maxPrice = Number.isFinite(Number(event.maxPrice)) ? Number(event.maxPrice) : null;
+  const sort = normalizeNumber(event.sort, 0) === 1;
+  const sortType = normalizeNumber(event.sortType, 0) === 1 ? 'desc' : 'asc';
+
   const rawStatus = typeof event.status === 'string' ? event.status.trim() : '';
   let statusValues = [];
   if (rawStatus) {
@@ -128,11 +133,22 @@ exports.main = async (event = {}) => {
     });
     conditions.push(db.command.or([{ title: reg }, { name: reg }, { goodsName: reg }, { goodName: reg }]));
   }
+  if (minPrice !== null) {
+    conditions.push({ price: db.command.gte(minPrice) });
+  }
+  if (maxPrice !== null) {
+    conditions.push({ price: db.command.lte(maxPrice) });
+  }
   const whereClause = conditions.length > 1 ? db.command.and(conditions) : conditions[0] || {};
 
-  const dataQuery = db.collection('goods').where(whereClause);
-  const total = await dataQuery.count();
-  const res = await dataQuery.skip(skip).limit(pageSize).get();
+  let query = db.collection('goods').where(whereClause);
+  const total = await query.count();
+  if (sort) {
+    query = query.orderBy('price', sortType);
+  } else {
+    query = query.orderBy('updatedAt', 'desc');
+  }
+  const res = await query.skip(skip).limit(pageSize).get();
   const dataList = res.data || [];
   const fileIds = dataList
     .flatMap((item) => [pickImageSource(item), ...pickGalleryImages(item), ...pickDetailImages(item)])

@@ -776,3 +776,42 @@ const ComponentWithNavigation = () => {
 ## 许可证
 
 MIT License
+
+## CloudBase Run Notes
+
+### Environment variables
+
+- `CLOUDBASE_ENV_ID`
+- `CLOUDBASE_SECRET_ID`
+- `CLOUDBASE_SECRET_KEY`
+- `PORT` (default `3001`)
+
+### Storage rules (recommended)
+
+- Read: allow
+- Write: deny
+- Uploads should go through `POST /api/upload` only.
+
+### Index suggestions
+
+- `goods`: `sku` (unique), `mockId`, `goodName`, `status`
+- `order`: `id` (unique), `goodsSku`, `userId`, `status`
+- `user`: `id` (unique)
+- `salesPromotion`: `id` (unique)
+
+### API examples (curl)
+
+```bash
+curl -X POST http://localhost:3001/api/upload \
+  -F "file=@./demo.png"
+```
+
+```bash
+curl -X POST http://localhost:3001/api/goods \
+  -H "Content-Type: application/json" \
+  -d @seed/goods.json
+```
+
+### Seed data
+
+See `seed/goods.json` for a minimal goods document.

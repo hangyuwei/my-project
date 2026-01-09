@@ -31,6 +31,7 @@ export const config = {
     'good.fetchGoodsList',
     'good.fetchGoodsListSearch',
     'good.fetchGood',
+    'good.getSearchResult',
   ],
 };
 

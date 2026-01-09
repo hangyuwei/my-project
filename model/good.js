@@ -1900,9 +1900,18 @@ export function adaptGoodDetail(real = {}) {
   const specList = buildSpecListFromReal(source, base);
   const skuList = buildSkuListFromReal(source, base, specList);
   const rawTags = source.tags || source.spuTagList;
-  const useFallbackTags =
-    Array.isArray(rawTags) && rawTags.length && typeof rawTags[0] === 'string' && ensureArray(base.spuTagList).length;
-  const spuTagList = useFallbackTags ? ensureArray(base.spuTagList) : normalizeTagList(rawTags, base.spuTagList);
+  const spuTagList = normalizeTagList(rawTags, []);
+  const salePrice = pickFirst(source.minSalePrice, source.price, base.minSalePrice);
+  let linePrice = pickFirst(source.maxLinePrice, source.linePrice, source.minLinePrice);
+  if (linePrice !== undefined && linePrice !== null && linePrice !== '') {
+    const saleNum = Number(salePrice);
+    const lineNum = Number(linePrice);
+    if (Number.isFinite(saleNum) && Number.isFinite(lineNum) && lineNum <= saleNum) {
+      linePrice = undefined;
+    }
+  } else {
+    linePrice = undefined;
+  }
   const detail = ensureArray(source.detail || source.detailBlocks || []).map((block) => {
     if (block && block.type === 'text' && typeof block.value === 'string') {
       return { ...block, value: block.value.replace(/\\n/g, '\n') };
@@ -1920,10 +1929,10 @@ export function adaptGoodDetail(real = {}) {
     title: goodsName,
     primaryImage,
     images,
-    minSalePrice: pickFirst(source.minSalePrice, source.price, base.minSalePrice),
-    minLinePrice: pickFirst(source.minLinePrice, source.price, source.linePrice, base.minLinePrice),
-    maxSalePrice: pickFirst(source.maxSalePrice, source.price, base.maxSalePrice),
-    maxLinePrice: pickFirst(source.maxLinePrice, source.linePrice, base.maxLinePrice),
+    minSalePrice: salePrice,
+    minLinePrice: linePrice,
+    maxSalePrice: pickFirst(source.maxSalePrice, source.price, salePrice),
+    maxLinePrice: linePrice,
     spuStockQuantity: toInt(pickFirst(source.spuStockQuantity, source.stockQuantity, source.stock, base.spuStockQuantity), base.spuStockQuantity),
     soldNum: pickFirst(source.soldNum, source.sold, base.soldNum),
     isPutOnSale: pickFirst(source.isPutOnSale, base.isPutOnSale),
@@ -1945,7 +1954,11 @@ export function adaptGoodsListItem(real = {}, options = {}) {
     pickFirst(detail.spuStockQuantity, sku.stockInfo?.stockQuantity, detail.stockQuantity, 0),
     0,
   );
-  const tags = normalizeTagList(detail.spuTagList || [], []).map((tag) => (options.tagAsObject ? { title: tag.title } : tag.title));
+  const tags = [];
+  const originPrice =
+    detail.maxLinePrice && detail.minSalePrice && Number(detail.maxLinePrice) > Number(detail.minSalePrice)
+      ? detail.maxLinePrice
+      : undefined;
 
   return {
     spuId: detail.spuId,
@@ -1956,7 +1969,7 @@ export function adaptGoodsListItem(real = {}, options = {}) {
     goodsName,
     skuImage: pickFirst(skuImage, ''),
     price: pickFirst(detail.minSalePrice, detail.price),
-    originPrice: pickFirst(detail.maxLinePrice, detail.originPrice),
+    originPrice,
     stockQuantity,
     tags,
   };

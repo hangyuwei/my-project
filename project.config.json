@@ -6,6 +6,7 @@
       { "type": "folder", "value": "server" },
       { "type": "folder", "value": "functions" },
       { "type": "folder", "value": "cloudfunctions" },
+      { "type": "folder", "value": "ecommerce-management-backend" },
       { "type": "folder", "value": "contracts" },
       { "type": "folder", "value": "scripts" },
       { "type": "file", "value": "README.md" },

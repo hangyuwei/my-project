@@ -8,13 +8,14 @@ This document defines collections, fields, relations, and indexes used by the ad
 | Field | Type | Notes |
 | --- | --- | --- |
 | sku | string | Unique SKU |
+| mockId | string | Optional mock binding ID |
 | goodName | string | Product name |
-| price | number | Price in yuan |
+| price | number | Price in cents |
 | description | string | Product description |
 | stock | number | Stock quantity |
-| coverImage | string | Cover image URL |
-| galleryImages | array<string> | Gallery image URL list |
-| detailImages | array<string> | Detail image URL list |
+| coverImage | string | Cover image URL or cloud fileID |
+| galleryImages | array<string> | Gallery image URL or cloud fileID list |
+| detailImages | array<string> | Detail image URL or cloud fileID list |
 | picture | array<string> | Legacy alias of galleryImages (optional) |
 | status | string | `online` or `offline` |
 | createTime | date | Created time |
@@ -66,7 +67,9 @@ This document defines collections, fields, relations, and indexes used by the ad
 
 ### goods
 - `sku` (unique)
+- `mockId`
 - `goodName`
+- `status`
 
 ### order
 - `id` (unique)
