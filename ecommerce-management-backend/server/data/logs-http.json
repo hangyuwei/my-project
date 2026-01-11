@@ -1,0 +1,738 @@
+[
+  {
+    "_id": "8584f05e-5f02-4f45-b5a9-7e0a12e8330a",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 3,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:34:41.519Z"
+  },
+  {
+    "_id": "79aed996-b60e-4974-bdba-e5ef5d35ee33",
+    "type": "http",
+    "method": "GET",
+    "path": "/settings",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 253,
+    "createdAt": "2026-01-07T02:34:39.679Z"
+  },
+  {
+    "_id": "1a453007-eb3c-4538-b56a-ac36cc5ace95",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 10493,
+    "createdAt": "2026-01-07T02:34:37.591Z"
+  },
+  {
+    "_id": "dce8b167-1e3a-4fde-b5c0-d7e4e64e898d",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions",
+      "name": "applyService"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 635,
+    "createdAt": "2026-01-07T02:34:34.142Z"
+  },
+  {
+    "_id": "a3a96251-80ad-495e-81aa-de0369c6da95",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/functions",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 378,
+    "createdAt": "2026-01-07T02:34:34.136Z"
+  },
+  {
+    "_id": "9be720ad-dd9e-4efa-947b-507de75669c8",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:34:33.887Z"
+  },
+  {
+    "_id": "f66e3d73-1186-436a-a0ea-3771c59d5d0c",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:34:32.394Z"
+  },
+  {
+    "_id": "dd89c814-f46d-4257-89ae-9de87fa5643e",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 1,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:34:30.649Z"
+  },
+  {
+    "_id": "8d732be7-3d69-4677-920a-34221a734d1f",
+    "type": "http",
+    "method": "POST",
+    "path": "/storage/upload",
+    "query": {},
+    "bodySummary": "[multipart]",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 240,
+    "createdAt": "2026-01-07T02:34:30.642Z"
+  },
+  {
+    "_id": "aff51a43-f4c5-4c9a-a727-fb6567064309",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:34:23.803Z"
+  },
+  {
+    "_id": "4e0451e9-55be-4164-98d2-130275e9db05",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions",
+      "name": "applyService"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 635,
+    "createdAt": "2026-01-07T02:34:23.232Z"
+  },
+  {
+    "_id": "a28f15bf-bd50-4c20-9e39-57429ef094ed",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/functions",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 378,
+    "createdAt": "2026-01-07T02:34:23.222Z"
+  },
+  {
+    "_id": "d070be19-8a52-4cc0-83c8-2c4ddb7067fc",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:34:20.498Z"
+  },
+  {
+    "_id": "2bbea4ee-1e4f-4c8f-aa2c-990a34f7b6ce",
+    "type": "http",
+    "method": "POST",
+    "path": "/storage/upload",
+    "query": {},
+    "bodySummary": "[multipart]",
+    "status": 200,
+    "rt": 6,
+    "responseSize": 240,
+    "createdAt": "2026-01-07T02:34:20.495Z"
+  },
+  {
+    "_id": "a7d5fd26-2919-4eac-b8bf-11349f24644c",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:34:15.042Z"
+  },
+  {
+    "_id": "77d8c860-f95c-4893-a960-45771680d90c",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:33:51.179Z"
+  },
+  {
+    "_id": "9f939e47-171f-4214-890d-b23e4236f344",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:33:50.628Z"
+  },
+  {
+    "_id": "b01d1552-e356-4d82-b080-2c72a72f6bd7",
+    "type": "http",
+    "method": "GET",
+    "path": "/settings",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 253,
+    "createdAt": "2026-01-07T02:33:48.049Z"
+  },
+  {
+    "_id": "d50663d1-666a-4c42-9576-14ac58e61f1e",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 10493,
+    "createdAt": "2026-01-07T02:33:45.937Z"
+  },
+  {
+    "_id": "73bae6af-d115-42bd-b8d5-c64b8cc8754b",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions",
+      "name": "applyService"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 635,
+    "createdAt": "2026-01-07T02:33:45.141Z"
+  },
+  {
+    "_id": "ce4bf75f-e2ed-47fa-b9e9-03557b9583ca",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/functions",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 378,
+    "createdAt": "2026-01-07T02:33:45.137Z"
+  },
+  {
+    "_id": "12381e8b-0bfa-4cb8-b409-2b4752f193f4",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:33:44.109Z"
+  },
+  {
+    "_id": "a9fef601-f741-4edf-9eb8-adee1dad81d8",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:33:11.988Z"
+  },
+  {
+    "_id": "91f25f13-26ff-47f4-a7ac-dd1753660200",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getOrderCount",
+    "query": {},
+    "bodySummary": "{\"data\":{\"parameter\":{\"orderStatus\":-1},\"localOrders\":[]},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 149,
+    "createdAt": "2026-01-07T02:32:46.471Z"
+  },
+  {
+    "_id": "a865aae3-73ce-4a79-84a8-771b4f2fb4d5",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getOrderList",
+    "query": {},
+    "bodySummary": "{\"data\":{\"parameter\":{\"pageNum\":1,\"pageSize\":2,\"orderStatus\":-1},\"localOrders\":[]},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 333,
+    "createdAt": "2026-01-07T02:32:46.467Z"
+  },
+  {
+    "_id": "116387c7-4b70-4304-a754-5f9e919e40b4",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getOrderDetail",
+    "query": {},
+    "bodySummary": "{\"data\":{\"parameter\":\"354021731671873099\",\"localOrders\":[]},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 48,
+    "createdAt": "2026-01-07T02:32:46.253Z"
+  },
+  {
+    "_id": "e17de060-bc1b-4d3f-a0da-91ea818af038",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/commitPay",
+    "query": {},
+    "bodySummary": "{\"data\":{},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 171,
+    "createdAt": "2026-01-07T02:32:46.035Z"
+  },
+  {
+    "_id": "4c21b8d1-e795-4ea6-a82c-82ad4c564b19",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getSettleDetail",
+    "query": {},
+    "bodySummary": "{\"data\":{\"goodsRequestList\":[{\"storeId\":\"1000\",\"spuId\":\"0\",\"skuId\":\"135676631\",\"title\":\"航天神舟牌鱼蛋白粉固体饮料\",\"primaryImage\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"quantity\":1,\"price\":95800,\"originPrice\":100000,\"specInfo\":[]}],\"couponList\":[],\"userAddressReq\":null},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 340,
+    "createdAt": "2026-01-07T02:32:46.031Z"
+  },
+  {
+    "_id": "1180cf0e-a55a-4219-8fbd-5ba0cb11a359",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/applyService",
+    "query": {},
+    "bodySummary": "{\"data\":{\"orderNo\":\"132222623132329291\",\"reasonId\":\"1\"},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 136,
+    "createdAt": "2026-01-07T02:32:46.012Z"
+  },
+  {
+    "_id": "126f86c5-5d1e-4058-b6d7-3bb070f7b9f3",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getApplyReasonList",
+    "query": {},
+    "bodySummary": "{\"data\":{\"rightsReasonType\":\"REFUND_MONEY\"},\"context\":{}}",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 208,
+    "createdAt": "2026-01-07T02:32:46.008Z"
+  },
+  {
+    "_id": "b8f7c8d3-5388-43b4-af0f-55d565f4a28e",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getRightsPreview",
+    "query": {},
+    "bodySummary": "{\"data\":{\"orderNo\":\"132222623132329291\",\"skuId\":\"135676631\"},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 311,
+    "createdAt": "2026-01-07T02:32:45.796Z"
+  },
+  {
+    "_id": "bf2947de-7fde-46b2-8298-2378392e13fb",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/searchGoods",
+    "query": {},
+    "bodySummary": "{\"data\":{\"pageNum\":1,\"pageSize\":10,\"keyword\":\"航天\"},\"context\":{}}",
+    "status": 200,
+    "rt": 3,
+    "responseSize": 816,
+    "createdAt": "2026-01-07T02:32:45.577Z"
+  },
+  {
+    "_id": "2c046e73-2654-4563-a349-e854f1d86e25",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/searchGoods",
+    "query": {},
+    "bodySummary": "{\"data\":{\"pageNum\":1,\"pageSize\":10,\"keyword\":\"\"},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 816,
+    "createdAt": "2026-01-07T02:32:44.698Z"
+  },
+  {
+    "_id": "eacdd1cf-8d8e-4f0b-88e7-fea27193425c",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getGoodsList",
+    "query": {},
+    "bodySummary": "{\"data\":{\"pageIndex\":1,\"pageSize\":1},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 766,
+    "createdAt": "2026-01-07T02:32:44.690Z"
+  },
+  {
+    "_id": "97246920-e2f0-4d9a-9897-70d2b115fc31",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getGood",
+    "query": {},
+    "bodySummary": "{\"data\":{\"id\":0},\"context\":{}}",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 764,
+    "createdAt": "2026-01-07T02:32:44.680Z"
+  },
+  {
+    "_id": "d865773b-8210-4f47-9ef7-10ea307bed19",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getCategoryList",
+    "query": {},
+    "bodySummary": "{\"data\":{},\"context\":{}}",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 333,
+    "createdAt": "2026-01-07T02:32:44.674Z"
+  },
+  {
+    "_id": "21427c70-e9cc-4e09-b3de-e07c056ee34d",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getCartGroupData",
+    "query": {},
+    "bodySummary": "{\"data\":{\"items\":[]},\"context\":{}}",
+    "status": 200,
+    "rt": 2,
+    "responseSize": 56,
+    "createdAt": "2026-01-07T02:32:43.791Z"
+  },
+  {
+    "_id": "10cbd12d-1687-4258-872c-577f1ff20752",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getAddressList",
+    "query": {},
+    "bodySummary": "{\"data\":{\"len\":2},\"context\":{}}",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 218,
+    "createdAt": "2026-01-07T02:32:43.775Z"
+  },
+  {
+    "_id": "2e5474f8-3928-4c10-a681-dc28769ff668",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getAddress",
+    "query": {},
+    "bodySummary": "{\"data\":{\"id\":0},\"context\":{}}",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 214,
+    "createdAt": "2026-01-07T02:32:43.773Z"
+  },
+  {
+    "_id": "8dbb673d-67a6-4de3-a0be-e1261eed6444",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/getHome",
+    "query": {},
+    "bodySummary": "{\"data\":{},\"context\":{}}",
+    "status": 200,
+    "rt": 4,
+    "responseSize": 651,
+    "createdAt": "2026-01-07T02:32:43.328Z"
+  },
+  {
+    "_id": "8963e7b8-89fa-4a80-8ebb-78e44610179c",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:30:00.979Z"
+  },
+  {
+    "_id": "26285f95-aeec-4319-af80-466bafca9db4",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 2,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:29:42.352Z"
+  },
+  {
+    "_id": "924d7c50-81f3-4914-bb61-b71a9c6f0eff",
+    "type": "http",
+    "method": "GET",
+    "path": "/settings",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 253,
+    "createdAt": "2026-01-07T02:29:37.279Z"
+  },
+  {
+    "_id": "8f9710cb-13ea-4919-90e4-6d2bff1036ab",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 2,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:29:35.227Z"
+  },
+  {
+    "_id": "38bcb1d0-518c-49d5-b187-35a09a2ff1dc",
+    "type": "http",
+    "method": "GET",
+    "path": "/settings",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 253,
+    "createdAt": "2026-01-07T02:29:25.255Z"
+  },
+  {
+    "_id": "4b7d316b-1d53-4c00-90f2-e0b364326af2",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 159,
+    "createdAt": "2026-01-07T02:29:22.447Z"
+  },
+  {
+    "_id": "e8db055e-6b55-486b-ac83-b5042f252f7a",
+    "type": "http",
+    "method": "GET",
+    "path": "/logs",
+    "query": {
+      "type": "functions",
+      "name": "applyService"
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 159,
+    "createdAt": "2026-01-07T02:29:17.209Z"
+  },
+  {
+    "_id": "329df7b2-885c-493a-b3f1-91d3c0517d91",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/functions",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 378,
+    "createdAt": "2026-01-07T02:29:17.204Z"
+  },
+  {
+    "_id": "d06c1141-ae7c-41e5-9a6d-b171658b772d",
+    "type": "http",
+    "method": "POST",
+    "path": "/admin/api/login",
+    "query": {},
+    "bodySummary": "{\"password\":\"admin123\"}",
+    "status": 200,
+    "rt": 1,
+    "responseSize": 181,
+    "createdAt": "2026-01-07T02:29:17.184Z"
+  },
+  {
+    "_id": "7d48bbac-6031-4312-840d-3de9d4d2664c",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/functions",
+    "query": {},
+    "bodySummary": null,
+    "status": 401,
+    "rt": 1,
+    "responseSize": 153,
+    "createdAt": "2026-01-07T02:28:38.618Z"
+  },
+  {
+    "_id": "950e533d-a756-4de5-a1c2-23d35de6e6f8",
+    "type": "http",
+    "method": "GET",
+    "path": "/storage/list",
+    "query": {
+      "prefix": ""
+    },
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:28:37.477Z"
+  },
+  {
+    "_id": "a94cdbe5-da20-4a3a-9b51-a3ffc41963ca",
+    "type": "http",
+    "method": "GET",
+    "path": "/favicon.ico",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-07T02:28:21.404Z"
+  },
+  {
+    "_id": "7d121f9e-5478-49f3-91d5-31c16c5ad83a",
+    "type": "http",
+    "method": "GET",
+    "path": "/db/products",
+    "query": {
+      "page": "1",
+      "pageSize": "10",
+      "q": ""
+    },
+    "bodySummary": null,
+    "status": 200,
+    "rt": 4,
+    "responseSize": 897,
+    "createdAt": "2026-01-07T02:28:21.380Z"
+  },
+  {
+    "_id": "54927e5f-0e1d-4785-8aa4-5bd2b1aa2630",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/app.js",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 4,
+    "responseSize": 0,
+    "createdAt": "2026-01-07T02:28:21.338Z"
+  },
+  {
+    "_id": "3ccaede2-77bc-4104-9142-6eaa65c3d856",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/styles.css",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 0,
+    "createdAt": "2026-01-07T02:28:21.332Z"
+  },
+  {
+    "_id": "acda7fe9-2fde-4fcf-9b77-40c121c57805",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 9,
+    "responseSize": 0,
+    "createdAt": "2026-01-07T02:28:21.269Z"
+  }
+]

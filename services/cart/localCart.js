@@ -41,6 +41,7 @@ export function addLocalCartItem(item = {}, quantity = 1) {
       stockQuantity: toInt(item.stockQuantity, 999),
       specInfo: Array.isArray(item.specInfo) ? item.specInfo : [],
       storeId: item.storeId || 'local',
+      category: item.category || null,
     });
   }
   wx.setStorageSync(STORAGE_KEY, list);
@@ -109,6 +110,7 @@ export function buildCartGroupData(items = []) {
       available: 1,
       putOnSale: 1,
       etitle: null,
+      category: item.category || null,
     };
   });
 

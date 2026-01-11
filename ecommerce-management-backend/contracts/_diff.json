@@ -1,0 +1,835 @@
+[
+  {
+    "id": "home.fetchHome",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "swiper",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 6,
+        "actual": 3,
+        "note": "array length mismatch"
+      }
+    ]
+  },
+  {
+    "id": "activity.fetchActivity",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "activity.fetchActivityList",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "address.fetchDeliveryAddress",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "storeId",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      }
+    ]
+  },
+  {
+    "id": "address.fetchDeliveryAddressList",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 2,
+        "actual": 10,
+        "note": "array length mismatch"
+      }
+    ]
+  },
+  {
+    "id": "cart.fetchCartGroupData",
+    "ok": false,
+    "diffCount": 6,
+    "diffs": [
+      {
+        "path": "data.isNotEmpty",
+        "expected": false,
+        "actual": true
+      },
+      {
+        "path": "data.storeGoods",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 0,
+        "actual": 1,
+        "note": "array length mismatch"
+      },
+      {
+        "path": "data.invalidGoodItems",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 0,
+        "actual": 1,
+        "note": "array length mismatch"
+      },
+      {
+        "path": "data.selectedGoodsCount",
+        "expected": 0,
+        "actual": 16
+      },
+      {
+        "path": "data.totalAmount",
+        "expected": "0",
+        "actual": "179997"
+      },
+      {
+        "path": "data.totalDiscountAmount",
+        "expected": "0",
+        "actual": "110000"
+      }
+    ]
+  },
+  {
+    "id": "comments.fetchComments",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "comments.fetchCommentsCount",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "coupon.fetchCouponList",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "coupon.fetchCouponDetail",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "good.createGoods",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "createdAt",
+        "expected": 1767750545443,
+        "actual": 1767753164667
+      }
+    ]
+  },
+  {
+    "id": "good.getCategoryList",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "0.groupId",
+        "expected": "24948",
+        "actual": "0"
+      }
+    ]
+  },
+  {
+    "id": "good.fetchGood",
+    "ok": false,
+    "diffCount": 4,
+    "diffs": [
+      {
+        "path": "minLinePrice",
+        "expected": 95800,
+        "actual": 100000
+      },
+      {
+        "path": "skuList.0.weight",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": {
+          "value": null,
+          "unit": "KG"
+        }
+      },
+      {
+        "path": "skuList.0.volume",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "spuTagList.0.id",
+        "expected": "13001",
+        "actual": "0"
+      }
+    ]
+  },
+  {
+    "id": "good.fetchGoodsList",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "good.fetchGoodsListSearch",
+    "ok": false,
+    "diffCount": 17,
+    "diffs": [
+      {
+        "path": "saasId",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "storeId",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "totalCount",
+        "expected": 2,
+        "actual": 1
+      },
+      {
+        "path": "spuList",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 2,
+        "actual": 1,
+        "note": "array length mismatch"
+      },
+      {
+        "path": "spuList.0.spuId",
+        "expected": "sample-1",
+        "actual": "0"
+      },
+      {
+        "path": "spuList.0.thumb",
+        "expected": "",
+        "actual": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png"
+      },
+      {
+        "path": "spuList.0.title",
+        "expected": "Sample Goods",
+        "actual": "航天神舟牌鱼蛋白粉固体饮料"
+      },
+      {
+        "path": "spuList.0.price",
+        "expected": 19900,
+        "actual": 95800
+      },
+      {
+        "path": "spuList.0.originPrice",
+        "expected": 19900,
+        "actual": 100000
+      },
+      {
+        "path": "spuList.0.tags",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 0,
+        "actual": 1,
+        "note": "array length mismatch"
+      },
+      {
+        "path": "spuList.0.stock",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 0
+      },
+      {
+        "path": "spuList.0.isPutOnSale",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 1
+      },
+      {
+        "path": "spuList.0.skuId",
+        "expectedType": "missing",
+        "actualType": "string",
+        "actual": "135676631"
+      },
+      {
+        "path": "spuList.0.storeId",
+        "expectedType": "missing",
+        "actualType": "string",
+        "actual": "1000"
+      },
+      {
+        "path": "spuList.0.goodsName",
+        "expectedType": "missing",
+        "actualType": "string",
+        "actual": "航天神舟牌鱼蛋白粉固体饮料"
+      },
+      {
+        "path": "spuList.0.skuImage",
+        "expectedType": "missing",
+        "actualType": "string",
+        "actual": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png"
+      },
+      {
+        "path": "spuList.0.stockQuantity",
+        "expectedType": "missing",
+        "actualType": "number",
+        "actual": 510
+      }
+    ]
+  },
+  {
+    "id": "good.getGoodsDetailsCommentsCount",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "good.getGoodsDetailsCommentList",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "good.getSearchHistory",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "good.getSearchPopular",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "good.getSearchResult",
+    "ok": false,
+    "diffCount": 21,
+    "diffs": [
+      {
+        "path": "saasId",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "storeId",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "spuList.0.saasId",
+        "expectedType": "string",
+        "actualType": "undefined",
+        "expected": "88888888"
+      },
+      {
+        "path": "spuList.0.primaryImage",
+        "expectedType": "string",
+        "actualType": "undefined",
+        "expected": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png"
+      },
+      {
+        "path": "spuList.0.images",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": [
+          "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+          "https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png"
+        ]
+      },
+      {
+        "path": "spuList.0.video",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "spuList.0.available",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 1
+      },
+      {
+        "path": "spuList.0.minSalePrice",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 95800
+      },
+      {
+        "path": "spuList.0.minLinePrice",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 95800
+      },
+      {
+        "path": "spuList.0.maxSalePrice",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 95800
+      },
+      {
+        "path": "spuList.0.maxLinePrice",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 100000
+      },
+      {
+        "path": "spuList.0.spuStockQuantity",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 510
+      },
+      {
+        "path": "spuList.0.soldNum",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 1020
+      },
+      {
+        "path": "spuList.0.isPutOnSale",
+        "expectedType": "number",
+        "actualType": "undefined",
+        "expected": 1
+      },
+      {
+        "path": "spuList.0.categoryIds",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": [
+          "127880527393854975",
+          "127880527393854976",
+          "127880537778953984"
+        ]
+      },
+      {
+        "path": "spuList.0.specList",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": []
+      },
+      {
+        "path": "spuList.0.skuList",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": [
+          {
+            "skuId": "135676631",
+            "skuImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+            "specInfo": [],
+            "priceInfo": [
+              {
+                "priceType": 1,
+                "price": "95800",
+                "priceTypeName": null
+              },
+              {
+                "priceType": 2,
+                "price": "100000",
+                "priceTypeName": null
+              }
+            ],
+            "stockInfo": {
+              "stockQuantity": 175,
+              "safeStockQuantity": 0,
+              "soldQuantity": 0
+            },
+            "weight": {
+              "value": null,
+              "unit": "KG"
+            },
+            "volume": null,
+            "profitPrice": null
+          }
+        ]
+      },
+      {
+        "path": "spuList.0.spuTagList",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": [
+          {
+            "id": "13001",
+            "title": "限时抢购",
+            "image": null
+          }
+        ]
+      },
+      {
+        "path": "spuList.0.limitInfo",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": [
+          {
+            "text": "限购5件"
+          }
+        ]
+      },
+      {
+        "path": "spuList.0.desc",
+        "expectedType": "array",
+        "actualType": "undefined",
+        "expected": [
+          "https://youke3.picui.cn/s1/2026/01/06/695ca884cd53b.png"
+        ]
+      },
+      {
+        "path": "spuList.0.etitle",
+        "expectedType": "string",
+        "actualType": "undefined",
+        "expected": ""
+      }
+    ]
+  },
+  {
+    "id": "good.getCommentDetail",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "order.fetchRightsPreview",
+    "ok": false,
+    "diffCount": 7,
+    "diffs": [
+      {
+        "path": "data.refundableAmount",
+        "expectedType": "string",
+        "actualType": "number",
+        "expected": "26900",
+        "actual": 0
+      },
+      {
+        "path": "data.refundableDiscountAmount",
+        "expectedType": "string",
+        "actualType": "number",
+        "expected": "0",
+        "actual": 0
+      },
+      {
+        "path": "data.shippingFeeIncluded",
+        "expectedType": "string",
+        "actualType": "number",
+        "expected": "0",
+        "actual": 0
+      },
+      {
+        "path": "data.paidAmountEach",
+        "expectedType": "string",
+        "actualType": "number",
+        "expected": "26900",
+        "actual": 0
+      },
+      {
+        "path": "data.goodsInfo.goodsName",
+        "expected": "航天神舟牌鱼蛋白粉固体饮料",
+        "actual": ""
+      },
+      {
+        "path": "data.goodsInfo.skuImage",
+        "expected": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+        "actual": ""
+      },
+      {
+        "path": "data.goodsInfo.specInfo",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 2,
+        "actual": 0,
+        "note": "array length mismatch"
+      }
+    ]
+  },
+  {
+    "id": "order.dispatchConfirmReceived",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      }
+    ]
+  },
+  {
+    "id": "order.fetchApplyReasonList",
+    "ok": false,
+    "diffCount": 8,
+    "diffs": [
+      {
+        "path": "data.rightsReasonList.0.id",
+        "expected": "9",
+        "actual": "1"
+      },
+      {
+        "path": "data.rightsReasonList.0.desc",
+        "expected": "空包裹",
+        "actual": "Changed mind"
+      },
+      {
+        "path": "data.rightsReasonList.1.id",
+        "expected": "10",
+        "actual": "2"
+      },
+      {
+        "path": "data.rightsReasonList.1.desc",
+        "expected": "快递/物流一直未送到",
+        "actual": "Wrong item shipped"
+      },
+      {
+        "path": "data.rightsReasonList.2.id",
+        "expected": "11",
+        "actual": "3"
+      },
+      {
+        "path": "data.rightsReasonList.2.desc",
+        "expected": "货物破损已拒签",
+        "actual": "Quality issue"
+      },
+      {
+        "path": "data.rightsReasonList.3.id",
+        "expected": "12",
+        "actual": "4"
+      },
+      {
+        "path": "data.rightsReasonList.3.desc",
+        "expected": "不喜欢",
+        "actual": "Package damaged"
+      }
+    ]
+  },
+  {
+    "id": "order.dispatchApplyService",
+    "ok": false,
+    "diffCount": 5,
+    "diffs": [
+      {
+        "path": "data.rightsNo",
+        "expected": "123123423",
+        "actual": "R1767753166011"
+      },
+      {
+        "path": "data.saasId",
+        "expected": "70000001",
+        "actual": "local"
+      },
+      {
+        "path": "data.uid",
+        "expected": "700000011070005",
+        "actual": "local"
+      },
+      {
+        "path": "data.storeId",
+        "expected": "542",
+        "actual": "local"
+      },
+      {
+        "path": "data.result",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      }
+    ]
+  },
+  {
+    "id": "order.fetchSettleDetail",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "data.storeGoodsList.0.skuDetailVos.0.roomId",
+        "expectedType": "missing",
+        "actualType": "undefined"
+      }
+    ]
+  },
+  {
+    "id": "order.dispatchCommitPay",
+    "ok": false,
+    "diffCount": 5,
+    "diffs": [
+      {
+        "path": "data.code",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "data.msg",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "data.interactId",
+        "expectedType": "string",
+        "actualType": "undefined",
+        "expected": "15145"
+      },
+      {
+        "path": "data.limitGoodsList",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      },
+      {
+        "path": "msg",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      }
+    ]
+  },
+  {
+    "id": "order.dispatchSupplementInvoice",
+    "ok": false,
+    "diffCount": 1,
+    "diffs": [
+      {
+        "path": "",
+        "expectedType": "object",
+        "actualType": "undefined",
+        "expected": null
+      }
+    ]
+  },
+  {
+    "id": "order.fetchOrderDetail",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "order.fetchBusinessTime",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "order.fetchOrders",
+    "ok": false,
+    "diffCount": 11,
+    "diffs": [
+      {
+        "path": "data.totalCount",
+        "expected": 7,
+        "actual": 1
+      },
+      {
+        "path": "data.orders",
+        "expectedType": "array",
+        "actualType": "array",
+        "expected": 2,
+        "actual": 1,
+        "note": "array length mismatch"
+      },
+      {
+        "path": "data.orders.0.orderId",
+        "expected": "354021735982432279",
+        "actual": "O1767753166034"
+      },
+      {
+        "path": "data.orders.0.orderNo",
+        "expected": "354021731671873099",
+        "actual": "O1767753166034"
+      },
+      {
+        "path": "data.orders.0.totalAmount",
+        "expected": "10010",
+        "actual": "0"
+      },
+      {
+        "path": "data.orders.0.goodsAmount",
+        "expected": "10000",
+        "actual": "0"
+      },
+      {
+        "path": "data.orders.0.paymentAmount",
+        "expected": "20",
+        "actual": "0"
+      },
+      {
+        "path": "data.orders.0.freightFee",
+        "expected": "10",
+        "actual": "0"
+      },
+      {
+        "path": "data.orders.0.discountAmount",
+        "expected": "9990",
+        "actual": "0"
+      },
+      {
+        "path": "data.orders.0.createTime",
+        "expected": "1600350829291",
+        "actual": "2026-01-07T02:32:46.034Z"
+      },
+      {
+        "path": "data.orders.0.orderStatusName",
+        "expected": "待付款",
+        "actual": "Pending payment"
+      }
+    ]
+  },
+  {
+    "id": "order.fetchOrdersCount",
+    "ok": false,
+    "diffCount": 3,
+    "diffs": [
+      {
+        "path": "data.1.orderNum",
+        "expected": 1,
+        "actual": 0
+      },
+      {
+        "path": "data.2.orderNum",
+        "expected": 1,
+        "actual": 0
+      },
+      {
+        "path": "data.3.orderNum",
+        "expected": 2,
+        "actual": 0
+      }
+    ]
+  },
+  {
+    "id": "order.orderSubmitCommentGoods",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "promotion.fetchPromotion",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "usercenter.fetchUserCenter",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  },
+  {
+    "id": "usercenter.fetchPerson",
+    "ok": true,
+    "diffCount": 0,
+    "diffs": []
+  }
+]

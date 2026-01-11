@@ -49,6 +49,7 @@ const mapOutput = (record = {}) => {
     ...normalized,
     price: fromCents(normalized.price),
     linePrice: normalized.linePrice ? fromCents(normalized.linePrice) : undefined,
+    category: normalized.category || null,
   };
 };
 
@@ -70,6 +71,8 @@ export const saveGoods = async (payload = {}) => {
   const mockId = normalizeString(payload.mockId);
 
   const skuValue = normalizeString(payload.sku);
+  const spuIdValue = normalizeString(payload.spuId);
+  const categoryValue = normalizeString(payload.category);
   const data = {
     goodName: normalizeString(payload.goodName),
     price: toCents(payload.price),
@@ -80,8 +83,10 @@ export const saveGoods = async (payload = {}) => {
     detailImages,
     picture,
     status: payload.status === 'offline' ? 'offline' : 'online',
+    category: categoryValue || null,
     updateTime: new Date(),
     ...(mockId ? { mockId } : {}),
+    ...(spuIdValue ? { spuId: spuIdValue } : {}),
   };
 
   if (payload._id) {

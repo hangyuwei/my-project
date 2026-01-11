@@ -231,7 +231,7 @@ Page({
   },
 
   addCart() {
-    const { isAllSelectedSku, details, selectItem } = this.data;
+    const { isAllSelectedSku, details, selectItem, buyNum } = this.data;
     if (!isAllSelectedSku) {
       Toast({
         context: this,
@@ -267,7 +267,8 @@ Page({
       stockQuantity: typeof details.spuStockQuantity === 'number' ? details.spuStockQuantity : 999,
       specInfo,
       storeId: details.storeId || 'local',
-    });
+      category: details.category || null,
+    }, buyNum);
 
     Toast({
       context: this,
@@ -357,11 +358,21 @@ Page({
   getDetail(spuId) {
     Promise.all([fetchGood(spuId), fetchActivityList()]).then((res) => {
       const [details, activityList] = res;
+
+      console.log('=== 小程序端调试 ===');
+      console.log('fetchGood 返回的 details:', details);
+      console.log('details.description:', details?.description);
+
       const normalizedDetail = normalizeDetailBlocks(details?.detail || []);
-      const detailText = normalizedDetail
+      const detailTextFromBlocks = normalizedDetail
         .filter((block) => block && block.type === 'text' && typeof block.value === 'string')
         .map((block) => block.value)
         .join('\n');
+      const detailText = details?.description || detailTextFromBlocks;
+
+      console.log('最终的 detailText:', detailText);
+      console.log('detailText 长度:', detailText ? detailText.length : 0);
+
       const nextDetails = {
         ...details,
         detail: normalizedDetail,

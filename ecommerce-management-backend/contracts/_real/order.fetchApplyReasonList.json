@@ -1,0 +1,29 @@
+{
+  "data": {
+    "saasId": "70000001",
+    "rightsReasonList": [
+      {
+        "id": "1",
+        "desc": "Changed mind"
+      },
+      {
+        "id": "2",
+        "desc": "Wrong item shipped"
+      },
+      {
+        "id": "3",
+        "desc": "Quality issue"
+      },
+      {
+        "id": "4",
+        "desc": "Package damaged"
+      }
+    ]
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "344588.17677531660092991.24062729",
+  "clientIp": "10.28.153.179",
+  "rt": 0,
+  "success": true
+}

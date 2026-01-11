@@ -1,0 +1,113 @@
+{
+  "home": [
+    {
+      "banners": [
+        {
+          "image": "https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner1.png"
+        },
+        {
+          "image": "https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner2.png"
+        },
+        {
+          "image": "https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner3.png"
+        }
+      ],
+      "tabs": [
+        {
+          "text": "精选推荐",
+          "key": 0
+        },
+        {
+          "text": "人气榜",
+          "key": 1
+        },
+        {
+          "text": "好评榜",
+          "key": 2
+        }
+      ],
+      "activityImage": "https://we-retail-static-1300977798.cos.ap-guangzhou.myqcloud.com/retail-mp/activity/banner.png",
+      "_id": "05bbf791-77ac-4726-a920-51d266c87b58",
+      "createdAt": "2026-01-07T02:28:16.911Z",
+      "updatedAt": "2026-01-07T02:34:41.517Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "food-health",
+      "name": "食品保健类",
+      "image": "https://tdesign.gtimg.com/miniprogram/template/retail/category/category-default.png",
+      "children": [],
+      "mockId": 0,
+      "_id": "52c2a8c9-f78e-47c0-ac9b-815322db121d",
+      "createdAt": "2026-01-07T02:28:16.911Z",
+      "updatedAt": "2026-01-07T02:34:41.517Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "0",
+      "storeId": "1000",
+      "name": "航天神舟牌鱼蛋白粉固体饮料",
+      "image": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "images": [
+        "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+        "https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png"
+      ],
+      "detailImages": [
+        "https://youke3.picui.cn/s1/2026/01/06/695ca884cd53b.png"
+      ],
+      "price": 95800,
+      "linePrice": 100000,
+      "stock": 510,
+      "sold": 1020,
+      "tags": [
+        "限时抢购"
+      ],
+      "specs": [],
+      "skus": [
+        {
+          "id": "135676631",
+          "image": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+          "price": 95800,
+          "linePrice": 100000,
+          "stock": 175,
+          "specs": []
+        }
+      ],
+      "mockId": 0,
+      "_id": "a0ca63f3-d05c-435c-8092-5157ea111a7b",
+      "createdAt": "2026-01-07T02:28:16.911Z",
+      "updatedAt": "2026-01-07T02:34:41.517Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "O1767753166034",
+      "orderNo": "O1767753166034",
+      "orderStatus": 5,
+      "orderStatusName": "Pending payment",
+      "totalAmount": 0,
+      "goodsAmount": 0,
+      "paymentAmount": 0,
+      "freightFee": 0,
+      "discountAmount": 0,
+      "createdAt": "2026-01-07T02:32:46.034Z",
+      "items": [],
+      "_id": "f883a81e-7032-4683-83ae-acff0fc3e24c",
+      "updatedAt": "2026-01-07T02:34:41.517Z"
+    }
+  ],
+  "rights": [
+    {
+      "id": "R1767753166011",
+      "rightsNo": "R1767753166011",
+      "orderNo": "132222623132329291",
+      "reason": "",
+      "status": "PENDING",
+      "createdAt": "2026-01-07T02:32:46.011Z",
+      "_id": "85a411a1-1268-4792-aef8-b466edcc2a37",
+      "updatedAt": "2026-01-07T02:34:41.517Z"
+    }
+  ]
+}

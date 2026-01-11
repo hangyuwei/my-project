@@ -2,16 +2,46 @@
   "description": "项目配置文件，详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
   "packOptions": {
     "ignore": [
-      { "type": "folder", "value": "__MACOSX" },
-      { "type": "folder", "value": "server" },
-      { "type": "folder", "value": "functions" },
-      { "type": "folder", "value": "cloudfunctions" },
-      { "type": "folder", "value": "ecommerce-management-backend" },
-      { "type": "folder", "value": "contracts" },
-      { "type": "folder", "value": "scripts" },
-      { "type": "file", "value": "README.md" },
-      { "type": "file", "value": "INTEGRATION_MAP.md" },
-      { "type": "file", "value": "mock.md" }
+      {
+        "value": "__MACOSX",
+        "type": "folder"
+      },
+      {
+        "value": "server",
+        "type": "folder"
+      },
+      {
+        "value": "functions",
+        "type": "folder"
+      },
+      {
+        "value": "cloudfunctions",
+        "type": "folder"
+      },
+      {
+        "value": "ecommerce-management-backend",
+        "type": "folder"
+      },
+      {
+        "value": "contracts",
+        "type": "folder"
+      },
+      {
+        "value": "scripts",
+        "type": "folder"
+      },
+      {
+        "value": "README.md",
+        "type": "file"
+      },
+      {
+        "value": "INTEGRATION_MAP.md",
+        "type": "file"
+      },
+      {
+        "value": "mock.md",
+        "type": "file"
+      }
     ],
     "include": []
   },
@@ -57,17 +87,19 @@
     "useStaticServer": true,
     "compileWorklet": false,
     "localPlugins": false,
-    "condition": false,
+    "condition": true,
     "swc": false,
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "3.8.0",
+  "libVersion": "3.13.1",
   "appid": "wx6d0ae758597cc08e",
   "projectname": "tdesign-miniprogram-starter-retail",
   "cloudfunctionRoot": "cloudfunctions/",
   "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
+  "simulatorPluginLibVersion": {
+    "wxext14566970e7e9f62": "2.27.3"
+  },
   "condition": {
     "miniprogram": {
       "list": [
@@ -155,5 +187,6 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "projectArchitecture": "multiPlatform"
 }

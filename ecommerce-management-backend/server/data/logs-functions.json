@@ -1,0 +1,311 @@
+[
+  {
+    "_id": "4a7b9e1b-9f4b-4a73-94a4-bda3ca6b64d4",
+    "type": "functions",
+    "name": "getOrderCount",
+    "event": {
+      "parameter": {
+        "orderStatus": -1
+      },
+      "localOrders": []
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "f8bb6362-787b-481a-9a5e-1a844d671914"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.470Z",
+    "resultSummary": "{\"list\":[{\"status\":5,\"count\":1},{\"status\":10,\"count\":0},{\"status\":40,\"count\":0},{\"status\":50,\"count\":0}]}"
+  },
+  {
+    "_id": "1979d71e-c96c-4ff2-9a62-99cdf3ad8bfd",
+    "type": "functions",
+    "name": "getOrderList",
+    "event": {
+      "parameter": {
+        "pageNum": 1,
+        "pageSize": 2,
+        "orderStatus": -1
+      },
+      "localOrders": []
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "9686624b-088b-44a7-bc09-acd63bf40174"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.466Z",
+    "resultSummary": "{\"pageNum\":1,\"pageSize\":2,\"totalCount\":1,\"orders\":[{\"id\":\"O1767753166034\",\"orderNo\":\"O1767753166034\",\"orderStatus\":5,\"orderStatusName\":\"Pending payment\",\"totalAmount\":0,\"goodsAmount\":0,\"paymentAmount\":0,\"freightFee\":0,\"discountAmount\":0,\"createdAt\":\"2026-01-07T02:32:46.034Z\",\"items\":[]}]}"
+  },
+  {
+    "_id": "bf6df6f3-8961-4b28-8708-b0f34c630359",
+    "type": "functions",
+    "name": "getOrderDetail",
+    "event": {
+      "parameter": "354021731671873099",
+      "localOrders": []
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "1c66c3f4-5f62-4383-99ec-10085f98c444"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.252Z",
+    "resultSummary": "null"
+  },
+  {
+    "_id": "c62a2063-9ee2-4d95-bd0b-becd5e6447ef",
+    "type": "functions",
+    "name": "commitPay",
+    "event": {},
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "7f0382a1-43ac-472e-a903-1463473ab4ab"
+    },
+    "rt": 1,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.034Z",
+    "resultSummary": "{\"isSuccess\":true,\"tradeNo\":\"O1767753166034\",\"transactionId\":\"29143dcd-3328-4bc1-923d-d553b8fcbde5\",\"orderNo\":\"O1767753166034\"}"
+  },
+  {
+    "_id": "0bed20db-0c87-4f38-9294-2a8f9952d25e",
+    "type": "functions",
+    "name": "getSettleDetail",
+    "event": {
+      "goodsRequestList": [
+        {
+          "storeId": "1000",
+          "spuId": "0",
+          "skuId": "135676631",
+          "title": "航天神舟牌鱼蛋白粉固体饮料",
+          "primaryImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+          "quantity": 1,
+          "price": 95800,
+          "originPrice": 100000,
+          "specInfo": []
+        }
+      ],
+      "couponList": [],
+      "userAddressReq": null
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "9bd438d0-88dc-4cba-9f1a-e9cc7f4a435b"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.030Z",
+    "resultSummary": "{\"goodsRequestList\":[{\"storeId\":\"1000\",\"spuId\":\"0\",\"skuId\":\"135676631\",\"title\":\"航天神舟牌鱼蛋白粉固体饮料\",\"primaryImage\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"quantity\":1,\"price\":95800,\"originPrice\":100000,\"specInfo\":[]}],\"couponList\":[],\"userAddressReq\":null}"
+  },
+  {
+    "_id": "b41b0549-cf01-451a-83e1-c243e5fdfa2e",
+    "type": "functions",
+    "name": "applyService",
+    "event": {
+      "orderNo": "132222623132329291",
+      "reasonId": "1"
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "4495ae27-c0a6-4034-a2a5-4bebd4c22cd5"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.011Z",
+    "resultSummary": "{\"rightsNo\":\"R1767753166011\",\"saasId\":\"local\",\"uid\":\"local\",\"storeId\":\"local\",\"result\":null}"
+  },
+  {
+    "_id": "1fc7624b-88bb-42de-a5fb-814648ce66f7",
+    "type": "functions",
+    "name": "getApplyReasonList",
+    "event": {
+      "rightsReasonType": "REFUND_MONEY"
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "35f49201-5365-43a1-80c4-41d49c8c7933"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:46.008Z",
+    "resultSummary": "{\"rightsReasonList\":[{\"id\":\"1\",\"desc\":\"Changed mind\"},{\"id\":\"2\",\"desc\":\"Wrong item shipped\"},{\"id\":\"3\",\"desc\":\"Quality issue\"},{\"id\":\"4\",\"desc\":\"Package damaged\"}]}"
+  },
+  {
+    "_id": "6601d2ad-ddf9-4838-a2e5-41b647495fce",
+    "type": "functions",
+    "name": "getRightsPreview",
+    "event": {
+      "orderNo": "132222623132329291",
+      "skuId": "135676631"
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "4f9d3845-8d93-4c5f-a2a4-6624ce01ac8e"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:45.795Z",
+    "resultSummary": "{\"orderNo\":\"132222623132329291\",\"skuId\":\"135676631\",\"spuId\":\"\",\"numOfSku\":1,\"numOfSkuAvailable\":1,\"refundableAmount\":0,\"refundableDiscountAmount\":0,\"shippingFeeIncluded\":0,\"paidAmountEach\":0,\"boughtQuantity\":1,\"goodsInfo\":{\"goodsName\":\"\",\"skuImage\":\"\",\"specInfo\":[]}}"
+  },
+  {
+    "_id": "90dcca9f-a353-4753-9d2b-5b7ef5c890c3",
+    "type": "functions",
+    "name": "searchGoods",
+    "event": {
+      "pageNum": 1,
+      "pageSize": 10,
+      "keyword": "航天"
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "77cf45cd-1755-4ebd-b71c-99ae3ed42e38"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:45.576Z",
+    "resultSummary": "{\"pageNum\":1,\"pageSize\":10,\"totalCount\":1,\"list\":[{\"id\":\"0\",\"storeId\":\"1000\",\"name\":\"航天神舟牌鱼蛋白粉固体饮料\",\"image\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"images\":[\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png\"],\"detailImages\":[\"https://youke3.picui.cn/s1/2026/01/06/695ca884cd53b.png\"],\"price\":95800,\"linePrice\":100000,\"stock\":510,\"sold\":1020,\"tags\":[\"限时抢购\"],\"specs\":[],\"skus\":[{\"id\":\"135676631\",\"image\":\"https://youke"
+  },
+  {
+    "_id": "a9bcccbb-2c14-41fb-aa9c-0d49d8222d98",
+    "type": "functions",
+    "name": "searchGoods",
+    "event": {
+      "pageNum": 1,
+      "pageSize": 10,
+      "keyword": ""
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "55b864c6-1f4b-48a6-be6e-2ad738fdceb7"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:44.697Z",
+    "resultSummary": "{\"pageNum\":1,\"pageSize\":10,\"totalCount\":1,\"list\":[{\"id\":\"0\",\"storeId\":\"1000\",\"name\":\"航天神舟牌鱼蛋白粉固体饮料\",\"image\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"images\":[\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png\"],\"detailImages\":[\"https://youke3.picui.cn/s1/2026/01/06/695ca884cd53b.png\"],\"price\":95800,\"linePrice\":100000,\"stock\":510,\"sold\":1020,\"tags\":[\"限时抢购\"],\"specs\":[],\"skus\":[{\"id\":\"135676631\",\"image\":\"https://youke"
+  },
+  {
+    "_id": "47d2d2ab-cf1e-4486-b7ac-17998bb2ad89",
+    "type": "functions",
+    "name": "getGoodsList",
+    "event": {
+      "pageIndex": 1,
+      "pageSize": 1
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "78deb0a6-bb5f-416a-adf2-c417d91783df"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:44.689Z",
+    "resultSummary": "[{\"id\":\"0\",\"storeId\":\"1000\",\"name\":\"航天神舟牌鱼蛋白粉固体饮料\",\"image\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"images\":[\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png\"],\"detailImages\":[\"https://youke3.picui.cn/s1/2026/01/06/695ca884cd53b.png\"],\"price\":95800,\"linePrice\":100000,\"stock\":510,\"sold\":1020,\"tags\":[\"限时抢购\"],\"specs\":[],\"skus\":[{\"id\":\"135676631\",\"image\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"pric"
+  },
+  {
+    "_id": "bb6aabeb-6696-458b-86c1-bb37d3b23140",
+    "type": "functions",
+    "name": "getGood",
+    "event": {
+      "id": 0
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "4d3e37f8-537e-4fe1-9478-bb18ee1cf4bb"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:44.680Z",
+    "resultSummary": "{\"id\":\"0\",\"storeId\":\"1000\",\"name\":\"航天神舟牌鱼蛋白粉固体饮料\",\"image\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"images\":[\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png\"],\"detailImages\":[\"https://youke3.picui.cn/s1/2026/01/06/695ca884cd53b.png\"],\"price\":95800,\"linePrice\":100000,\"stock\":510,\"sold\":1020,\"tags\":[\"限时抢购\"],\"specs\":[],\"skus\":[{\"id\":\"135676631\",\"image\":\"https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png\",\"price"
+  },
+  {
+    "_id": "eef8dd2f-48e4-4200-870c-45d19d4494bf",
+    "type": "functions",
+    "name": "getCategoryList",
+    "event": {},
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "cd55e576-dcd9-4cb6-bd56-8f9291fd6d87"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:44.674Z",
+    "resultSummary": "[{\"id\":\"food-health\",\"name\":\"食品保健类\",\"image\":\"https://tdesign.gtimg.com/miniprogram/template/retail/category/category-default.png\",\"children\":[],\"mockId\":0,\"_id\":\"52c2a8c9-f78e-47c0-ac9b-815322db121d\",\"createdAt\":\"2026-01-07T02:28:16.911Z\",\"updatedAt\":\"2026-01-07T02:29:42.350Z\"}]"
+  },
+  {
+    "_id": "77ae0fc4-bdf2-4aff-82d4-805af2923bbb",
+    "type": "functions",
+    "name": "getCartGroupData",
+    "event": {
+      "items": []
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "dcaa787b-d779-4ff6-a09f-fd8cb3dcfa33"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:43.790Z",
+    "resultSummary": "{\"items\":[]}"
+  },
+  {
+    "_id": "a7e7108a-f9c8-4fe5-9857-a5d634a4622e",
+    "type": "functions",
+    "name": "getHome",
+    "event": {},
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "::1",
+      "REQ_ID": "af10bd66-a7f8-4062-8e9a-a3ca7679f7e9"
+    },
+    "rt": 0,
+    "success": true,
+    "createdAt": "2026-01-07T02:32:43.326Z",
+    "resultSummary": "{\"banners\":[{\"image\":\"https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner1.png\"},{\"image\":\"https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner2.png\"},{\"image\":\"https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner3.png\"}],\"tabs\":[{\"text\":\"精选推荐\",\"key\":0},{\"text\":\"人气榜\",\"key\":1},{\"text\":\"好评榜\",\"key\":2}],\"activityImage\":\"https://we-retail-static-1300977798.cos.ap-guangzhou.myqcloud.com/retail-mp/activity/banner.png\",\"_id\":\"05bbf791-77ac-4726-a920-51d26"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "tabType": 5,
+      "orderNum": 1
+    },
+    {
+      "tabType": 10,
+      "orderNum": 1
+    },
+    {
+      "tabType": 40,
+      "orderNum": 1
+    },
+    {
+      "tabType": 50,
+      "orderNum": 2
+    }
+  ],
+  "code": "Success",
+  "msg": null,
+  "requestId": "849120.17677505499203067.88418534",
+  "clientIp": "10.117.68.235",
+  "rt": 41,
+  "success": true
+}

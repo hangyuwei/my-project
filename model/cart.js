@@ -355,6 +355,7 @@ export function adaptCartGroupData(real = {}) {
       available: pickFirst(sku.available, 1),
       putOnSale: pickFirst(sku.putOnSale, 1),
       etitle: pickFirst(sku.etitle, null),
+      category: pickFirst(sku.category, null),
     };
   });
 

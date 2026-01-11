@@ -114,18 +114,37 @@ exports.main = async (event = {}) => {
   const spuId = event.spuId ? String(event.spuId) : '';
   const skuId = event.skuId ? String(event.skuId) : '';
 
+  console.log('=== getGood 云函数开始 ===');
+  console.log('接收参数 spuId:', spuId, ', skuId:', skuId);
+
   let query = {};
   if (spuId && skuId) {
-    query = _.or([{ spuId }, { skuId }, { sku: spuId }, { sku: skuId }, { _id: spuId }, { _id: skuId }]);
+    query = _.or([{ spuId }, { mockId: spuId }, { skuId }, { sku: spuId }, { sku: skuId }, { _id: spuId }, { _id: skuId }]);
   } else if (spuId) {
-    query = _.or([{ spuId }, { sku: spuId }, { _id: spuId }]);
+    query = _.or([{ spuId }, { mockId: spuId }, { sku: spuId }, { _id: spuId }]);
   } else if (skuId) {
     query = _.or([{ skuId }, { sku: skuId }, { _id: skuId }]);
   }
 
+  console.log('查询条件:', JSON.stringify(query));
+
   const res = await db.collection('goods').where(query).limit(1).get();
+
+  console.log('查询结果数量:', res.data ? res.data.length : 0);
+  if (res.data && res.data.length > 0) {
+    console.log('查询到的商品 spuId:', res.data[0].spuId);
+    console.log('查询到的商品 description:', res.data[0].description);
+  }
+
   const product = res.data && res.data[0];
-  if (!product) return null;
+  if (!product) {
+    console.log('未找到商品，返回 null');
+    return null;
+  }
+
+  console.log('=== 云函数 getGood 调试 ===');
+  console.log('查询到的商品 description:', product.description);
+  console.log('商品名称:', product.goodName);
 
   const imageSource = pickImageSource(product);
   const thumbSource = pickThumbSource(product);
@@ -185,7 +204,7 @@ exports.main = async (event = {}) => {
   const linePrice = Number(linePriceRaw) > Number(price) ? linePriceRaw : undefined;
   const stock = normalizeNumber(product.stock, 0);
 
-  return {
+  const result = {
     mockId: String(product.mockId || product.spuId || product.sku || product._id || ''),
     spuId: String(product.spuId || product.sku || product._id || ''),
     skuId: String(product.skuId || product.sku || ''),
@@ -214,6 +233,12 @@ exports.main = async (event = {}) => {
     detailImages: desc,
     desc,
     detail,
+    description: product.description || '',
     status: product.status || 'online',
   };
+
+  console.log('云函数返回的 description:', result.description);
+  console.log('description 长度:', result.description ? result.description.length : 0);
+
+  return result;
 };

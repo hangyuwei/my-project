@@ -120,7 +120,29 @@ Page({
   },
 
   init() {
-    this.fetUseriInfoHandle();
+    this.loadUserInfo();
+  },
+
+  // 从全局加载用户信息
+  loadUserInfo() {
+    const app = getApp();
+    const globalUserInfo = app.globalData.userInfo;
+
+    if (globalUserInfo) {
+      this.setData({
+        userInfo: {
+          avatarUrl: globalUserInfo.avatarUrl || '',
+          nickName: globalUserInfo.nickName || '微信用户',
+        },
+        currAuthStep: globalUserInfo.nickName && globalUserInfo.nickName !== '微信用户' ? 3 : 2,
+      });
+    } else {
+      // 如果全局没有，等待一下再试
+      setTimeout(() => {
+        this.loadUserInfo();
+      }, 500);
+    }
+    wx.stopPullDownRefresh();
   },
 
   fetUseriInfoHandle() {
@@ -236,10 +258,12 @@ Page({
 
   gotoUserEditPage() {
     const { currAuthStep } = this.data;
-    if (currAuthStep === 2) {
+    if (currAuthStep >= 2) {
+      // 已登录，跳转个人信息页
       wx.navigateTo({ url: '/pages/user/person-info/index' });
     } else {
-      this.fetUseriInfoHandle();
+      // 未登录，重新加载
+      this.loadUserInfo();
     }
   },
 

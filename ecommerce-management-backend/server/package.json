@@ -1,0 +1,13 @@
+{
+  "name": "cloudbase-admin-console",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "tcb-admin-node": "^1.23.0"
+  }
+}

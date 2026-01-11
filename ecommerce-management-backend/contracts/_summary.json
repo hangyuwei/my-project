@@ -1,0 +1,146 @@
+[
+  {
+    "id": "home.fetchHome",
+    "ok": true
+  },
+  {
+    "id": "activity.fetchActivity",
+    "ok": true
+  },
+  {
+    "id": "activity.fetchActivityList",
+    "ok": true
+  },
+  {
+    "id": "address.fetchDeliveryAddress",
+    "ok": true
+  },
+  {
+    "id": "address.fetchDeliveryAddressList",
+    "ok": true
+  },
+  {
+    "id": "cart.fetchCartGroupData",
+    "ok": true
+  },
+  {
+    "id": "comments.fetchComments",
+    "ok": true
+  },
+  {
+    "id": "comments.fetchCommentsCount",
+    "ok": true
+  },
+  {
+    "id": "coupon.fetchCouponList",
+    "ok": true
+  },
+  {
+    "id": "coupon.fetchCouponDetail",
+    "ok": true
+  },
+  {
+    "id": "good.createGoods",
+    "ok": true
+  },
+  {
+    "id": "good.getCategoryList",
+    "ok": true
+  },
+  {
+    "id": "good.fetchGood",
+    "ok": true
+  },
+  {
+    "id": "good.fetchGoodsList",
+    "ok": true
+  },
+  {
+    "id": "good.fetchGoodsListSearch",
+    "ok": true
+  },
+  {
+    "id": "good.getGoodsDetailsCommentsCount",
+    "ok": true
+  },
+  {
+    "id": "good.getGoodsDetailsCommentList",
+    "ok": true
+  },
+  {
+    "id": "good.getSearchHistory",
+    "ok": true
+  },
+  {
+    "id": "good.getSearchPopular",
+    "ok": true
+  },
+  {
+    "id": "good.getSearchResult",
+    "ok": true
+  },
+  {
+    "id": "good.getCommentDetail",
+    "ok": true
+  },
+  {
+    "id": "order.fetchRightsPreview",
+    "ok": true
+  },
+  {
+    "id": "order.dispatchConfirmReceived",
+    "ok": true
+  },
+  {
+    "id": "order.fetchApplyReasonList",
+    "ok": true
+  },
+  {
+    "id": "order.dispatchApplyService",
+    "ok": true
+  },
+  {
+    "id": "order.fetchSettleDetail",
+    "ok": true
+  },
+  {
+    "id": "order.dispatchCommitPay",
+    "ok": true
+  },
+  {
+    "id": "order.dispatchSupplementInvoice",
+    "ok": true
+  },
+  {
+    "id": "order.fetchOrderDetail",
+    "ok": true
+  },
+  {
+    "id": "order.fetchBusinessTime",
+    "ok": true
+  },
+  {
+    "id": "order.fetchOrders",
+    "ok": true
+  },
+  {
+    "id": "order.fetchOrdersCount",
+    "ok": true
+  },
+  {
+    "id": "order.orderSubmitCommentGoods",
+    "ok": true
+  },
+  {
+    "id": "promotion.fetchPromotion",
+    "ok": true
+  },
+  {
+    "id": "usercenter.fetchUserCenter",
+    "ok": true
+  },
+  {
+    "id": "usercenter.fetchPerson",
+    "ok": true
+  }
+]

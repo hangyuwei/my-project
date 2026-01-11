@@ -1,0 +1,14 @@
+{
+  "data": {
+    "isSuccess": true,
+    "tradeNo": "O1767753166034",
+    "payInfo": "{}",
+    "transactionId": "29143dcd-3328-4bc1-923d-d553b8fcbde5",
+    "channel": "wechat"
+  },
+  "code": "Success",
+  "requestId": "359339.17677531660353062.51065392",
+  "clientIp": "10.238.127.68",
+  "rt": 0,
+  "success": true
+}

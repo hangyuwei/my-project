@@ -1,0 +1,38 @@
+{
+  "data": {
+    "saasId": "88888888",
+    "uid": "88888888205468",
+    "storeId": "1000",
+    "skuId": "135676631",
+    "numOfSku": 1,
+    "numOfSkuAvailable": 1,
+    "refundableAmount": "26900",
+    "refundableDiscountAmount": "0",
+    "shippingFeeIncluded": "0",
+    "paidAmountEach": "26900",
+    "boughtQuantity": 1,
+    "orderNo": "132222623132329291",
+    "goodsInfo": {
+      "goodsName": "航天神舟牌鱼蛋白粉固体饮料",
+      "skuImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "specInfo": [
+        {
+          "specId": "50456",
+          "specTitle": "颜色",
+          "specValue": "米色荷叶边"
+        },
+        {
+          "specId": "50459",
+          "specTitle": "尺码",
+          "specValue": "S"
+        }
+      ]
+    }
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "625715.17677505476018530.45592443",
+  "clientIp": "10.129.10.120",
+  "rt": 36,
+  "success": true
+}

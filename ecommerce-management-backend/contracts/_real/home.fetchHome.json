@@ -1,0 +1,22 @@
+{
+  "swiper": [
+    "https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner1.png",
+    "https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner2.png",
+    "https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner3.png"
+  ],
+  "tabList": [
+    {
+      "text": "精选推荐",
+      "key": 0
+    },
+    {
+      "text": "人气榜",
+      "key": 1
+    },
+    {
+      "text": "好评榜",
+      "key": 2
+    }
+  ],
+  "activityImg": "https://we-retail-static-1300977798.cos.ap-guangzhou.myqcloud.com/retail-mp/activity/banner.png"
+}

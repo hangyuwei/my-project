@@ -1,0 +1,122 @@
+[
+  {
+    "key": "0",
+    "status": "default",
+    "type": 1,
+    "value": 1800,
+    "tag": "",
+    "desc": "无门槛使用",
+    "base": 0,
+    "title": "生鲜满减券 - 0",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "1",
+    "status": "default",
+    "type": 2,
+    "value": 5.5,
+    "tag": "",
+    "desc": "满100元可用",
+    "base": 10000,
+    "title": "生鲜折扣券 - 1",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "2",
+    "status": "default",
+    "type": 1,
+    "value": 1800,
+    "tag": "",
+    "desc": "满200元可用",
+    "base": 20000,
+    "title": "生鲜满减券 - 2",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "3",
+    "status": "default",
+    "type": 2,
+    "value": 5.5,
+    "tag": "",
+    "desc": "满300元可用",
+    "base": 30000,
+    "title": "生鲜折扣券 - 3",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "4",
+    "status": "default",
+    "type": 1,
+    "value": 1800,
+    "tag": "",
+    "desc": "满400元可用",
+    "base": 40000,
+    "title": "生鲜满减券 - 4",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "5",
+    "status": "default",
+    "type": 2,
+    "value": 5.5,
+    "tag": "",
+    "desc": "满500元可用",
+    "base": 50000,
+    "title": "生鲜折扣券 - 5",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "6",
+    "status": "default",
+    "type": 1,
+    "value": 1800,
+    "tag": "",
+    "desc": "满600元可用",
+    "base": 60000,
+    "title": "生鲜满减券 - 6",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "7",
+    "status": "default",
+    "type": 2,
+    "value": 5.5,
+    "tag": "",
+    "desc": "满700元可用",
+    "base": 70000,
+    "title": "生鲜折扣券 - 7",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "8",
+    "status": "default",
+    "type": 1,
+    "value": 1800,
+    "tag": "",
+    "desc": "满800元可用",
+    "base": 80000,
+    "title": "生鲜满减券 - 8",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  },
+  {
+    "key": "9",
+    "status": "default",
+    "type": 2,
+    "value": 5.5,
+    "tag": "",
+    "desc": "满900元可用",
+    "base": 90000,
+    "title": "生鲜折扣券 - 9",
+    "timeLimit": "2019.11.18-2023.12.18",
+    "currency": "¥"
+  }
+]

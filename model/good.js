@@ -1,5 +1,6 @@
 import { cdnBase } from '../config/index';
 import { ensureArray, ensureObject, pickFirst, toInt, toString } from './adaptUtils';
+import { PRODUCT_CATEGORIES } from '../constants/productCategory';
 const imgPrefix = cdnBase;
 
 const defaultDesc = [`${imgPrefix}/goods/details-1.png`];
@@ -27,6 +28,7 @@ const allGoods = [
     soldNum: 1020,
     isPutOnSale: 1,
     categoryIds: ['127880527393854975', '127880527393854976', '127880537778953984'],
+    category: PRODUCT_CATEGORIES.NUTRITION, // 营养补充类
     specList: [],
     skuList: [
       {
@@ -1942,6 +1944,8 @@ export function adaptGoodDetail(real = {}) {
     detail,
     desc: ensureArray(source.desc || source.detailImages || base.desc),
     etitle: pickFirst(source.etitle, base.etitle),
+    category: pickFirst(source.category, base.category),
+    description: pickFirst(source.description, base.description),
   };
 }
 
@@ -1972,5 +1976,6 @@ export function adaptGoodsListItem(real = {}, options = {}) {
     originPrice,
     stockQuantity,
     tags,
+    category: detail.category,
   };
 }

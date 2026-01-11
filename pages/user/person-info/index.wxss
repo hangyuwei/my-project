@@ -43,3 +43,21 @@ page view {
 .person-info .t-cell-class {
   height: 112rpx;
 }
+
+.avatar-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.avatar-button::after {
+  border: none;
+}
+
+.nickname-input {
+  text-align: right;
+  font-size: 28rpx;
+  color: #666;
+}

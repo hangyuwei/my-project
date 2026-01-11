@@ -8,6 +8,7 @@ import {
   uploadFile,
 } from '../utils/api';
 import { useDebounce } from '../hooks/useDebounce';
+import { PRODUCT_CATEGORIES, CATEGORY_NAMES } from '../../../constants/productCategory';
 
 const GoodsPage = () => {
   const [goods, setGoods] = useState([]);
@@ -25,6 +26,7 @@ const GoodsPage = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({
     sku: '',
+    spuId: '',
     goodName: '',
     price: '',
     description: '',
@@ -32,7 +34,8 @@ const GoodsPage = () => {
     coverImage: '',
     galleryImages: [''],
     detailImages: [''],
-    status: 'online'
+    status: 'online',
+    category: ''
   });
 
   const pageSize = 10;
@@ -73,6 +76,7 @@ const GoodsPage = () => {
       setEditingItem(item);
       setFormData({
         sku: item.sku,
+        spuId: item.spuId || item.mockId || '',
         goodName: item.goodName,
         price: item.price,
         description: item.description,
@@ -80,12 +84,14 @@ const GoodsPage = () => {
         coverImage: item.coverImage || (item.picture && item.picture[0]) || '',
         galleryImages: item.galleryImages || item.picture || [''],
         detailImages: item.detailImages || [''],
-        status: item.status
+        status: item.status,
+        category: item.category || ''
       });
     } else {
       setEditingItem(null);
       setFormData({
         sku: '',
+        spuId: '',
         goodName: '',
         price: '',
         description: '',
@@ -93,7 +99,8 @@ const GoodsPage = () => {
         coverImage: '',
         galleryImages: [''],
         detailImages: [''],
-        status: 'online'
+        status: 'online',
+        category: ''
       });
     }
     setShowModal(true);
@@ -196,6 +203,7 @@ const GoodsPage = () => {
         galleryImages,
         detailImages,
         picture: galleryImages,
+        category: formData.category || null,
         updateTime: new Date()
       };
 
@@ -421,6 +429,23 @@ const GoodsPage = () => {
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="label">
+                    <span className="label-text">商品 SPU ID</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="spuId"
+                    value={formData.spuId}
+                    onChange={handleInputChange}
+                    className="input input-bordered w-full"
+                    placeholder="商品唯一标识，如: 0, 1, 2..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">用于小程序查询商品，建议填写简单数字（如 0, 1, 2...）。留空则使用数据库 ID。</p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label">
@@ -570,6 +595,25 @@ const GoodsPage = () => {
                 >
                   添加详情图
                 </button>
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text">产品分类</span>
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">未分类</option>
+                  {Object.keys(PRODUCT_CATEGORIES).map((key) => (
+                    <option key={PRODUCT_CATEGORIES[key]} value={PRODUCT_CATEGORIES[key]}>
+                      {CATEGORY_NAMES[PRODUCT_CATEGORIES[key]]}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

@@ -3,22 +3,20 @@
     <t-cell
       title="头像"
       center="{{true}}"
-      data-type="avatarUrl"
-      bind:click="onClickCell"
       arrow
       t-class-left="order-group__left"
     >
-      <t-image slot="note" src="{{personInfo.avatarUrl}}" t-class="avatarUrl" mode="aspectFill" />
+      <button slot="note" class="avatar-button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <t-image src="{{personInfo.avatarUrl}}" t-class="avatarUrl" mode="aspectFill" />
+      </button>
     </t-cell>
     <t-cell
       title="昵称"
-      arrow
-      note="{{personInfo.nickName}}"
-      data-type="name"
-      bind:click="onClickCell"
       t-class="t-cell-class"
       t-class-left="order-group__left"
-    />
+    >
+      <input slot="note" type="nickname" class="nickname-input" value="{{personInfo.nickName}}" placeholder="请输入昵称" bind:change="onNicknameChange" />
+    </t-cell>
     <t-cell
       title="性别"
       arrow

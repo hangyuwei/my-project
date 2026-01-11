@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "????",
+  "usingComponents": {
+    "t-image": "/components/webp-image/index",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-empty": "tdesign-miniprogram/empty/empty",
+    "t-dialog": "tdesign-miniprogram/dialog/dialog",
+    "t-toast": "tdesign-miniprogram/toast/toast",
+    "price": "/components/price/index"
+  }
+}

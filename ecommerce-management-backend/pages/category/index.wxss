@@ -1,0 +1,30 @@
+.tabbar-position {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.category-wrap {
+  min-height: 100vh;
+  padding: 24rpx;
+  box-sizing: border-box;
+  background-color: #f6f6f6;
+}
+.category-header {
+  padding: 8rpx 0 20rpx;
+}
+.category-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+.category-goods-list {
+  margin-top: 12rpx;
+}
+
+page {
+  min-height: 100%;
+  padding-bottom: 0;
+  background-color: #f6f6f6;
+}

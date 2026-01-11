@@ -1,3 +1,30 @@
+<<<<<<< HEAD
+/.git
+/.gitignore
+/.vscode
+/.idea
+/node_modules
+**/node_modules
+/miniprogram_npm
+/cloudfunctions
+/functions
+/server
+/contracts
+/pages
+/components
+/common
+/config
+/model
+/services
+/style
+/utils
+/custom-tab-bar
+/scripts
+/server.zip
+*.zip
+*.log
+=======
 node_modules/
 dist/
 .git/
+>>>>>>> 392b113 (init: first commit)

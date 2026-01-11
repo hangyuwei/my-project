@@ -1,0 +1,337 @@
+{
+  "data": {
+    "pageNum": 1,
+    "pageSize": 2,
+    "totalCount": 7,
+    "orders": [
+      {
+        "saasId": "88888888",
+        "storeId": "1000",
+        "storeName": "云Mall深圳旗舰店",
+        "uid": "88888888205468",
+        "parentOrderNo": "354021731671873099",
+        "orderId": "354021735982432279",
+        "orderNo": "354021731671873099",
+        "orderType": 0,
+        "orderSubType": 0,
+        "orderStatus": 5,
+        "orderSubStatus": null,
+        "totalAmount": "10010",
+        "goodsAmount": "10000",
+        "goodsAmountApp": "10000",
+        "paymentAmount": "20",
+        "freightFee": "10",
+        "packageFee": "0",
+        "discountAmount": "9990",
+        "channelType": 0,
+        "channelSource": "",
+        "channelIdentity": "",
+        "remark": "",
+        "cancelType": null,
+        "cancelReasonType": null,
+        "cancelReason": null,
+        "rightsType": null,
+        "createTime": "1600350829291",
+        "orderItemVOs": [
+          {
+            "id": "354021736133427225",
+            "orderNo": null,
+            "spuId": "3",
+            "skuId": "135696670",
+            "roomId": null,
+            "goodsMainType": 0,
+            "goodsViceType": 0,
+            "goodsName": "腾讯极光盒子4智能网络电视机顶盒6K千兆网络机顶盒4K高分辨率",
+            "specifications": [
+              {
+                "specTitle": "颜色",
+                "specValue": "贵族青"
+              },
+              {
+                "specTitle": "类型",
+                "specValue": "尊享礼盒装"
+              }
+            ],
+            "goodsPictureUrl": "https://tdesign.gtimg.com/miniprogram/template/retail/goods/dz-3b.png",
+            "originPrice": "0",
+            "actualPrice": "9999",
+            "buyQuantity": 1,
+            "itemTotalAmount": "9999",
+            "itemDiscountAmount": "9990",
+            "itemPaymentAmount": "10",
+            "goodsPaymentPrice": "10",
+            "tagPrice": null,
+            "tagText": null,
+            "outCode": null,
+            "labelVOs": null,
+            "buttonVOs": null
+          }
+        ],
+        "logisticsVO": {
+          "logisticsType": 1,
+          "logisticsNo": "",
+          "logisticsStatus": null,
+          "logisticsCompanyCode": "",
+          "logisticsCompanyName": "",
+          "receiverAddressId": "14",
+          "provinceCode": "440000",
+          "cityCode": "440300",
+          "countryCode": "440306",
+          "receiverProvince": "广东省",
+          "receiverCity": "深圳市",
+          "receiverCountry": "宝安区",
+          "receiverArea": "",
+          "receiverAddress": "沙井中心路28号丽沙花都xx栋xx号",
+          "receiverPostCode": "",
+          "receiverLongitude": "113.829127",
+          "receiverLatitude": "22.713649",
+          "receiverIdentity": "88888888205468",
+          "receiverPhone": "17612345678",
+          "receiverName": "测试用户",
+          "expectArrivalTime": null,
+          "senderName": "",
+          "senderPhone": "",
+          "senderAddress": "",
+          "sendTime": null,
+          "arrivalTime": null
+        },
+        "paymentVO": {
+          "payStatus": 1,
+          "amount": "20",
+          "currency": null,
+          "payType": null,
+          "payWay": null,
+          "payWayName": null,
+          "interactId": null,
+          "traceNo": null,
+          "channelTrxNo": null,
+          "period": null,
+          "payTime": null,
+          "paySuccessTime": null
+        },
+        "buttonVOs": [
+          {
+            "primary": false,
+            "type": 2,
+            "name": "取消订单"
+          },
+          {
+            "primary": true,
+            "type": 1,
+            "name": "付款"
+          }
+        ],
+        "labelVOs": null,
+        "invoiceVO": null,
+        "couponAmount": null,
+        "autoCancelTime": "1600352629291",
+        "orderStatusName": "待付款",
+        "orderStatusRemark": "需支付￥0.20",
+        "logisticsLogVO": null,
+        "invoiceStatus": null,
+        "invoiceDesc": null,
+        "invoiceUrl": null
+      },
+      {
+        "saasId": "88888888",
+        "storeId": "1000",
+        "storeName": "云Mall深圳旗舰店",
+        "uid": "88888888205468",
+        "parentOrderNo": "132381532610540875",
+        "orderId": "132381537256650240",
+        "orderNo": "132381532610540875",
+        "orderType": 0,
+        "orderSubType": 0,
+        "orderStatus": 10,
+        "orderSubStatus": null,
+        "totalAmount": "76600",
+        "goodsAmount": "76600",
+        "goodsAmountApp": "76600",
+        "paymentAmount": "36800",
+        "freightFee": "0",
+        "packageFee": "0",
+        "discountAmount": "39800",
+        "channelType": 0,
+        "channelSource": "",
+        "channelIdentity": "",
+        "remark": "",
+        "cancelType": null,
+        "cancelReasonType": null,
+        "cancelReason": null,
+        "rightsType": null,
+        "createTime": "1587140043980",
+        "orderItemVOs": [
+          {
+            "id": "132381537407645696",
+            "orderNo": null,
+            "spuId": "0",
+            "skuId": "135676631",
+            "roomId": null,
+            "goodsMainType": 0,
+            "goodsViceType": 0,
+            "goodsName": "白色短袖连衣裙荷叶边裙摆宽松韩版休闲纯白清爽优雅连衣裙",
+            "goodsPictureUrl": "https://tdesign.gtimg.com/miniprogram/template/retail/goods/nz-09a.png",
+            "originPrice": "40000",
+            "actualPrice": "29800",
+            "specifications": [
+              {
+                "specTitle": "颜色",
+                "specValue": "米色荷叶边"
+              },
+              {
+                "specTitle": "尺码",
+                "specValue": "S"
+              }
+            ],
+            "buyQuantity": 1,
+            "itemTotalAmount": "29800",
+            "itemDiscountAmount": "19813",
+            "itemPaymentAmount": "9987",
+            "goodsPaymentPrice": "9987",
+            "tagPrice": null,
+            "tagText": null,
+            "outCode": null,
+            "labelVOs": null,
+            "buttonVOs": null
+          },
+          {
+            "id": "132381537407645952",
+            "orderNo": null,
+            "spuId": "7",
+            "skuId": "135691633",
+            "roomId": null,
+            "goodsMainType": 0,
+            "goodsViceType": 0,
+            "goodsName": "不锈钢刀叉勺套装家用西餐餐具ins简约耐用不锈钢金色银色可选",
+            "goodsPictureUrl": "https://tdesign.gtimg.com/miniprogram/template/retail/goods/gh-2b.png",
+            "originPrice": "29900",
+            "actualPrice": "19900",
+            "specifications": [
+              {
+                "specTitle": "颜色",
+                "specValue": "奶黄色"
+              },
+              {
+                "specTitle": "类型",
+                "specValue": "三件套"
+              }
+            ],
+            "buyQuantity": 1,
+            "itemTotalAmount": "19900",
+            "itemDiscountAmount": "13230",
+            "itemPaymentAmount": "6670",
+            "goodsPaymentPrice": "6670",
+            "tagPrice": null,
+            "tagText": null,
+            "outCode": null,
+            "labelVOs": null,
+            "buttonVOs": null
+          },
+          {
+            "id": "132381537407646208",
+            "orderNo": null,
+            "spuId": "1",
+            "skuId": "135691631",
+            "roomId": null,
+            "goodsMainType": 0,
+            "goodsViceType": 0,
+            "goodsName": "纯色纯棉休闲圆领短袖T恤纯白亲肤厚柔软细腻面料纯白短袖套头T恤",
+            "goodsPictureUrl": "https://tdesign.gtimg.com/miniprogram/template/retail/goods/nz-08a.png",
+            "originPrice": "31900",
+            "actualPrice": "26900",
+            "specifications": [
+              {
+                "specTitle": "颜色",
+                "specValue": "白色"
+              },
+              {
+                "specTitle": "尺码",
+                "specValue": "S"
+              }
+            ],
+            "buyQuantity": 1,
+            "itemTotalAmount": "26900",
+            "itemDiscountAmount": "6757",
+            "itemPaymentAmount": "20143",
+            "goodsPaymentPrice": "20143",
+            "tagPrice": null,
+            "tagText": null,
+            "outCode": null,
+            "labelVOs": null,
+            "buttonVOs": null
+          }
+        ],
+        "logisticsVO": {
+          "logisticsType": 1,
+          "logisticsNo": "",
+          "logisticsStatus": null,
+          "logisticsCompanyCode": "",
+          "logisticsCompanyName": "",
+          "receiverAddressId": "2",
+          "provinceCode": "440000",
+          "cityCode": "440300",
+          "countryCode": "440306",
+          "receiverProvince": "广东省",
+          "receiverCity": "深圳市",
+          "receiverCountry": "南山区",
+          "receiverArea": "",
+          "receiverAddress": "前海路333号阳光玫瑰园",
+          "receiverPostCode": "",
+          "receiverLongitude": "113.829127",
+          "receiverLatitude": "22.713649",
+          "receiverIdentity": "88888888205468",
+          "receiverPhone": "17612345678",
+          "receiverName": "平均线",
+          "expectArrivalTime": null,
+          "senderName": "",
+          "senderPhone": "",
+          "senderAddress": "",
+          "sendTime": null,
+          "arrivalTime": null
+        },
+        "paymentVO": {
+          "payStatus": 1,
+          "amount": "36800",
+          "currency": null,
+          "payType": null,
+          "payWay": null,
+          "payWayName": null,
+          "interactId": null,
+          "traceNo": null,
+          "channelTrxNo": null,
+          "period": null,
+          "payTime": null,
+          "paySuccessTime": null
+        },
+        "buttonVOs": [
+          {
+            "primary": false,
+            "type": 2,
+            "name": "取消订单"
+          },
+          {
+            "primary": true,
+            "type": 9,
+            "name": "再次购买"
+          }
+        ],
+        "labelVOs": null,
+        "invoiceVO": null,
+        "couponAmount": null,
+        "autoCancelTime": null,
+        "orderStatusName": "待发货",
+        "orderStatusRemark": null,
+        "logisticsLogVO": null,
+        "invoiceStatus": null,
+        "invoiceDesc": null,
+        "invoiceUrl": null
+      }
+    ]
+  },
+  "code": "Success",
+  "msg": null,
+  "requestId": "777972.17677505497051262.33366992",
+  "clientIp": "10.159.124.212",
+  "rt": 113,
+  "success": true
+}

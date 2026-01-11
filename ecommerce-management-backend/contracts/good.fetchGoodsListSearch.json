@@ -1,0 +1,100 @@
+{
+  "saasId": null,
+  "storeId": null,
+  "pageNum": 1,
+  "pageSize": 10,
+  "totalCount": 2,
+  "spuList": [
+    {
+      "spuId": "sample-1",
+      "thumb": "",
+      "title": "Sample Goods",
+      "price": 19900,
+      "originPrice": 19900,
+      "tags": [],
+      "stock": 0,
+      "isPutOnSale": 1
+    },
+    {
+      "saasId": "88888888",
+      "storeId": "1000",
+      "spuId": "0",
+      "goodsName": "航天神舟牌鱼蛋白粉固体饮料",
+      "skuImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "title": "航天神舟牌鱼蛋白粉固体饮料",
+      "primaryImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "images": [
+        "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+        "https://youke3.picui.cn/s1/2026/01/06/695ca883deca6.png"
+      ],
+      "video": null,
+      "available": 1,
+      "minSalePrice": 95800,
+      "minLinePrice": 95800,
+      "maxSalePrice": 95800,
+      "maxLinePrice": 100000,
+      "spuStockQuantity": 510,
+      "soldNum": 1020,
+      "isPutOnSale": 1,
+      "categoryIds": [
+        "127880527393854975",
+        "127880527393854976",
+        "127880537778953984"
+      ],
+      "specList": [],
+      "skuList": [
+        {
+          "skuId": "135676631",
+          "skuImage": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+          "specInfo": [],
+          "priceInfo": [
+            {
+              "priceType": 1,
+              "price": "95800",
+              "priceTypeName": null
+            },
+            {
+              "priceType": 2,
+              "price": "100000",
+              "priceTypeName": null
+            }
+          ],
+          "stockInfo": {
+            "stockQuantity": 175,
+            "safeStockQuantity": 0,
+            "soldQuantity": 0
+          },
+          "weight": {
+            "value": null,
+            "unit": "KG"
+          },
+          "volume": null,
+          "profitPrice": null
+        }
+      ],
+      "spuTagList": [
+        {
+          "id": "13001",
+          "title": "限时抢购",
+          "image": null
+        }
+      ],
+      "limitInfo": [
+        {
+          "text": "限购5件"
+        }
+      ],
+      "desc": "",
+      "etitle": "",
+      "skuId": "135676631",
+      "thumb": "https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png",
+      "price": 95800,
+      "originPrice": 100000,
+      "stockQuantity": 510,
+      "tags": [
+        "限时抢购"
+      ]
+    }
+  ],
+  "algId": 0
+}
