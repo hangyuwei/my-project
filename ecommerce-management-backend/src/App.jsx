@@ -5,7 +5,9 @@ import DashboardPage from './pages/DashboardPage'
 import GoodsPage from './pages/GoodsPage'
 import UsersPage from './pages/UsersPage'
 import OrdersPage from './pages/OrdersPage'
+import AfterSalesPage from './pages/AfterSalesPage'
 import PromotionsPage from './pages/PromotionsPage'
+import BannersPage from './pages/BannersPage'
 import TestPage from './pages/TestPage'
 import './App.css'
 
@@ -37,7 +39,9 @@ function App() {
           <Route path="/goods" element={<GoodsPage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/after-sales" element={<AfterSalesPage />} />
           <Route path="/promotions" element={<PromotionsPage />} />
+          <Route path="/banners" element={<BannersPage />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="*" element={<DashboardPage />} />
         </Routes>

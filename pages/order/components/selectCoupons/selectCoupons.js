@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+const dayjs = require('dayjs');
 import { couponsData } from './mock';
 
 const emptyCouponImg = `https://tdesign.gtimg.com/miniprogram/template/retail/coupon/ordersure-coupon-newempty.png`;

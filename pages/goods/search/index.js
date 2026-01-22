@@ -20,8 +20,9 @@ Page({
   deleteIndex: '',
 
   onShow() {
-    this.queryHistory();
-    this.queryPopular();
+    // 已关闭历史搜索和热门搜索功能
+    // this.queryHistory();
+    // this.queryPopular();
   },
 
   async queryHistory() {

@@ -1,0 +1,88 @@
+{
+<<<<<<< HEAD
+  "name": "@tencent/tdesign-miniprogram-starter-retail",
+  "version": "0.2.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --cache --fix --ext .js",
+    "check": "node config/eslintCheck.js",
+    "contracts:gen": "node scripts/contracts/generate.js",
+    "contracts:diff": "node scripts/contracts/compare.js",
+    "prepare": "husky install",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  },
+  "author": "",
+  "license": "ISC",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{js, ts}": "eslint --cache --fix",
+    "*.{js,ts,wxml,html,json,css,less}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "dayjs": "^1.9.3",
+    "tdesign-miniprogram": "1.9.5",
+    "tslib": "^1.11.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "commitizen": "^4.3.0",
+    "conventional-changelog-cli": "^2.2.2",
+    "cz-conventional-changelog": "^3.3.0",
+    "esbuild-register": "^3.6.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^10.0.8",
+    "prettier": "^2.1.2"
+=======
+  "name": "cloudbase-react-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "@cloudbase/js-sdk": "latest",
+    "@cloudbase/node-sdk": "^3.8.0",
+    "@heroicons/react": "^2.2.0",
+    "daisyui": "^5.0.35",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "framer-motion": "^12.12.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^6.30.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.3.5"
+>>>>>>> 392b113 (init: first commit)
+  }
+}

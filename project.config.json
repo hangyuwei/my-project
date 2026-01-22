@@ -11,8 +11,16 @@
         "type": "folder"
       },
       {
+        "value": "server/**/*",
+        "type": "glob"
+      },
+      {
         "value": "functions",
         "type": "folder"
+      },
+      {
+        "value": "functions/**/*",
+        "type": "glob"
       },
       {
         "value": "cloudfunctions",
@@ -23,12 +31,24 @@
         "type": "folder"
       },
       {
+        "value": "ecommerce-management-backend/**/*",
+        "type": "glob"
+      },
+      {
         "value": "contracts",
         "type": "folder"
       },
       {
+        "value": "contracts/**/*",
+        "type": "glob"
+      },
+      {
         "value": "scripts",
         "type": "folder"
+      },
+      {
+        "value": "scripts/**/*",
+        "type": "glob"
       },
       {
         "value": "README.md",

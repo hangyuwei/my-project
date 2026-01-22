@@ -88,7 +88,7 @@ const createOrderFromEvent = (event = {}, db) => {
     id: orderNo,
     orderNo,
     orderStatus,
-    orderStatusName: pickFirst(event.orderStatusName, 'Pending payment'),
+    orderStatusName: pickFirst(event.orderStatusName, '待付款'),
     totalAmount,
     goodsAmount: totalAmount,
     paymentAmount: totalAmount,

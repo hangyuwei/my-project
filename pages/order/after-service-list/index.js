@@ -42,7 +42,7 @@ Page({
     let status = parseInt(query.status);
     status = this.data.tabs.map((t) => t.key).includes(status) ? status : -1;
     this.init(status);
-    this.pullDownRefresh = this.selectComponent('#wr-pull-down-refresh');
+    this.pullDownRefresh = this.selectComponent('#t-pull-down-refresh');
   },
 
   onShow() {
@@ -65,7 +65,7 @@ Page({
   },
 
   onPullDownRefresh_(e) {
-    const { callback } = e.detail;
+    const callback = e && e.detail && e.detail.callback;
     this.setData({
       pullDownRefreshing: true,
     }); // 下拉刷新时不显示load-more

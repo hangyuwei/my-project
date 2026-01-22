@@ -50,8 +50,30 @@ const GoodsPage = () => {
         setSearchLoading(true);
       }
       const data = await getGoods({ page, pageSize, search });
+      const list = data.list || [];
       setTotalPages(Math.ceil((data.total || 0) / pageSize));
-      setGoods(data.list || []);
+      setGoods(list);
+      const nextPreviewMap = {};
+      list.forEach((item) => {
+        if (item.coverImage && item.coverUrl) {
+          nextPreviewMap[item.coverImage] = item.coverUrl;
+        }
+        if (Array.isArray(item.galleryImages) && Array.isArray(item.galleryUrls)) {
+          item.galleryImages.forEach((value, index) => {
+            const url = item.galleryUrls[index];
+            if (value && url) nextPreviewMap[value] = url;
+          });
+        }
+        if (Array.isArray(item.detailImages) && Array.isArray(item.detailUrls)) {
+          item.detailImages.forEach((value, index) => {
+            const url = item.detailUrls[index];
+            if (value && url) nextPreviewMap[value] = url;
+          });
+        }
+      });
+      if (Object.keys(nextPreviewMap).length) {
+        setPreviewMap((prev) => ({ ...prev, ...nextPreviewMap }));
+      }
     } catch (error) {
       console.error('获取商品列表失败:', error);
     } finally {
@@ -126,6 +148,13 @@ const GoodsPage = () => {
       ...prev,
       coverImage: value
     }));
+    // For direct URL paste, set it as its own preview
+    if (value && value.startsWith('http')) {
+      setPreviewMap(prev => ({
+        ...prev,
+        [value]: value
+      }));
+    }
   };
 
   const updateImageList = (key, index, value) => {
@@ -135,6 +164,13 @@ const GoodsPage = () => {
       ...prev,
       [key]: nextList
     }));
+    // For direct URL paste, set it as its own preview
+    if (value && value.startsWith('http')) {
+      setPreviewMap(prev => ({
+        ...prev,
+        [value]: value
+      }));
+    }
   };
 
   const addImageInput = (key) => {
@@ -322,10 +358,12 @@ const GoodsPage = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-16 w-16">
-                      {(item.coverImage || (item.picture && item.picture[0])) ? (
+                      {(item.coverUrl || item.coverImage || (item.picture && item.picture[0])) ? (
                         <img
                           className="h-16 w-16 rounded-lg object-cover"
-                          src={resolvePreview(item.coverImage || (item.picture && item.picture[0]))}
+                          src={resolvePreview(
+                            item.coverUrl || item.coverImage || (item.picture && item.picture[0]),
+                          )}
                           alt={item.goodName}
                         />
                       ) : (
@@ -495,21 +533,32 @@ const GoodsPage = () => {
                 <label className="label">
                   <span className="label-text">Cover Image</span>
                 </label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="url"
-                    value={formData.coverImage}
-                    onChange={(e) => handleCoverImageChange(e.target.value)}
-                    className="input input-bordered w-full"
-                    placeholder="Cover image URL"
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, (value) => handleCoverImageChange(value))}
-                    className="file-input file-input-bordered file-input-sm w-32"
-                    disabled={uploading}
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="url"
+                      value={formData.coverImage}
+                      onChange={(e) => handleCoverImageChange(e.target.value)}
+                      className="input input-bordered w-full"
+                      placeholder="Cover image URL"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, (value) => handleCoverImageChange(value))}
+                      className="file-input file-input-bordered file-input-sm w-32"
+                      disabled={uploading}
+                    />
+                  </div>
+                  {formData.coverImage && (
+                    <div className="w-32 h-32 border rounded-lg overflow-hidden">
+                      <img
+                        src={resolvePreview(formData.coverImage)}
+                        alt="Cover preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -518,31 +567,42 @@ const GoodsPage = () => {
                   <span className="label-text">Gallery Images</span>
                 </label>
                 {formData.galleryImages.map((url, index) => (
-                  <div key={index} className="flex items-center space-x-2 mb-2">
-                    <input
-                      type="url"
-                      value={url}
-                      onChange={(e) => updateImageList('galleryImages', index, e.target.value)}
-                      className="input input-bordered flex-1"
-                      placeholder="Gallery image URL"
-                    />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileChange(e, (value) => updateImageList('galleryImages', index, value))
-                      }
-                      className="file-input file-input-bordered file-input-sm w-32"
-                      disabled={uploading}
-                    />
-                    {formData.galleryImages.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeImageInput('galleryImages', index)}
-                        className="btn btn-sm btn-error"
-                      >
-                        删除
-                      </button>
+                  <div key={index} className="space-y-2 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="url"
+                        value={url}
+                        onChange={(e) => updateImageList('galleryImages', index, e.target.value)}
+                        className="input input-bordered flex-1"
+                        placeholder="Gallery image URL"
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileChange(e, (value) => updateImageList('galleryImages', index, value))
+                        }
+                        className="file-input file-input-bordered file-input-sm w-32"
+                        disabled={uploading}
+                      />
+                      {formData.galleryImages.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeImageInput('galleryImages', index)}
+                          className="btn btn-sm btn-error"
+                        >
+                          删除
+                        </button>
+                      )}
+                    </div>
+                    {url && (
+                      <div className="w-32 h-32 border rounded-lg overflow-hidden">
+                        <img
+                          src={resolvePreview(url)}
+                          alt={`Gallery ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     )}
                   </div>
                 ))}
@@ -560,31 +620,42 @@ const GoodsPage = () => {
                   <span className="label-text">Detail Images</span>
                 </label>
                 {formData.detailImages.map((url, index) => (
-                  <div key={index} className="flex items-center space-x-2 mb-2">
-                    <input
-                      type="url"
-                      value={url}
-                      onChange={(e) => updateImageList('detailImages', index, e.target.value)}
-                      className="input input-bordered flex-1"
-                      placeholder="Detail image URL"
-                    />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleFileChange(e, (value) => updateImageList('detailImages', index, value))
-                      }
-                      className="file-input file-input-bordered file-input-sm w-32"
-                      disabled={uploading}
-                    />
-                    {formData.detailImages.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeImageInput('detailImages', index)}
-                        className="btn btn-sm btn-error"
-                      >
-                        删除
-                      </button>
+                  <div key={index} className="space-y-2 mb-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="url"
+                        value={url}
+                        onChange={(e) => updateImageList('detailImages', index, e.target.value)}
+                        className="input input-bordered flex-1"
+                        placeholder="Detail image URL"
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleFileChange(e, (value) => updateImageList('detailImages', index, value))
+                        }
+                        className="file-input file-input-bordered file-input-sm w-32"
+                        disabled={uploading}
+                      />
+                      {formData.detailImages.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeImageInput('detailImages', index)}
+                          className="btn btn-sm btn-error"
+                        >
+                          删除
+                        </button>
+                      )}
+                    </div>
+                    {url && (
+                      <div className="w-32 h-32 border rounded-lg overflow-hidden">
+                        <img
+                          src={resolvePreview(url)}
+                          alt={`Detail ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     )}
                   </div>
                 ))}

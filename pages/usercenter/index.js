@@ -10,28 +10,10 @@ const menuData = [
       type: 'address',
     },
     {
-      title: '优惠券',
-      tit: '',
-      url: '',
-      type: 'coupon',
-    },
-    {
       title: '积分',
       tit: '',
       url: '',
       type: 'point',
-    },
-    {
-      title: '商品发布',
-      tit: '',
-      url: '',
-      type: 'goods-publish',
-    },
-    {
-      title: '商品管理',
-      tit: '',
-      url: '',
-      type: 'goods-manage',
     },
   ],
   [
@@ -77,7 +59,7 @@ const orderTagInfos = [
     title: '待评价',
     iconName: 'comment',
     orderNum: 0,
-    tabType: 60,
+    tabType: 50,  // 已完成订单可以评价
     status: 1,
   },
   {
@@ -127,8 +109,10 @@ Page({
   loadUserInfo() {
     const app = getApp();
     const globalUserInfo = app.globalData.userInfo;
+    const openid = app.globalData.openid;
 
     if (globalUserInfo) {
+      // 已注册用户，显示用户信息
       this.setData({
         userInfo: {
           avatarUrl: globalUserInfo.avatarUrl || '',
@@ -136,8 +120,17 @@ Page({
         },
         currAuthStep: globalUserInfo.nickName && globalUserInfo.nickName !== '微信用户' ? 3 : 2,
       });
+    } else if (openid) {
+      // 有 openid 但没有 userInfo，说明是新用户，显示默认状态
+      this.setData({
+        userInfo: {
+          avatarUrl: '',
+          nickName: '微信用户',
+        },
+        currAuthStep: 2,
+      });
     } else {
-      // 如果全局没有，等待一下再试
+      // 如果连 openid 都没有，等待一下再试
       setTimeout(() => {
         this.loadUserInfo();
       }, 500);
@@ -180,39 +173,18 @@ Page({
         break;
       }
       case 'service': {
-        this.openMakePhone();
+        // 跳转到客服页面
+        wx.navigateTo({ url: '/pages/user/customer-service/index' });
         break;
       }
       case 'help-center': {
-        Toast({
-          context: this,
-          selector: '#t-toast',
-          message: '你点击了帮助中心',
-          icon: '',
-          duration: 1000,
-        });
+        // 跳转到帮助中心页面
+        wx.navigateTo({ url: '/pages/user/help-center/index' });
         break;
       }
       case 'point': {
-        Toast({
-          context: this,
-          selector: '#t-toast',
-          message: '你点击了积分菜单',
-          icon: '',
-          duration: 1000,
-        });
-        break;
-      }
-      case 'coupon': {
-        wx.navigateTo({ url: '/pages/coupon/coupon-list/index' });
-        break;
-      }
-      case 'goods-publish': {
-        wx.navigateTo({ url: '/pages/goods/publish/index' });
-        break;
-      }
-      case 'goods-manage': {
-        wx.navigateTo({ url: '/pages/goods/manage/index' });
+        // 跳转到积分页面
+        wx.navigateTo({ url: '/pages/user/points/index' });
         break;
       }
       default: {

@@ -9,7 +9,7 @@ const toFloat = (value) => {
 export const getDashboard = async () => {
   const goodsCollection = db.collection('goods');
   const userCollection = db.collection('user');
-  const orderCollection = db.collection('order');
+  const orderCollection = db.collection('orders');
   const promotionCollection = db.collection('salesPromotion');
 
   const [

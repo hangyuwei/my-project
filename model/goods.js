@@ -11,6 +11,7 @@ export function adaptGoodsList(realList = []) {
   const list = Array.isArray(realList)
     ? realList
     : ensureArray(realList?.list || realList?.items || realList?.products || realList?.data?.list);
-  if (!list.length) return getGoodsList();
+  // 返回空数组而不是模拟数据，避免无限加载
+  if (!list.length) return [];
   return list.map((item) => adaptGoodsListItem(item));
 }

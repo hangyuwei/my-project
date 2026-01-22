@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+const dayjs = require('dayjs');
 
 const formatTime = (date, template) => dayjs(date).format(template);
 
@@ -36,7 +36,19 @@ function priceFormat(price, fill = 0) {
  * @param {number} [height] 可选，高度，不填时与width同值
  */
 const cosThumb = (url, width, height = width) => {
-  if (url.indexOf('?') > -1) {
+  // 处理空值和无效URL
+  if (!url || typeof url !== 'string') {
+    return '';
+  }
+
+  // 云存储临时URL、已处理URL、或其他带参数的URL，直接返回
+  if (
+    url.indexOf('?') > -1 ||
+    url.indexOf('tcb.qcloud.la') > -1 ||
+    url.indexOf('.myqcloud.com') > -1 ||
+    url.indexOf('imageMogr2') > -1 ||
+    url.indexOf('imageView2') > -1
+  ) {
     return url;
   }
 

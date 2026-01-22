@@ -102,6 +102,7 @@ exports.main = async (event = {}) => {
   const skip = (pageNum - 1) * pageSize;
 
   const keyword = typeof event.keyword === 'string' ? event.keyword.trim() : '';
+  const category = typeof event.category === 'string' ? event.category.trim() : '';
   const rawStatus = typeof event.status === 'string' ? event.status.trim() : '';
   let statusValues = [];
   if (rawStatus) {
@@ -128,12 +129,23 @@ exports.main = async (event = {}) => {
     });
     conditions.push(db.command.or([{ title: reg }, { name: reg }, { goodsName: reg }, { goodName: reg }]));
   }
+  // 添加分类过滤
+  if (category) {
+    conditions.push({ category });
+  }
   const whereClause = conditions.length > 1 ? db.command.and(conditions) : conditions[0] || {};
 
   const dataQuery = db.collection('goods').where(whereClause);
   const total = await dataQuery.count();
   const res = await dataQuery.skip(skip).limit(pageSize).get();
-  const dataList = res.data || [];
+
+  // 展平嵌套的 data 字段
+  const rawData = res.data || [];
+  const dataList = rawData.map((item) => ({
+    _id: item._id,
+    ...(item.data || item),
+  }));
+
   const fileIds = dataList
     .flatMap((item) => [pickImageSource(item), ...pickGalleryImages(item), ...pickDetailImages(item)])
     .filter(isCloudFileId);

@@ -1,12 +1,31 @@
-<view class="category-wrap">
-  <view class="category-header">
-    <view class="category-title">{{categoryName}}</view>
-  </view>
-  <goods-list
-    wr-class="category-goods-list"
-    goodsList="{{goodsList}}"
-    bind:click="onGoodsClick"
-    bind:addcart="onAddCart"
-  />
+<view class="category-page">
+  <!-- 左侧分类导航 -->
+  <scroll-view class="category-sidebar" scroll-y>
+    <view
+      wx:for="{{categories}}"
+      wx:key="key"
+      class="sidebar-item {{currentCategory === item.key ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      data-name="{{item.name}}"
+      bind:tap="onCategoryTap"
+    >
+      {{item.name}}
+    </view>
+  </scroll-view>
+
+  <!-- 右侧商品列表 -->
+  <scroll-view class="category-content" scroll-y>
+    <view class="category-header">
+      <view class="category-title">{{categoryName}}</view>
+    </view>
+    <goods-list
+      wx:if="{{goodsList.length > 0}}"
+      wr-class="category-goods-list"
+      goodsList="{{goodsList}}"
+      bind:click="onGoodsClick"
+      bind:addcart="onAddCart"
+    />
+    <view wx:else class="empty-tip">该分类下暂无商品</view>
+  </scroll-view>
 </view>
 <t-toast id="t-toast" />

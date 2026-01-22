@@ -2,7 +2,6 @@ import Toast from 'tdesign-miniprogram/toast/index';
 import { fetchSettleDetail } from '../../../services/order/orderConfirm';
 import { commitPay, wechatPayOrder } from './pay';
 import { getAddressPromise } from '../../../services/address/list';
-import { addLocalOrder, buildLocalOrder } from '../../../services/order/localOrders';
 
 const stripeImg = `https://tdesign.gtimg.com/miniprogram/template/retail/order/stripe.png`;
 
@@ -46,6 +45,7 @@ Page({
   payLock: false,
   noteInfo: [],
   tempNoteInfo: [],
+  hasTriedLoadAddress: false, // 是否已尝试加载默认地址
   onLoad(options) {
     this.setData({
       loading: true,
@@ -81,13 +81,64 @@ Page({
     if (options.userAddressReq) {
       userAddressReq = options.userAddressReq;
     }
-    if (options.type === 'cart') {
-      // 从购物车跳转过来时，获取传入的商品列表数据
-      const goodsRequestListJson = wx.getStorageSync('order.goodsRequestList');
-      goodsRequestList = JSON.parse(goodsRequestListJson);
-    } else if (typeof options.goodsRequestList === 'string') {
-      goodsRequestList = JSON.parse(options.goodsRequestList);
+
+    // 如果没有地址且是首次加载（不是从地址页返回），自动获取默认地址
+    const isFirstLoad = !this.userAddressReq && !options.userAddressReq;
+    const shouldLoadDefaultAddress = isFirstLoad && !this.hasTriedLoadAddress;
+
+    try {
+      if (options.type === 'cart') {
+        // 从购物车跳转过来时，获取传入的商品列表数据
+        const goodsRequestListJson = wx.getStorageSync('order.goodsRequestList');
+        if (goodsRequestListJson && goodsRequestListJson.trim()) {
+          goodsRequestList = JSON.parse(goodsRequestListJson);
+        }
+      } else if (typeof options.goodsRequestList === 'string' && options.goodsRequestList.trim()) {
+        // 从商品详情页跳转过来时，需要解码 URL 参数
+        const decodedStr = decodeURIComponent(options.goodsRequestList);
+        goodsRequestList = JSON.parse(decodedStr);
+      }
+    } catch (error) {
+      console.error('解析商品列表失败:', error);
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '商品信息错误，请重试',
+        duration: 2000,
+        icon: '',
+      });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 1500);
+      return;
     }
+
+    // 验证商品列表
+    if (!goodsRequestList || !Array.isArray(goodsRequestList) || goodsRequestList.length === 0) {
+      console.error('商品列表为空');
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '商品列表为空，请重新选择',
+        duration: 2000,
+        icon: '',
+      });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 1500);
+      return;
+    }
+
+    // 数据清洗：确保所有必需字段都有有效值，防止 null 或 undefined
+    goodsRequestList = goodsRequestList.map(goods => ({
+      ...goods,
+      storeId: goods.storeId || '1',
+      storeName: goods.storeName || '默认店铺',
+      quantity: goods.quantity || 1,
+      goodsName: goods.goodsName || goods.title || '未知商品',
+      price: goods.price || 0,
+    }));
+
     //获取结算页请求数据列表
     const storeMap = {};
     goodsRequestList.forEach((goods) => {
@@ -101,6 +152,56 @@ Page({
     });
     this.goodsRequestList = goodsRequestList;
     this.storeInfoList = storeInfoList;
+
+    // 暂时禁用自动加载默认地址功能，避免阻塞购买流程
+    // TODO: 等云函数依赖安装完成后再启用
+    const autoLoadAddress = true;
+
+    // 如果应该加载默认地址，先获取地址列表
+    if (shouldLoadDefaultAddress && autoLoadAddress) {
+      this.hasTriedLoadAddress = true;
+
+      // 使用 try-catch 确保即使获取地址失败也不影响购买流程
+      try {
+        const { fetchDeliveryAddressList } = require('../../../services/address/fetchAddress');
+
+        fetchDeliveryAddressList()
+          .then((addressList) => {
+            // 查找默认地址
+            const defaultAddress = addressList.find((addr) => addr.isDefault === 1);
+            if (defaultAddress) {
+              console.log('[订单确认] 自动选择默认地址:', defaultAddress);
+              // 使用默认地址
+              userAddressReq = {
+                ...defaultAddress,
+                name: defaultAddress.name,
+                phone: defaultAddress.phoneNumber || defaultAddress.phone,
+                checked: true,
+              };
+              this.userAddressReq = userAddressReq;
+            }
+
+            // 继续处理订单
+            this.proceedWithOrder(goodsRequestList, storeInfoList, userAddressReq, couponList);
+          })
+          .catch((err) => {
+            console.error('[订单确认] 获取地址列表失败:', err);
+            // 即使获取地址失败，也继续处理订单（允许用户手动添加地址）
+            this.proceedWithOrder(goodsRequestList, storeInfoList, userAddressReq, couponList);
+          });
+      } catch (error) {
+        console.error('[订单确认] 加载地址模块失败:', error);
+        // 模块加载失败，直接继续处理订单
+        this.proceedWithOrder(goodsRequestList, storeInfoList, userAddressReq, couponList);
+      }
+    } else {
+      // 不需要加载默认地址，直接处理订单
+      this.proceedWithOrder(goodsRequestList, storeInfoList, userAddressReq, couponList);
+    }
+  },
+
+  // 继续处理订单的逻辑
+  proceedWithOrder(goodsRequestList, storeInfoList, userAddressReq, couponList) {
     const params = {
       goodsRequestList,
       storeInfoList,
@@ -377,15 +478,7 @@ Page({
           return;
         }
         if (res.code === 'Success') {
-          addLocalOrder(
-            buildLocalOrder({
-              orderNo: data.tradeNo,
-              goodsRequestList,
-              storeInfoList,
-              settleDetailData,
-              userAddress: settleDetailData.userAddress || userAddressReq,
-            }),
-          );
+          // 订单已在 dispatchCommitPay 中保存到本地，这里不需要再保存
           this.handlePay(data, settleDetailData);
         } else {
           Toast({

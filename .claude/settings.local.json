@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(npm install:*)",
+      "Bash(pkill:*)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(node -e:*)",
+      "Bash(find:*)",
+      "Bash(dir \"C:\\\\Users\\\\13811\\\\WeChatProjects\\\\miniprogram-1\\\\ecommerce-management-backend\\\\server\")",
+      "Bash(dir \"C:\\\\Users\\\\13811\\\\WeChatProjects\\\\miniprogram-1\\\\ecommerce-management-backend\\\\server\\\\data\" /s)"
+    ]
+  }
+}

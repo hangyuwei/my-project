@@ -151,9 +151,16 @@
       </view>
     </view>
   </view>
-  <view wx:if="{{_order.buttons.length > 0}}" class="bottom-bar">
-    <order-button-bar order="{{_order}}" bindrefresh="onRefresh" isBtnMax />
-  </view>
 </t-pull-down-refresh>
+
+<!-- 底部操作栏 -->
+<view class="bottom-bar">
+  <!-- 取消订单按钮 -->
+  <view class="cancel-order-btn" bindtap="onCancelOrderTap">取消订单</view>
+
+  <!-- 原有按钮 -->
+  <order-button-bar wx:if="{{_order.buttons.length > 0}}" order="{{_order}}" bindrefresh="onRefresh" />
+</view>
+
 <t-toast id="t-toast" />
 <t-dialog id="t-dialog" />

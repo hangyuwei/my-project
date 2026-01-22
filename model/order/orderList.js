@@ -1024,6 +1024,30 @@ export function genOrdersCount() {
   return resp;
 }
 
+// 根据订单状态生成按钮
+const generateOrderButtons = (orderStatus) => {
+  switch (orderStatus) {
+    case 5: // 待付款
+      return [
+        { primary: false, type: 2, name: '取消订单' },
+        { primary: true, type: 1, name: '付款' },
+      ];
+    case 10: // 待发货
+      return []; // 待发货状态没有操作按钮
+    case 40: // 待收货
+      return [
+        { primary: true, type: 3, name: '确认收货' },
+      ];
+    case 60: // 已完成
+      return [
+        { primary: false, type: 4, name: '申请售后' },
+        { primary: true, type: 6, name: '评价' },
+      ];
+    default:
+      return [];
+  }
+};
+
 const mapOrderItem = (item = {}, baseItem = {}) => {
   const source = ensureObject(item);
   return {
@@ -1055,7 +1079,22 @@ export function adaptOrders(real = {}, params = {}) {
   if (real && real.data && Array.isArray(real.data.orders)) return real;
   const source = ensureObject(real);
   const list = ensureArray(source.orders || source.items || source.list);
-  if (!list.length) return genOrders(params);
+  if (!list.length) {
+    // 返回空数据，不使用mock
+    const { parameter = {} } = params || {};
+    const { pageNum = 1, pageSize = 10 } = parameter;
+    return {
+      data: {
+        pageNum,
+        pageSize,
+        totalCount: 0,
+        orders: [],
+      },
+      code: 'Success',
+      msg: null,
+      success: true,
+    };
+  }
 
   const baseResp = genOrders({
     parameter: {
@@ -1073,6 +1112,10 @@ export function adaptOrders(real = {}, params = {}) {
       mapOrderItem(item, baseItem),
     );
 
+    const orderStatus = pickFirst(info.orderStatus, info.status, baseOrder.orderStatus);
+    // 根据订单状态生成正确的按钮
+    const buttonVOs = info.buttonVOs || generateOrderButtons(orderStatus);
+
     return {
       ...baseOrder,
       saasId: pickFirst(info.saasId, baseOrder.saasId),
@@ -1081,7 +1124,7 @@ export function adaptOrders(real = {}, params = {}) {
       uid: pickFirst(info.uid, baseOrder.uid),
       orderId: toString(pickFirst(info.orderId, info.id, baseOrder.orderId)),
       orderNo: toString(pickFirst(info.orderNo, info.id, baseOrder.orderNo)),
-      orderStatus: pickFirst(info.orderStatus, info.status, baseOrder.orderStatus),
+      orderStatus: orderStatus,
       totalAmount: toString(pickFirst(info.totalAmount, info.amount, baseOrder.totalAmount, '0')),
       goodsAmount: toString(pickFirst(info.goodsAmount, baseOrder.goodsAmount, '0')),
       paymentAmount: toString(pickFirst(info.paymentAmount, info.payAmount, baseOrder.paymentAmount, '0')),
@@ -1090,6 +1133,7 @@ export function adaptOrders(real = {}, params = {}) {
       createTime: pickFirst(info.createTime, info.createdAt, baseOrder.createTime),
       orderItemVOs: items.length ? items : baseOrder.orderItemVOs,
       orderStatusName: pickFirst(info.orderStatusName, info.statusName, baseOrder.orderStatusName),
+      buttonVOs: buttonVOs,
     };
   });
 
@@ -1113,7 +1157,15 @@ export function adaptOrdersCount(real = {}) {
   if (real && Array.isArray(real.data)) return real;
   const source = ensureObject(real);
   const list = ensureArray(source.data || source.list || source.items);
-  if (!list.length) return genOrdersCount();
+  if (!list.length) {
+    // 返回空统计，不使用mock
+    return {
+      data: [],
+      code: 'Success',
+      msg: null,
+      success: true,
+    };
+  }
 
   return {
     data: list.map((item) => ({

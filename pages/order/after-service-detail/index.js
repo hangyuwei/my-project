@@ -38,7 +38,7 @@ Page({
 
   // 页面刷新，展示下拉刷新
   onPullDownRefresh_(e) {
-    const { callback } = e.detail;
+    const callback = e && e.detail && e.detail.callback;
     return this.getService().then(() => callback && callback());
   },
 

@@ -41,7 +41,43 @@ export function fetchDeliveryAddressList(len = 10) {
   if (shouldMock('address.fetchDeliveryAddressList')) {
     return mockFetchDeliveryAddressList(len);
   }
-  return callCloudFunction('getAddressList', { len }).then((real) =>
-    adaptDeliveryAddressList(real),
-  );
+  return callCloudFunction('getAddressList', { len }).then((real) => {
+    if (real && real.success && real.data) {
+      return adaptDeliveryAddressList(real.data);
+    }
+    return adaptDeliveryAddressList(real);
+  });
+}
+
+/** 保存收货地址 */
+export function saveAddress(addressData) {
+  return callCloudFunction('saveAddress', { addressData }).then((real) => {
+    if (real && real.success) {
+      return {
+        success: true,
+        addressId: real.addressId,
+        message: real.message,
+      };
+    }
+    return {
+      success: false,
+      error: real?.error || '保存地址失败',
+    };
+  });
+}
+
+/** 删除收货地址 */
+export function deleteAddress(addressId) {
+  return callCloudFunction('deleteAddress', { addressId }).then((real) => {
+    if (real && real.success) {
+      return {
+        success: true,
+        message: real.message,
+      };
+    }
+    return {
+      success: false,
+      error: real?.error || '删除地址失败',
+    };
+  });
 }

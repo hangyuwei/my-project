@@ -1,7 +1,11 @@
 <view class="person-info">
+  <view class="person-info__header">
+    <text class="person-info__tips">通过微信授权获取您的头像和昵称</text>
+  </view>
+
   <t-cell-group>
     <t-cell
-      title="头像"
+      title="微信头像"
       center="{{true}}"
       arrow
       t-class-left="order-group__left"
@@ -11,42 +15,23 @@
       </button>
     </t-cell>
     <t-cell
-      title="昵称"
+      title="微信昵称"
       t-class="t-cell-class"
       t-class-left="order-group__left"
-    >
-      <input slot="note" type="nickname" class="nickname-input" value="{{personInfo.nickName}}" placeholder="请输入昵称" bind:change="onNicknameChange" />
-    </t-cell>
-    <t-cell
-      title="性别"
-      arrow
-      note="{{genderMap[personInfo.gender]}}"
-      data-type="gender"
-      bind:click="onClickCell"
-      t-class="t-cell-class"
-      t-class-left="order-group__left"
-    />
-    <t-cell
       bordered="{{false}}"
-      title="手机号"
-      arrow
-      note="{{personInfo.phoneNumber ? personInfo.phoneNumber : '去绑定手机号'}}"
-      data-type="phoneNumber"
-      bind:click="onClickCell"
-      t-class="t-cell-class"
-      t-class-left="order-group__left"
-    />
+    >
+      <input
+        slot="note"
+        type="nickname"
+        class="nickname-input"
+        value="{{personInfo.nickName}}"
+        placeholder="点击授权微信昵称"
+        bind:change="onNicknameChange"
+      />
+    </t-cell>
   </t-cell-group>
 </view>
 <view class="person-info__wrapper">
   <view class="person-info__btn" bind:tap="openUnbindConfirm"> 切换账号登录 </view>
 </view>
-<t-select-picker
-  show="{{typeVisible}}"
-  picker-options="{{pickerOptions}}"
-  title="选择性别"
-  value="{{personInfo.gender}}"
-  bind:confirm="onConfirm"
-  bind:close="onClose"
-/>
 <t-toast id="t-toast" />

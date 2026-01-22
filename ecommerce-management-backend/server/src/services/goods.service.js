@@ -1,3 +1,4 @@
+import { cloudApp } from '../libs/cloudbase.js';
 import { fromCents, toCents } from '../utils/money.js';
 import { generateId } from '../utils/id.js';
 import {
@@ -53,10 +54,49 @@ const mapOutput = (record = {}) => {
   };
 };
 
+const isCloudFileId = (value) => typeof value === 'string' && value.startsWith('cloud://');
+
+const resolveUrl = (value, urlMap) => {
+  if (!value) return '';
+  if (isCloudFileId(value)) return urlMap[value] || '';
+  return value;
+};
+
+const collectFileIds = (records = []) =>
+  records
+    .flatMap((record) => [
+      record.coverImage,
+      ...(record.galleryImages || []),
+      ...(record.detailImages || []),
+      ...(record.picture || []),
+    ])
+    .filter(isCloudFileId);
+
+const buildTempUrlMap = async (fileIds = []) => {
+  const unique = Array.from(new Set(fileIds.filter(Boolean)));
+  if (!unique.length) return {};
+  const res = await cloudApp.getTempFileURL({
+    fileList: unique.map((fileID) => ({ fileID, maxAge: 3600 })),
+  });
+  return (res.fileList || []).reduce((acc, item) => {
+    acc[item.fileID] = item.tempFileURL || '';
+    return acc;
+  }, {});
+};
+
+const attachImageUrls = (record = {}, urlMap = {}) => ({
+  ...record,
+  coverUrl: resolveUrl(record.coverImage, urlMap),
+  galleryUrls: (record.galleryImages || []).map((value) => resolveUrl(value, urlMap)).filter(Boolean),
+  detailUrls: (record.detailImages || []).map((value) => resolveUrl(value, urlMap)).filter(Boolean),
+});
+
 export const listGoods = async ({ page, pageSize, search }) => {
   const result = await findPaged({ page, pageSize, search });
+  const mappedList = result.list.map(mapOutput);
+  const urlMap = await buildTempUrlMap(collectFileIds(mappedList));
   return {
-    list: result.list.map(mapOutput),
+    list: mappedList.map((item) => attachImageUrls(item, urlMap)),
     total: result.total,
   };
 };

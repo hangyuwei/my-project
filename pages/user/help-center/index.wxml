@@ -1,0 +1,100 @@
+<view class="help-center-page">
+  <!-- 搜索框 -->
+  <view class="search-container">
+    <t-search
+      model:value="{{searchKeyword}}"
+      placeholder="搜索问题"
+      bind:change="onSearchInput"
+      bind:clear="onSearchClear"
+    />
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{isSearching}}" class="search-results">
+    <view wx:if="{{searchResults.length === 0}}" class="empty-result">
+      <t-icon name="info-circle" size="96rpx" color="#ccc" />
+      <text class="empty-text">未找到相关问题</text>
+      <button class="contact-service-btn" bind:tap="onContactService">联系客服</button>
+    </view>
+    <view wx:else class="result-list">
+      <view
+        wx:for="{{searchResults}}"
+        wx:key="id"
+        class="result-item {{expandedQuestion === item.id ? 'expanded' : ''}}"
+        data-id="{{item.id}}"
+        bind:tap="onQuestionTap"
+      >
+        <view class="result-header">
+          <view class="result-category">{{item.categoryTitle}}</view>
+          <view class="result-question">
+            <text>{{item.question}}</text>
+            <t-icon
+              name="{{expandedQuestion === item.id ? 'chevron-up' : 'chevron-down'}}"
+              size="32rpx"
+              color="#999"
+            />
+          </view>
+        </view>
+        <view wx:if="{{expandedQuestion === item.id}}" class="result-answer">
+          {{item.answer}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 帮助分类列表 -->
+  <view wx:else class="help-categories">
+    <view
+      wx:for="{{helpCategories}}"
+      wx:key="id"
+      class="category-item {{expandedCategory === item.id ? 'expanded' : ''}}"
+    >
+      <view
+        class="category-header"
+        data-id="{{item.id}}"
+        bind:tap="onCategoryTap"
+      >
+        <view class="category-left">
+          <t-icon name="{{item.icon}}" size="48rpx" color="#FF6B6B" />
+          <text class="category-title">{{item.title}}</text>
+        </view>
+        <t-icon
+          name="{{expandedCategory === item.id ? 'chevron-up' : 'chevron-down'}}"
+          size="32rpx"
+          color="#999"
+        />
+      </view>
+
+      <view wx:if="{{expandedCategory === item.id}}" class="questions-list">
+        <view
+          wx:for="{{item.questions}}"
+          wx:for-item="question"
+          wx:key="id"
+          class="question-item {{expandedQuestion === question.id ? 'expanded' : ''}}"
+          data-id="{{question.id}}"
+          bind:tap="onQuestionTap"
+        >
+          <view class="question-header">
+            <text class="question-text">{{question.question}}</text>
+            <t-icon
+              name="{{expandedQuestion === question.id ? 'chevron-up' : 'chevron-down'}}"
+              size="28rpx"
+              color="#999"
+            />
+          </view>
+          <view wx:if="{{expandedQuestion === question.id}}" class="question-answer">
+            {{question.answer}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部联系客服按钮 -->
+  <view class="footer-contact">
+    <button class="contact-btn" bind:tap="onContactService">
+      <t-icon name="service" size="36rpx" color="#fff" />
+      <text>联系客服</text>
+    </button>
+  </view>
+</view>

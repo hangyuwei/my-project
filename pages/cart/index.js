@@ -6,6 +6,7 @@ import { removeLocalCartItem, updateLocalCartItemQuantity } from '../../services
 Page({
   data: {
     cartGroupData: null,
+    isSettling: false, // 防止重复点击结算按钮
   },
 
   // 调用自定义tabbar的init函数，使页面与tabbar激活状态保持一致
@@ -277,6 +278,11 @@ Page({
   },
 
   onToSettle() {
+    // 防止重复点击
+    if (this.data.isSettling) {
+      return;
+    }
+
     const goodsRequestList = [];
     this.data.cartGroupData.storeGoods.forEach((store) => {
       store.promotionGoodsList.forEach((promotion) => {
@@ -287,8 +293,41 @@ Page({
         });
       });
     });
+
+    // 检查是否有选中的商品
+    if (goodsRequestList.length === 0) {
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        message: '请选择要结算的商品',
+        icon: '',
+      });
+      return;
+    }
+
+    // 设置结算状态为true，防止重复点击
+    this.setData({ isSettling: true });
+
     wx.setStorageSync('order.goodsRequestList', JSON.stringify(goodsRequestList));
-    wx.navigateTo({ url: '/pages/order/order-confirm/index?type=cart' });
+    wx.navigateTo({
+      url: '/pages/order/order-confirm/index?type=cart',
+      success: () => {
+        // 导航成功后重置状态
+        setTimeout(() => {
+          this.setData({ isSettling: false });
+        }, 500);
+      },
+      fail: () => {
+        // 导航失败时也要重置状态
+        this.setData({ isSettling: false });
+        Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '跳转失败，请重试',
+          icon: '',
+        });
+      },
+    });
   },
   onGotoHome() {
     wx.switchTab({ url: '/pages/home/home' });

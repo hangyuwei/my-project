@@ -204,13 +204,15 @@
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 10;
+  z-index: 999;
   background: #fff;
   height: 112rpx;
-  width: 686rpx;
+  width: 100%;
+  box-sizing: border-box;
   padding: 0rpx 32rpx env(safe-area-inset-bottom);
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .bottom-bar::before {
@@ -223,6 +225,7 @@
   left: 0;
   top: 0;
   transform-origin: left top;
+  pointer-events: none;
 }
 
 .goods-button-bar {
@@ -242,4 +245,32 @@
 .t-button {
   --td-button-default-color: #000;
   --td-button-primary-text-color: #fa4126;
+}
+
+/* 取消订单按钮 */
+.cancel-order-btn {
+  position: relative;
+  z-index: 1;
+  height: 64rpx;
+  padding: 0 32rpx;
+  font-size: 26rpx;
+  line-height: 64rpx;
+  color: #666;
+  background-color: #fff;
+  border: 2rpx solid #ddd;
+  border-radius: 32rpx;
+  margin-right: 16rpx;
+}
+
+/* 售后按钮 */
+.after-sale-btn {
+  height: 64rpx;
+  padding: 0 32rpx;
+  font-size: 26rpx;
+  line-height: 64rpx;
+  color: #fa4126;
+  background-color: #fff;
+  border: 2rpx solid #fa4126;
+  border-radius: 32rpx;
+  margin-right: 16rpx;
 }

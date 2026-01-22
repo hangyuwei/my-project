@@ -7,13 +7,13 @@ const toNumber = (value) => {
 export const toCents = (value) => {
   const num = toNumber(value);
   if (num === null) return 0;
-  if (Number.isInteger(num) && num >= 1000) return num;
+  // 总是将元转换为分，避免歧义
   return Math.round(num * 100);
 };
 
 export const fromCents = (value) => {
   const num = toNumber(value);
   if (num === null) return 0;
-  if (num >= 1000) return Math.round(num) / 100;
-  return num;
+  // 总是将分转换为元，避免歧义
+  return Math.round(num) / 100;
 };

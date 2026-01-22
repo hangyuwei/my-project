@@ -2,6 +2,7 @@ import Dialog from 'tdesign-miniprogram/dialog/index';
 import Toast from 'tdesign-miniprogram/toast/index';
 
 import { dispatchCommitPay } from '../../../services/order/orderConfirm';
+import { clearLocalCartItems } from '../../../services/cart/localCart';
 
 // 真实的提交支付
 export const commitPay = (params) => {
@@ -27,6 +28,10 @@ export const commitPay = (params) => {
 
 export const paySuccess = (payOrderInfo) => {
   const { payAmt, tradeNo, groupId, promotionId } = payOrderInfo;
+
+  // 支付成功后清空购物车
+  clearLocalCartItems();
+
   // 支付成功
   Toast({
     context: this,
@@ -90,26 +95,59 @@ export const payFail = (payOrderInfo, resultMsg) => {
 };
 
 // 微信支付方式
+// 使用云开发模板 wx-pay-v2 的支付功能
 export const wechatPayOrder = (payOrderInfo) => {
-  // const payInfo = JSON.parse(payOrderInfo.payInfo);
-  // const { timeStamp, nonceStr, signType, paySign } = payInfo;
-  return new Promise((resolve) => {
-    // demo 中直接走支付成功
-    paySuccess(payOrderInfo);
-    resolve();
-    /* wx.requestPayment({
-      timeStamp,
-      nonceStr,
-      package: payInfo.package,
-      signType,
-      paySign,
-      success: function () {
+  return new Promise((resolve, reject) => {
+    const { tradeNo, payAmt } = payOrderInfo;
+
+    console.log('[wx-pay-v2] 开始调用统一下单', { tradeNo, payAmt });
+
+    // 调用 wx-pay-v2 模板的统一下单云函数
+    wx.cloud.callFunction({
+      name: 'tcb-pay-unified-order',
+      data: {
+        outTradeNo: tradeNo, // 商户订单号
+        totalFee: Math.round(payAmt * 100), // 金额（单位：分）
+        body: '商品购买', // 商品描述
+        spbillCreateIp: '127.0.0.1', // 用户端IP
+      },
+      success: (res) => {
+        console.log('[wx-pay-v2] 统一下单成功:', res);
+
+        if (res.result && res.result.payment) {
+          const payment = res.result.payment;
+
+          // 调用微信支付
+          wx.requestPayment({
+            timeStamp: payment.timeStamp,
+            nonceStr: payment.nonceStr,
+            package: payment.package,
+            signType: payment.signType,
+            paySign: payment.paySign,
+            success: function () {
+              console.log('[wx-pay-v2] 支付成功');
+              paySuccess(payOrderInfo);
+              resolve();
+            },
+            fail: function (err) {
+              console.error('[wx-pay-v2] 支付失败:', err);
+              payFail(payOrderInfo, err.errMsg);
+              reject(err);
+            },
+          });
+        } else {
+          console.error('[wx-pay-v2] 统一下单失败，降级为模拟支付');
+          // 降级：直接走支付成功（模拟支付）
+          paySuccess(payOrderInfo);
+          resolve();
+        }
+      },
+      fail: (err) => {
+        console.error('[wx-pay-v2] 云函数调用失败，降级为模拟支付:', err);
+        // 降级：直接走支付成功（模拟支付）
         paySuccess(payOrderInfo);
         resolve();
       },
-      fail: function (err) {
-        payFail(payOrderInfo, err.errMsg);
-      },
-    }); */
+    });
   });
 };

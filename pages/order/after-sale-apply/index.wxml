@@ -1,0 +1,122 @@
+<view class="apply-page">
+  <!-- 售后类型选择 -->
+  <view class="section" wx:if="{{typeOptions.length > 1}}">
+    <view class="section-title">售后类型</view>
+    <view class="type-options">
+      <view
+        wx:for="{{typeOptions}}"
+        wx:key="value"
+        class="type-option {{selectedType === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTypeChange"
+        data-detail="{{item.value}}"
+      >
+        <view class="type-icon">
+          <t-icon name="{{item.value === 'ONLY_REFUND' ? 'money' : 'rollback'}}" size="48rpx" />
+        </view>
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款金额 -->
+  <view class="section">
+    <view class="section-title">退款金额</view>
+    <view class="amount-input-wrap">
+      <text class="amount-symbol">¥</text>
+      <input
+        class="amount-input"
+        type="digit"
+        value="{{refundAmount}}"
+        placeholder="请输入退款金额"
+        bindinput="onAmountInput"
+      />
+    </view>
+    <view class="amount-hint">最多可退 ¥{{maxAmount}}</view>
+  </view>
+
+  <!-- 退款原因 -->
+  <view class="section">
+    <view class="section-title">退款原因</view>
+    <view class="reason-select" bindtap="openReasonPicker">
+      <text class="{{selectedReason ? '' : 'placeholder'}}">
+        {{selectedReason.text || '请选择退款原因'}}
+      </text>
+      <t-icon name="chevron-right" size="40rpx" color="#999" />
+    </view>
+  </view>
+
+  <!-- 补充说明 -->
+  <view class="section">
+    <view class="section-title">补充说明（选填）</view>
+    <textarea
+      class="reason-textarea"
+      placeholder="请描述您遇到的问题，以便商家更好地处理"
+      maxlength="200"
+      value="{{reasonText}}"
+      bindinput="onReasonTextInput"
+    />
+  </view>
+
+  <!-- 上传凭证 -->
+  <view class="section">
+    <view class="section-title">上传凭证（选填）</view>
+    <view class="evidence-list">
+      <view
+        wx:for="{{evidence}}"
+        wx:key="*this"
+        class="evidence-item"
+      >
+        <image
+          src="{{item}}"
+          mode="aspectFill"
+          data-url="{{item}}"
+          bindtap="previewImage"
+        />
+        <view class="evidence-delete" data-index="{{index}}" bindtap="removeImage">
+          <t-icon name="close" size="24rpx" color="#fff" />
+        </view>
+      </view>
+      <view
+        wx:if="{{evidence.length < 9}}"
+        class="evidence-add"
+        bindtap="chooseImage"
+      >
+        <t-icon name="add" size="48rpx" color="#999" />
+        <text>添加图片</text>
+      </view>
+    </view>
+    <view class="evidence-hint">最多上传9张图片</view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-bar">
+    <button class="submit-btn" bindtap="onSubmit" loading="{{submitting}}">
+      提交申请
+    </button>
+  </view>
+</view>
+
+<!-- 原因选择弹窗 -->
+<t-popup visible="{{showReasonPicker}}" placement="bottom" bind:visible-change="closeReasonPicker">
+  <view class="reason-picker">
+    <view class="reason-picker-header">
+      <text>请选择退款原因</text>
+      <t-icon name="close" size="40rpx" bindtap="closeReasonPicker" />
+    </view>
+    <scroll-view scroll-y class="reason-picker-list">
+      <view
+        wx:for="{{reasonOptions}}"
+        wx:key="code"
+        class="reason-picker-item {{selectedReason.code === item.code ? 'active' : ''}}"
+        data-code="{{item.code}}"
+        bindtap="onReasonSelect"
+      >
+        <text>{{item.text}}</text>
+        <t-icon wx:if="{{selectedReason.code === item.code}}" name="check" size="40rpx" color="#fa4126" />
+      </view>
+    </scroll-view>
+  </view>
+</t-popup>
+
+<t-toast id="t-toast" />

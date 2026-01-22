@@ -1,5 +1,27 @@
 [
   {
+    "_id": "62dfe375-7293-47e9-a8ef-9572a07e1e6e",
+    "type": "functions",
+    "name": "createOrder",
+    "event": {
+      "orderData": {
+        "orderNo": "TEST-123",
+        "totalAmount": "95800"
+      }
+    },
+    "context": {
+      "OPENID": "mock_openid_001",
+      "APPID": "mock_appid_001",
+      "ENV": "mock",
+      "CLIENT_IP": "127.0.0.1",
+      "REQ_ID": "7c4349aa-dcb2-475e-82ce-7aecc0634003"
+    },
+    "rt": 1,
+    "success": true,
+    "createdAt": "2026-01-12T06:28:49.936Z",
+    "resultSummary": "{\"success\":true,\"orderId\":\"TEST-123\",\"orderNo\":\"TEST-123\",\"message\":\"订单创建成功\"}"
+  },
+  {
     "_id": "4a7b9e1b-9f4b-4a73-94a4-bda3ca6b64d4",
     "type": "functions",
     "name": "getOrderCount",

@@ -1,0 +1,178 @@
+.help-center-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+/* 搜索框 */
+.search-container {
+  padding: 24rpx 32rpx;
+  background: #fff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 搜索结果 */
+.search-results {
+  padding: 24rpx 32rpx;
+}
+
+.empty-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+
+.empty-text {
+  margin-top: 24rpx;
+  margin-bottom: 40rpx;
+  font-size: 28rpx;
+  color: #999;
+}
+
+.contact-service-btn {
+  padding: 20rpx 48rpx;
+  background: #FF6B6B;
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+}
+
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.result-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.result-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.result-category {
+  font-size: 24rpx;
+  color: #FF6B6B;
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  background: #FFF2F0;
+  border-radius: 8rpx;
+  align-self: flex-start;
+}
+
+.result-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28rpx;
+  color: #333;
+  gap: 16rpx;
+}
+
+.result-answer {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1px solid #f5f5f5;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 帮助分类列表 */
+.help-categories {
+  padding: 24rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.category-item {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 24rpx;
+}
+
+.category-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.category-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.questions-list {
+  padding: 0 24rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.question-item {
+  padding: 24rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.question-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.question-answer {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1px solid #e5e5e5;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 底部联系客服 */
+.footer-contact {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 32rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.contact-btn {
+  width: 100%;
+  height: 80rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: #fff;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}

@@ -4,48 +4,16 @@
     t-class-input="t-search__input"
     value="{{searchValue}}"
     leftIcon=""
-    placeholder="iPhone12pro"
+    placeholder="搜索商品"
     bind:submit="handleSubmit"
     focus
   >
     <t-icon slot="left-icon" prefix="wr" name="search" size="40rpx" color="#bbb" />
   </t-search>
   <view class="search-wrap">
-    <view class="history-wrap">
-      <view class="search-header">
-        <text class="search-title">历史搜索</text>
-        <text class="search-clear" bind:tap="handleClearHistory">清除</text>
-      </view>
-      <view class="search-content">
-        <view
-          class="search-item"
-          hover-class="hover-history-item"
-          wx:for="{{historyWords}}"
-          bind:tap="handleHistoryTap"
-          bindlongpress="deleteCurr"
-          data-index="{{index}}"
-          wx:key="*this"
-        >
-          {{item}}
-        </view>
-      </view>
-    </view>
-    <view class="popular-wrap">
-      <view class="search-header">
-        <text class="search-title">热门搜索</text>
-      </view>
-      <view class="search-content">
-        <view
-          class="search-item"
-          hover-class="hover-history-item"
-          wx:for="{{popularWords}}"
-          bind:tap="handleHistoryTap"
-          data-index="{{index}}"
-          wx:key="*this"
-        >
-          {{item}}
-        </view>
-      </view>
+    <!-- 历史搜索和热门搜索已关闭 -->
+    <view class="search-empty-tip">
+      <text>输入关键词搜索商品</text>
     </view>
   </view>
   <t-dialog

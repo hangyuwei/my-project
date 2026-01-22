@@ -1220,6 +1220,16 @@ const mapOrderDetailItem = (item = {}, baseItem = {}) => {
 export function adaptOrderDetail(real = {}, params = {}) {
   if (real && real.data && real.data.orderNo) return real;
   const source = ensureObject(real);
+
+  // 如果没有数据，返回空结果，不使用mock
+  if (!source || Object.keys(source).length === 0) {
+    return {
+      success: false,
+      error: '订单不存在',
+      code: 'NOT_FOUND',
+    };
+  }
+
   const base = genOrderDetail(params) || orderResps?.[0];
   if (!base) return real;
 

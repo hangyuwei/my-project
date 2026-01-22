@@ -1,28 +1,214 @@
 import { db } from '../libs/cloudbase.js';
-import { applyWhere, safeCount, safeGet, safeDocGet } from './repo.utils.js';
+import { safeCount, safeGet, safeDocGet } from './repo.utils.js';
+import * as afterSalesRepo from './after-sales.repo.js';
 
-const collection = () => db.collection('order');
+const collection = () => db.collection('orders');
+
+const normalizeStatus = (value) => {
+  if (typeof value !== 'string') return '';
+  return value.trim();
+};
+
+const normalizeTime = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (typeof value === 'number') return new Date(value);
+  if (typeof value === 'string') {
+    const num = Number(value);
+    if (Number.isFinite(num)) return new Date(num);
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+  return null;
+};
+
+// Adapter: convert mini program order shape to admin order shape.
+const adaptOrder = (order) => {
+  if (!order) return order;
+
+  const isAdminShape = order.goodsSku !== undefined;
+  const normalizedCreateTime = normalizeTime(order.createTime || order.createdAt) || new Date();
+  const normalizedUpdateTime = normalizeTime(order.updateTime || order.updatedAt) || new Date();
+  const rawStatus = normalizeStatus(order.status);
+  const resolvedStatus = rawStatus ? mapOrderStatus(rawStatus) : mapOrderStatus(order.orderStatus);
+
+  if (isAdminShape) {
+    const resolvedGoodsName =
+      order.goodsName || order.goodsTitle || order.title || order.goodName || '';
+    return {
+      ...order,
+      goodsName: resolvedGoodsName,
+      totalPrice: parseFloat(order.totalPrice || 0),
+      status: resolvedStatus,
+      createTime: normalizedCreateTime,
+      updateTime: normalizedUpdateTime,
+    };
+  }
+
+  const firstItem = order.orderItemVOs?.[0] || {};
+  const fallbackOpenid = order.openid || order.uid || order.userId || 'mock_openid_001';
+
+  return {
+    ...order,
+    id: order.orderNo || order.orderId || order.id,
+    goodsName: firstItem.goodsName || order.goodsName || '',
+    goodsSku: firstItem.skuId || firstItem.goodsName || 'unknown',
+    num: firstItem.buyQuantity || 1,
+    openid: order.openid || fallbackOpenid,
+    uid: order.uid || fallbackOpenid,
+    userId: order.userId || fallbackOpenid,
+    logisticsVO: order.logisticsVO || null,
+    totalPrice:
+      order.totalPrice !== undefined
+        ? parseFloat(order.totalPrice || 0)
+        : parseFloat(order.totalAmount || order.paymentAmount || 0) / 100,
+    status: resolvedStatus,
+    createTime: normalizedCreateTime,
+    updateTime: normalizedUpdateTime,
+  };
+};
+
+// Map order status to admin status.
+const mapOrderStatus = (orderStatus) => {
+  if (typeof orderStatus === 'string') {
+    const trimmed = orderStatus.trim();
+    if (!trimmed) return 'pending';
+    const numeric = Number(trimmed);
+    if (Number.isFinite(numeric)) return mapOrderStatus(numeric);
+    return trimmed;
+  }
+  switch (orderStatus) {
+    case 5:
+      return 'pending_payment';
+    case 10:
+      return 'pending';
+    case 20:
+      return 'shipped';
+    case 30:
+      return 'completed';
+    case 40:
+      return 'shipped';
+    case 50:
+      return 'completed';
+    case 80:
+      return 'refunded';
+    default:
+      return 'pending';
+  }
+};
+
+const mapStatusToOrderStatus = (status) => {
+  switch (normalizeStatus(status)) {
+    case 'pending_payment':
+      return 5;
+    case 'pending':
+      return 10;
+    case 'shipped':
+      return 40;
+    case 'completed':
+      return 50;
+    case 'refunded':
+      return 80;
+    default:
+      return null;
+  }
+};
 
 export const findPaged = async ({ page, pageSize, search, status, userId }) => {
-  const where = {};
+  const _ = db.command;
+  const conditions = [];
+
   if (search) {
-    where.id = db.RegExp({ regexp: search, options: 'i' });
+    conditions.push({ id: db.RegExp({ regexp: search, options: 'i' }) });
   }
-  if (status) {
-    where.status = status;
+
+  const normalizedStatus = normalizeStatus(status);
+  if (normalizedStatus) {
+    const mappedStatus = mapStatusToOrderStatus(normalizedStatus);
+    if (mappedStatus !== null) {
+      conditions.push(_.or([{ status: normalizedStatus }, { orderStatus: mappedStatus }]));
+    } else {
+      conditions.push({ status: normalizedStatus });
+    }
   }
+
   if (userId) {
-    where.userId = userId;
+    conditions.push({ userId });
   }
+
+  const whereClause = conditions.length === 1 ? conditions[0] : conditions.length ? _.and(conditions) : {};
+  const baseQuery = conditions.length ? collection().where(whereClause) : collection();
+
   const listResult = await safeGet(
-    applyWhere(collection(), where)
+    baseQuery
       .orderBy('createTime', 'desc')
       .skip((page - 1) * pageSize)
       .limit(pageSize),
   );
-  const countResult = await safeCount(applyWhere(collection(), where));
+  const countResult = await safeCount(
+    conditions.length ? collection().where(whereClause) : collection(),
+  );
+
+  // Enrich orders with goods and after-sales information
+  const orders = listResult.data || [];
+
+  // 收集所有需要查询售后的订单号
+  const orderNosWithAfterSale = orders
+    .filter(o => o.hasAfterSale || o.afterSaleId)
+    .map(o => o.orderNo || o.id);
+
+  // 批量查询售后信息
+  let afterSalesMap = {};
+  if (orderNosWithAfterSale.length > 0) {
+    try {
+      const afterSalesList = await afterSalesRepo.findByOrderNos(orderNosWithAfterSale);
+      afterSalesMap = afterSalesList.reduce((acc, as) => {
+        acc[as.orderNo] = as;
+        return acc;
+      }, {});
+    } catch (error) {
+      console.error('Error fetching after-sales for orders:', error);
+    }
+  }
+
+  const enrichedOrders = await Promise.all(
+    orders.map(async (order) => {
+      const adaptedOrder = adaptOrder(order);
+
+      // Fetch goods information if goodsSku exists
+      if (adaptedOrder.goodsSku && !adaptedOrder.goodsName) {
+        try {
+          const goodsResult = await safeGet(
+            db.collection('goods').where({ sku: adaptedOrder.goodsSku }).limit(1)
+          );
+          const goods = goodsResult.data?.[0];
+          if (goods) {
+            adaptedOrder.goodsName = goods.goodsName || goods.goodName || goods.title || '';
+          }
+        } catch (error) {
+          console.error('Error fetching goods for order:', adaptedOrder._id, error);
+        }
+      }
+
+      // 添加售后信息
+      const orderNo = adaptedOrder.orderNo || adaptedOrder.id;
+      if (orderNo && afterSalesMap[orderNo]) {
+        const afterSale = afterSalesMap[orderNo];
+        adaptedOrder.afterSaleInfo = {
+          afterSaleNo: afterSale.afterSaleNo,
+          status: afterSale.status,
+          statusDesc: afterSale.statusDesc,
+          type: afterSale.type,
+          applyTime: afterSale.applyTime,
+        };
+      }
+
+      return adaptedOrder;
+    })
+  );
+
   return {
-    list: listResult.data || [],
+    list: enrichedOrders,
     total: countResult.total || 0,
   };
 };
@@ -33,4 +219,10 @@ export const updateById = async (id, data) => collection().doc(id).update(data);
 
 export const removeById = async (id) => collection().doc(id).remove();
 
-export const findById = async (id) => safeDocGet('order', id);
+export const findById = async (id) => {
+  const result = await safeDocGet('orders', id);
+  if (result.data && result.data[0]) {
+    result.data[0] = adaptOrder(result.data[0]);
+  }
+  return result;
+};

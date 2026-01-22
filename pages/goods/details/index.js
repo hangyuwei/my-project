@@ -243,7 +243,17 @@ Page({
       return;
     }
 
-    if (!details) return;
+    // 防止重复添加
+    if (this.addingToCart) {
+      return;
+    }
+    this.addingToCart = true;
+
+    if (!details) {
+      this.addingToCart = false;
+      return;
+    }
+
     const skuId = selectItem?.skuId || details?.skuList?.[0]?.skuId || details?.spuId || '';
     const price = selectItem?.price || details?.minSalePrice || 0;
     const originPrice = details?.maxLinePrice || price;
@@ -277,10 +287,15 @@ Page({
       icon: '',
       duration: 1000,
     });
+
+    // 300ms后解锁
+    setTimeout(() => {
+      this.addingToCart = false;
+    }, 300);
   },
 
   gotoBuy(type) {
-    const { isAllSelectedSku, buyNum } = this.data;
+    const { isAllSelectedSku, buyNum, details, selectItem } = this.data;
     if (!isAllSelectedSku) {
       Toast({
         context: this,
@@ -291,28 +306,39 @@ Page({
       });
       return;
     }
+
+    // 安全获取 skuId，参考 addCart 方法的实现
+    const skuId = selectItem?.skuId || details?.skuList?.[0]?.skuId || details?.spuId || '';
+
     this.handlePopupHide();
-    const goodsTitle = this.data.details.goodsName || this.data.details.title;
+    const goodsTitle = details.goodsName || details.title || '';
+
+    // 安全处理 specInfo，防止 null 值
+    const specInfo = Array.isArray(details?.specList)
+      ? details.specList
+        .map((item) => ({
+          specTitle: item.title,
+          specValue: item.specValueList && item.specValueList[0] ? item.specValueList[0].specValue : '',
+        }))
+        .filter((item) => item.specTitle)
+      : [];
+
     const query = {
       quantity: buyNum,
-      storeId: '1',
-      spuId: this.data.spuId,
+      storeId: details.storeId || '1', // 从商品数据中获取 storeId，避免硬编码
+      spuId: details.spuId || this.data.spuId || '',
       goodsName: goodsTitle,
-      skuId: type === 1 ? this.data.skuList[0].skuId : this.data.selectItem.skuId,
-      available: this.data.details.available,
-      price: this.data.details.minSalePrice,
-      specInfo: this.data.details.specList?.map((item) => ({
-        specTitle: item.title,
-        specValue: item.specValueList[0].specValue,
-      })),
-      primaryImage: this.data.details.primaryImage,
-      spuId: this.data.details.spuId,
-      thumb: this.data.details.primaryImage,
+      skuId: skuId,
+      available: details.available || true,
+      price: details.minSalePrice || 0,
+      specInfo: specInfo,
+      primaryImage: details.primaryImage || '',
+      thumb: details.primaryImage || '',
       title: goodsTitle,
     };
     let urlQueryStr = obj2Params({
       goodsRequestList: JSON.stringify([query]),
-    });
+    }, true); // 启用 URL 编码，防止 JSON 特殊字符导致参数损坏
     urlQueryStr = urlQueryStr ? `?${urlQueryStr}` : '';
     const path = `/pages/order/order-confirm/index${urlQueryStr}`;
     wx.navigateTo({

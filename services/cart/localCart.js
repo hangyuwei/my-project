@@ -1,4 +1,5 @@
-const STORAGE_KEY = 'local_cart_items';
+const STORAGE_KEY_PREFIX = 'local_cart_items';
+const LEGACY_STORAGE_KEY = 'local_cart_items'; // 旧的固定key，用于数据迁移
 
 const toInt = (value, fallback = 0) => {
   const num = parseInt(value, 10);
@@ -10,14 +11,67 @@ const normalizeQuantity = (value) => {
   return qty > 0 ? qty : 1;
 };
 
+// 获取当前用户的购物车存储key
+function getStorageKey() {
+  const app = getApp();
+  const openid = app?.globalData?.openid;
+
+  if (!openid) {
+    console.warn('[购物车] 未获取到openid，使用默认key');
+    return LEGACY_STORAGE_KEY;
+  }
+
+  return `${STORAGE_KEY_PREFIX}_${openid}`;
+}
+
+// 迁移旧的购物车数据到新的用户专属key
+function migrateOldCartData() {
+  try {
+    const currentKey = getStorageKey();
+
+    // 如果当前key就是旧key，说明没有openid，不需要迁移
+    if (currentKey === LEGACY_STORAGE_KEY) {
+      return;
+    }
+
+    // 检查新key是否已有数据
+    const newData = wx.getStorageSync(currentKey);
+    if (newData && Array.isArray(newData) && newData.length > 0) {
+      // 新key已有数据，不需要迁移
+      return;
+    }
+
+    // 读取旧key的数据
+    const oldData = wx.getStorageSync(LEGACY_STORAGE_KEY);
+    if (oldData && Array.isArray(oldData) && oldData.length > 0) {
+      console.log('[购物车] 迁移旧购物车数据到用户专属存储', { count: oldData.length });
+
+      // 将旧数据迁移到新key
+      wx.setStorageSync(currentKey, oldData);
+
+      // 清除旧key的数据
+      wx.removeStorageSync(LEGACY_STORAGE_KEY);
+
+      console.log('[购物车] 数据迁移完成');
+    }
+  } catch (error) {
+    console.error('[购物车] 数据迁移失败', error);
+  }
+}
+
 export function getLocalCartItems() {
-  const data = wx.getStorageSync(STORAGE_KEY);
+  // 尝试迁移旧数据
+  migrateOldCartData();
+
+  const storageKey = getStorageKey();
+  const data = wx.getStorageSync(storageKey);
   return Array.isArray(data) ? data : [];
 }
 
 export function setLocalCartItems(items = []) {
   const next = Array.isArray(items) ? items : [];
-  wx.setStorageSync(STORAGE_KEY, next);
+  const storageKey = getStorageKey();
+  wx.setStorageSync(storageKey, next);
   return next;
 }
 
@@ -44,7 +98,8 @@ export function addLocalCartItem(item = {}, quantity = 1) {
       category: item.category || null,
     });
   }
-  wx.setStorageSync(STORAGE_KEY, list);
+  const storageKey = getStorageKey();
+  wx.setStorageSync(storageKey, list);
   return list;
 }
 
@@ -54,7 +109,8 @@ export function updateLocalCartItemQuantity(spuId, skuId, quantity) {
   const index = list.findIndex((entry) => entry.spuId === spuId && entry.skuId === skuId);
   if (index < 0) return list;
   list[index].quantity = nextQuantity;
-  wx.setStorageSync(STORAGE_KEY, list);
+  const storageKey = getStorageKey();
+  wx.setStorageSync(storageKey, list);
   return list;
 }
 
@@ -62,12 +118,30 @@ export function removeLocalCartItem(spuId, skuId) {
   const list = getLocalCartItems();
   const nextList = list.filter((entry) => !(entry.spuId === spuId && entry.skuId === skuId));
   if (nextList.length === list.length) return list;
-  wx.setStorageSync(STORAGE_KEY, nextList);
+  const storageKey = getStorageKey();
+  wx.setStorageSync(storageKey, nextList);
   return nextList;
 }
 
 export function clearLocalCartItems() {
-  wx.setStorageSync(STORAGE_KEY, []);
+  const storageKey = getStorageKey();
+  wx.setStorageSync(storageKey, []);
+}
+
+// 清除所有用户的购物车数据（用于调试或用户登出场景）
+export function clearAllCartData() {
+  try {
+    // 清除当前用户的购物车
+    const storageKey = getStorageKey();
+    wx.removeStorageSync(storageKey);
+
+    // 清除旧的固定key购物车
+    wx.removeStorageSync(LEGACY_STORAGE_KEY);
+
+    console.log('[购物车] 已清除所有购物车数据');
+  } catch (error) {
+    console.error('[购物车] 清除购物车数据失败', error);
+  }
 }
 
 export function buildCartGroupData(items = []) {

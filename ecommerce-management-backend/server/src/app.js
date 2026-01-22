@@ -6,6 +6,9 @@ import ordersRoutes from './routes/orders.routes.js';
 import promotionsRoutes from './routes/promotions.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import usersRoutes from './routes/users.routes.js';
+import bannersRoutes from './routes/banners.routes.js';
+import afterSalesRoutes from './routes/after-sales.routes.js';
+import cloudfunctionsRoutes from './routes/cloudfunctions.routes.js';
 
 const app = express();
 
@@ -15,6 +18,7 @@ app.get('/api/health', (req, res) => {
   res.json({ data: { ok: true } });
 });
 
+app.use('/cloudfunctions', cloudfunctionsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/goods', goodsRoutes);
 app.use('/api/orders', ordersRoutes);
@@ -22,11 +26,25 @@ app.use('/api/promotions', promotionsRoutes);
 app.use('/api/salesPromotions', promotionsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/banners', bannersRoutes);
+app.use('/api/after-sales', afterSalesRoutes);
 
-app.use(express.static(path.join(process.cwd(), 'dist')));
+// 静态文件服务（dist目录可能不存在，所以不要在这里崩溃）
+const distPath = path.join(process.cwd(), 'dist');
+app.use(express.static(distPath));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+  // 只处理HTML请求，API请求已经在上面处理了
+  if (req.accepts('html')) {
+    const indexPath = path.join(distPath, 'index.html');
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        res.status(404).send('管理后台前端未构建，请运行 npm run build');
+      }
+    });
+  } else {
+    res.status(404).json({ error: 'Not found' });
+  }
 });
 
 app.use((error, req, res, next) => {

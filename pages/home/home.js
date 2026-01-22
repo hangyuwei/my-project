@@ -1,5 +1,6 @@
 import { fetchHome } from '../../services/home/home';
 import { fetchGoodsList } from '../../services/good/fetchGoods';
+import { addLocalCartItem } from '../../services/cart/localCart';
 import Toast from 'tdesign-miniprogram/toast/index';
 
 Page({
@@ -26,12 +27,12 @@ Page({
     tabIndex: 0,
   },
 
-  onShow() {
-    this.getTabBar().init();
-  },
-
   onLoad() {
     this.init();
+  },
+
+  onShow() {
+    this.getTabBar().init();
   },
 
   onReachBottom() {
@@ -83,20 +84,24 @@ Page({
     this.setData({ goodsListLoadStatus: 1 });
 
     const pageSize = this.goodListPagination.num;
-    let pageIndex = this.privateData.tabIndex * pageSize + this.goodListPagination.index + 1;
+    let pageIndex;
     if (fresh) {
       pageIndex = 0;
+      this.goodListPagination.index = 0;
+    } else {
+      pageIndex = this.goodListPagination.index;
     }
 
     try {
       const nextList = await fetchGoodsList(pageIndex, pageSize);
       this.setData({
         goodsList: fresh ? nextList : this.data.goodsList.concat(nextList),
-        goodsListLoadStatus: 0,
+        goodsListLoadStatus: nextList.length === 0 ? 2 : 0,
       });
 
-      this.goodListPagination.index = pageIndex;
-      this.goodListPagination.num = pageSize;
+      if (nextList.length > 0) {
+        this.goodListPagination.index = pageIndex + 1;
+      }
     } catch (err) {
       this.setData({ goodsListLoadStatus: 3 });
     }
@@ -110,12 +115,22 @@ Page({
     });
   },
 
-  goodListAddCartHandle() {
-    Toast({
-      context: this,
-      selector: '#t-toast',
-      message: '点击加入购物车',
-    });
+  goodListAddCartHandle(e) {
+    const { goods } = e.detail;
+    if (!goods || !goods.spuId) {
+      Toast({ context: this, selector: '#t-toast', message: '商品信息错误' });
+      return;
+    }
+    addLocalCartItem({
+      spuId: goods.spuId,
+      skuId: goods.skuId || goods.spuId,
+      title: goods.title,
+      thumb: goods.thumb,
+      price: goods.price,
+      originPrice: goods.originPrice || goods.price,
+      stockQuantity: goods.stockQuantity || 999,
+    }, 1);
+    Toast({ context: this, selector: '#t-toast', message: '已加入购物车' });
   },
 
   navToSearchPage() {
@@ -126,6 +141,12 @@ Page({
     const { index: promotionID = 0 } = detail || {};
     wx.navigateTo({
       url: `/pages/promotion/promotion-detail/index?promotion_id=${promotionID}`,
+    });
+  },
+
+  navToGoodsListPage() {
+    wx.navigateTo({
+      url: '/pages/goods/list/index',
     });
   },
 });

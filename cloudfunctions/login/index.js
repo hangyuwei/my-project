@@ -12,7 +12,10 @@ exports.main = async (event, context) => {
   const appid = wxContext.APPID;
   const unionid = wxContext.UNIONID;
 
-  console.log('用户登录 - openid:', openid);
+  const { silentLogin, nickName, avatarUrl } = event;
+
+  console.log('用户登录/获取信息 - openid:', openid);
+  console.log('参数:', { silentLogin, nickName, avatarUrl });
 
   try {
     // 查询用户是否已存在
@@ -20,6 +23,26 @@ exports.main = async (event, context) => {
       openid: openid
     }).get();
 
+    // 静默登录模式：只返回 openid 和已有用户信息，不创建新用户
+    if (silentLogin) {
+      if (userQuery.data && userQuery.data.length > 0) {
+        console.log('静默登录 - 用户已存在');
+        return {
+          success: true,
+          openid,
+          userInfo: userQuery.data[0],
+        };
+      } else {
+        console.log('静默登录 - 用户不存在');
+        return {
+          success: true,
+          openid,
+          userInfo: null,
+        };
+      }
+    }
+
+    // 正常登录/注册模式
     let userData = {
       openid,
       appid,
@@ -44,10 +67,10 @@ exports.main = async (event, context) => {
         openid,
       };
     } else {
-      // 新用户，创建记录
+      // 新用户，创建记录（使用传入的头像和昵称）
       userData.createTime = new Date();
-      userData.nickName = '微信用户';
-      userData.avatarUrl = '';
+      userData.nickName = nickName || '微信用户';
+      userData.avatarUrl = avatarUrl || '';
 
       const createResult = await db.collection('user').add({
         data: userData

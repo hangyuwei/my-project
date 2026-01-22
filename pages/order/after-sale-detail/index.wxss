@@ -1,0 +1,254 @@
+.detail-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 140rpx);
+}
+
+/* 状态卡片 */
+.status-card {
+  display: flex;
+  align-items: center;
+  padding: 48rpx 32rpx;
+  background: linear-gradient(135deg, #ff6b4a 0%, #fa4126 100%);
+  color: #fff;
+}
+
+.status-card.status-REFUNDED {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+}
+
+.status-card.status-CANCELED,
+.status-card.status-SELLER_REJECTED {
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+}
+
+.status-icon {
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.status-desc {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 通用区块 */
+.section {
+  background-color: #fff;
+  padding: 32rpx;
+  margin-top: 20rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+}
+
+.section-row .label {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.section-row .value {
+  font-size: 26rpx;
+  color: #333;
+  text-align: right;
+  max-width: 60%;
+}
+
+.section-row .value.amount {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fa4126;
+}
+
+.section-row.clickable {
+  padding: 20rpx 0;
+}
+
+.value-with-arrow {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.value-with-arrow text {
+  font-size: 26rpx;
+  color: #333;
+}
+
+/* 金额区块 */
+.amount-section {
+  margin-top: 0;
+  border-radius: 0 0 24rpx 24rpx;
+  margin-left: 24rpx;
+  margin-right: 24rpx;
+  transform: translateY(-20rpx);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 退货地址 */
+.return-address {
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 24rpx;
+}
+
+.address-info .name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.address-info .detail {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 凭证图片 */
+.evidence-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.evidence-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 32rpx;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 20rpx);
+  background-color: #fff;
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 24rpx;
+}
+
+.btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.btn::after {
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b4a 0%, #fa4126 100%);
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+/* 加载中 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.loading text {
+  margin-top: 16rpx;
+}
+
+/* 物流弹窗 */
+.logistics-popup {
+  background-color: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.popup-header text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.popup-content {
+  padding: 32rpx;
+}
+
+.input-group {
+  margin-bottom: 32rpx;
+}
+
+.input-label {
+  font-size: 26rpx;
+  color: #333;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.input-field {
+  width: 100%;
+  height: 88rpx;
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.popup-footer {
+  padding: 0 32rpx 32rpx;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 32rpx);
+}
+
+.popup-footer .btn {
+  width: 100%;
+}

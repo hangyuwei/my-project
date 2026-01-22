@@ -9,7 +9,10 @@ Component({
     service: {
       type: Object,
       observer(service) {
-        const buttonsRight = service.buttons || service.buttonVOs || [];
+        const buttonsRight = (service.buttons || service.buttonVOs || []).map((button) => ({
+          ...button,
+          openType: button.openType || '',
+        }));
         this.setData({
           buttons: {
             left: [],

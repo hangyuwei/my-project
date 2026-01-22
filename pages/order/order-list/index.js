@@ -29,7 +29,7 @@ Page({
     let status = parseInt(query.status);
     status = this.data.tabs.map((t) => t.key).includes(status) ? status : -1;
     this.init(status);
-    this.pullDownRefresh = this.selectComponent('#wr-pull-down-refresh');
+    this.pullDownRefresh = this.selectComponent('#pull-down-refresh');
   },
 
   onShow() {
@@ -48,13 +48,11 @@ Page({
     this.pullDownRefresh && this.pullDownRefresh.onPageScroll(e);
   },
 
-  onPullDownRefresh_(e) {
-    const { callback } = e.detail;
+  onPullDownRefresh_() {
     this.setData({ pullDownRefreshing: true });
     this.refreshList(this.data.curTab)
       .then(() => {
         this.setData({ pullDownRefreshing: false });
-        callback && callback();
       })
       .catch((err) => {
         this.setData({ pullDownRefreshing: false });
@@ -95,7 +93,7 @@ Page({
               statusDesc: order.orderStatusName,
               amount: order.paymentAmount,
               totalAmount: order.totalAmount,
-              logisticsNo: order.logisticsVO.logisticsNo,
+              logisticsNo: order.logisticsVO ? order.logisticsVO.logisticsNo : '',
               createTime: order.createTime,
               goodsList: (order.orderItemVOs || []).map((goods) => ({
                 id: goods.id,

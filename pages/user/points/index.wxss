@@ -1,0 +1,190 @@
+.points-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 32rpx;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+/* 积分卡片 */
+.points-card {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  color: #fff;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 107, 0.3);
+}
+
+.points-header {
+  margin-bottom: 40rpx;
+}
+
+.points-label {
+  font-size: 28rpx;
+  opacity: 0.9;
+  margin-bottom: 16rpx;
+}
+
+.points-value {
+  font-size: 80rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.points-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.sign-in-btn,
+.exchange-btn {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  backdrop-filter: blur(10rpx);
+}
+
+.sign-in-btn.disabled {
+  opacity: 0.5;
+}
+
+.exchange-btn {
+  background: #fff;
+  color: #FF6B6B;
+  border: none;
+}
+
+/* 积分规则 */
+.points-rules {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.rule-item {
+  padding: 24rpx;
+  background: #f8f8f8;
+  border-radius: 16rpx;
+}
+
+.rule-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.rule-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.rule-points {
+  font-size: 28rpx;
+  color: #FF6B6B;
+  font-weight: 600;
+}
+
+.rule-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 积分明细 */
+.points-history {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+}
+
+.empty-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+}
+
+.empty-text {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: #999;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24rpx 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-left {
+  flex: 1;
+}
+
+.history-reason {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.history-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 4rpx;
+}
+
+.history-extra {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 4rpx;
+}
+
+.history-points {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-left: 24rpx;
+}
+
+.history-points.earn {
+  color: #52c41a;
+}
+
+.history-points.use {
+  color: #ff4d4f;
+}

@@ -34,7 +34,9 @@
         "after-service-detail/index",
         "fill-tracking-no/index",
         "delivery-detail/index",
-        "invoice/index"
+        "invoice/index",
+        "after-sale-apply/index",
+        "after-sale-detail/index"
       ]
     },
     {

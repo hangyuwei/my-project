@@ -310,16 +310,14 @@ Page({
 
     this.hasSava = true;
 
-    resolveAddress({
-      saasId: '88888888',
-      uid: `88888888205500`,
-      authToken: null,
-      id: locationState.addressId,
-      addressId: locationState.addressId,
+    // 准备地址数据
+    const addressData = {
+      addressId: locationState.addressId || locationState._id,
+      _id: locationState._id,
       phone: locationState.phone,
       name: locationState.name,
-      countryName: locationState.countryName,
-      countryCode: locationState.countryCode,
+      countryName: locationState.countryName || '中国',
+      countryCode: locationState.countryCode || 'chn',
       provinceName: locationState.provinceName,
       provinceCode: locationState.provinceCode,
       cityName: locationState.cityName,
@@ -329,12 +327,65 @@ Page({
       detailAddress: locationState.detailAddress,
       isDefault: locationState.isDefault === 1 ? 1 : 0,
       addressTag: locationState.addressTag,
-      latitude: locationState.latitude,
-      longitude: locationState.longitude,
-      storeId: null,
+      latitude: locationState.latitude || '',
+      longitude: locationState.longitude || '',
+    };
+
+    // 调用真实的保存地址云函数
+    const { saveAddress } = require('../../../../services/address/fetchAddress');
+
+    Toast({
+      context: this,
+      selector: '#t-toast',
+      message: '保存中...',
+      icon: 'loading',
+      duration: 0,
     });
 
-    wx.navigateBack({ delta: 1 });
+    saveAddress(addressData)
+      .then((res) => {
+        if (res.success) {
+          Toast({
+            context: this,
+            selector: '#t-toast',
+            message: '保存成功',
+            icon: 'check-circle',
+            duration: 1000,
+          });
+
+          // 返回完整的地址信息
+          resolveAddress({
+            ...addressData,
+            addressId: res.addressId || addressData.addressId,
+            _id: res.addressId || addressData._id,
+            id: addressData.addressId || res.addressId,
+          });
+
+          setTimeout(() => {
+            wx.navigateBack({ delta: 1 });
+          }, 1000);
+        } else {
+          Toast({
+            context: this,
+            selector: '#t-toast',
+            message: res.error || '保存失败',
+            icon: '',
+            duration: 2000,
+          });
+          this.hasSava = false;
+        }
+      })
+      .catch((error) => {
+        console.error('[保存地址] 失败:', error);
+        Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '保存失败，请重试',
+          icon: '',
+          duration: 2000,
+        });
+        this.hasSava = false;
+      });
   },
 
   getWeixinAddress(e) {

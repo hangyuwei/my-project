@@ -21,9 +21,10 @@
   </view>
   <t-pull-down-refresh
     id="pull-down-refresh"
-    normal-bar-height="{{200}}"
+    value="{{pullDownRefreshing}}"
+    normal-bar-height="{{88}}"
     max-bar-height="{{272}}"
-    refreshTimeout="{{3000}}"
+    refreshTimeout="{{5000}}"
     background="#f5f5f5"
     use-loading-slot
     loading-size="60rpx"

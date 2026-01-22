@@ -8,3 +8,5 @@ export const cloudApp = cloudbase.init({
 });
 
 export const db = cloudApp.database();
+
+export const getDb = () => db;

@@ -78,3 +78,24 @@ export const batchUpdateOrders = (ids, status) =>
 
 export const getOrderDetail = (id) =>
   apiFetch(`/api/orders/${id}/detail`);
+
+export const getBanners = () => apiFetch('/api/banners');
+
+export const saveBanner = (payload) =>
+  apiFetch('/api/banners', { method: 'POST', body: JSON.stringify(payload) });
+
+export const deleteBanner = (id) =>
+  apiFetch(`/api/banners/${id}`, { method: 'DELETE' });
+
+// 售后管理
+export const getAfterSales = ({ page = 1, pageSize = 10, status = '' } = {}) =>
+  apiFetch(`/api/after-sales?page=${page}&pageSize=${pageSize}&status=${encodeURIComponent(status)}`);
+
+export const getAfterSaleDetail = (id) =>
+  apiFetch(`/api/after-sales/${id}`);
+
+export const updateAfterSaleStatus = (id, status, rejectReason = '') =>
+  apiFetch(`/api/after-sales/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, rejectReason })
+  });

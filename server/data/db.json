@@ -83,6 +83,28 @@
   ],
   "orders": [
     {
+      "_id": "5fc96993-cf3c-46b4-b6ef-c60ea20c623c",
+      "id": "TEST-123",
+      "orderNo": "TEST-123",
+      "orderId": "TEST-123",
+      "orderStatus": 10,
+      "orderStatusName": "待发货",
+      "createTime": "1768199329934",
+      "updateTime": "1768199329934",
+      "createdAt": "2026-01-12T06:28:49.934Z",
+      "updatedAt": "2026-01-12T06:28:49.935Z",
+      "totalAmount": "95800",
+      "goodsAmount": "0",
+      "paymentAmount": "0",
+      "freightFee": "0",
+      "discountAmount": "0",
+      "orderItemVOs": [],
+      "logisticsVO": {},
+      "storeId": "",
+      "storeName": "",
+      "remark": ""
+    },
+    {
       "id": "O1767753166034",
       "orderNo": "O1767753166034",
       "orderStatus": 5,

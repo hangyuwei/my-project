@@ -2,7 +2,9 @@ export const config = {
   /** 是否使用mock代替api返回 */
   useMock: false,
   cloudEnvId: 'dfhxcx-7gwr0cb34dd24d36',
-  cloudBaseUrl: 'http://localhost:3001',
+  cloudBaseUrl: 'http://127.0.0.1:3001',
+  // Force cloud function calls to use cloudBaseUrl (local mock server).
+  forceLocalCloud: false,
   /** 强制走 mock 的服务（useMock=false 时生效） */
   mockServices: [
     'activity.fetchActivity',

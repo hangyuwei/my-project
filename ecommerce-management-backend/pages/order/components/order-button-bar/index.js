@@ -13,10 +13,16 @@ Component({
         // 判定有传goodsIndex ，则认为是商品button bar, 仅显示申请售后按钮
         if (this.properties?.goodsIndex !== null) {
           const goods = order.goodsList[Number(this.properties.goodsIndex)];
+          const rightButtons = (goods.buttons || [])
+            .filter((b) => b.type == OrderButtonTypes.APPLY_REFUND)
+            .map((button) => ({
+              ...button,
+              openType: button.openType || '',
+            }));
           this.setData({
             buttons: {
               left: [],
-              right: (goods.buttons || []).filter((b) => b.type == OrderButtonTypes.APPLY_REFUND),
+              right: rightButtons,
             },
           });
           return;
@@ -47,7 +53,10 @@ Component({
                 },
               };
             }
-            return button;
+            return {
+              ...button,
+              openType: button.openType || '',
+            };
           });
         // 删除订单按钮单独挪到左侧
         const deleteBtnIndex = buttonsRight.findIndex((b) => b.type === OrderButtonTypes.DELETE);

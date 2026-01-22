@@ -1,5 +1,128 @@
 [
   {
+    "_id": "d2f42a68-4bf4-4587-af8a-24a9d0be91ea",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/products",
+    "query": {
+      "q": "",
+      "status": ""
+    },
+    "bodySummary": null,
+    "status": 401,
+    "rt": 1,
+    "responseSize": 153,
+    "createdAt": "2026-01-12T06:32:27.059Z"
+  },
+  {
+    "_id": "c73b4bb2-6d35-45a3-a49a-287f61ff39b2",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/app.js",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T06:32:27.053Z"
+  },
+  {
+    "_id": "cf6f92e5-6481-4970-92ac-e3d5b346aa2a",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/styles.css",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T06:32:27.050Z"
+  },
+  {
+    "_id": "aa2ffbe4-c56d-495b-8fc0-ab8e1600a8fe",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 4,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T06:32:27.037Z"
+  },
+  {
+    "_id": "a3091fba-a94d-4160-b915-40af89772247",
+    "type": "http",
+    "method": "GET",
+    "path": "/",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T06:32:23.462Z"
+  },
+  {
+    "_id": "ac1d3a2e-41e8-4729-87e9-7ab56c765f68",
+    "type": "http",
+    "method": "GET",
+    "path": "/",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T06:29:41.184Z"
+  },
+  {
+    "_id": "3ad28e52-075d-403c-acee-9ce4f942c367",
+    "type": "http",
+    "method": "GET",
+    "path": "/",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 1,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T06:29:38.564Z"
+  },
+  {
+    "_id": "e7d94646-ffa2-453f-99a3-76a36d1d5c2b",
+    "type": "http",
+    "method": "GET",
+    "path": "/favicon.ico",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T06:29:24.222Z"
+  },
+  {
+    "_id": "d235b714-a09e-4638-9037-9937dc566b3b",
+    "type": "http",
+    "method": "GET",
+    "path": "/",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 1,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T06:29:24.147Z"
+  },
+  {
+    "_id": "88e110d7-a5b6-444a-b769-a2dad9cc5cae",
+    "type": "http",
+    "method": "POST",
+    "path": "/cloudfunctions/createOrder",
+    "query": {},
+    "bodySummary": "{\"data\":{\"orderData\":{\"orderNo\":\"TEST-123\",\"totalAmount\":\"95800\"}}}",
+    "status": 200,
+    "rt": 8,
+    "responseSize": 133,
+    "createdAt": "2026-01-12T06:28:49.938Z"
+  },
+  {
     "_id": "8584f05e-5f02-4f45-b5a9-7e0a12e8330a",
     "type": "http",
     "method": "GET",

@@ -1,6 +1,6 @@
 import { fetchComments } from '../../../services/comments/fetchComments';
 import { fetchCommentsCount } from '../../../services/comments/fetchCommentsCount';
-import dayjs from 'dayjs';
+const dayjs = require('dayjs');
 const layoutMap = {
   0: 'vertical',
 };

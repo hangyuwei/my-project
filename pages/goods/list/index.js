@@ -1,4 +1,5 @@
 import { fetchGoodsList } from '../../../services/good/fetchGoodsList';
+import { addLocalCartItem } from '../../../services/cart/localCart';
 import Toast from 'tdesign-miniprogram/toast/index';
 
 const initFilters = {
@@ -140,12 +141,22 @@ Page({
     this.init(false);
   },
 
-  handleAddCart() {
-    Toast({
-      context: this,
-      selector: '#t-toast',
-      message: '点击加购',
-    });
+  handleAddCart(e) {
+    const { goods } = e.detail;
+    if (!goods || !goods.spuId) {
+      Toast({ context: this, selector: '#t-toast', message: '商品信息错误' });
+      return;
+    }
+    addLocalCartItem({
+      spuId: goods.spuId,
+      skuId: goods.skuId || goods.spuId,
+      title: goods.title,
+      thumb: goods.thumb,
+      price: goods.price,
+      originPrice: goods.originPrice || goods.price,
+      stockQuantity: goods.stockQuantity || 999,
+    }, 1);
+    Toast({ context: this, selector: '#t-toast', message: '已加入购物车' });
   },
 
   tagClickHandle() {

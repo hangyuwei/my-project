@@ -36,6 +36,7 @@ const OrdersPage = () => {
 
   const pageSize = 10;
   const statusLabels = {
+    pending_payment: '待付款',
     pending: '待发货',
     shipped: '已发货',
     completed: '已完成',
@@ -44,9 +45,35 @@ const OrdersPage = () => {
 
   const statusColors = {
     pending: 'badge-warning',
+    pending_payment: 'badge-warning',
     shipped: 'badge-info',
     completed: 'badge-success',
     refunded: 'badge-error'
+  };
+
+  // 售后状态标签和颜色
+  const afterSaleStatusLabels = {
+    APPLIED: '退款申请中',
+    SELLER_AGREED: '商家已同意',
+    SELLER_REJECTED: '已拒绝退款',
+    WAIT_BUYER_RETURN: '待买家退货',
+    BUYER_SHIPPED: '买家已寄回',
+    SELLER_RECEIVED: '商家已收货',
+    REFUNDING: '退款处理中',
+    REFUNDED: '已退款',
+    CANCELED: '售后已取消',
+  };
+
+  const afterSaleStatusColors = {
+    APPLIED: 'badge-warning',
+    SELLER_AGREED: 'badge-info',
+    SELLER_REJECTED: 'badge-error',
+    WAIT_BUYER_RETURN: 'badge-warning',
+    BUYER_SHIPPED: 'badge-info',
+    SELLER_RECEIVED: 'badge-info',
+    REFUNDING: 'badge-warning',
+    REFUNDED: 'badge-success',
+    CANCELED: 'badge-ghost',
   };
 
   const gradeLabels = {
@@ -262,6 +289,7 @@ const OrdersPage = () => {
           className="select select-bordered"
         >
           <option value="">全部状态</option>
+          <option value="pending_payment">待付款</option>
           <option value="pending">待发货</option>
           <option value="shipped">已发货</option>
           <option value="completed">已完成</option>
@@ -310,6 +338,9 @@ const OrdersPage = () => {
                 商品信息
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                收货地址
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 总价
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -341,17 +372,45 @@ const OrdersPage = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">SKU: {item.goodsSku}</div>
+                    {item.goodsName && (
+                      <div className="text-sm font-medium text-gray-900 mb-1">{item.goodsName}</div>
+                    )}
+                    <div className="text-sm text-gray-500">SKU: {item.goodsSku}</div>
                     <div className="text-sm text-gray-500">数量: {item.num}</div>
                   </div>
+                </td>
+                <td className="px-6 py-4">
+                  {item.logisticsVO ? (
+                    <div className="text-sm text-gray-500 max-w-xs">
+                      <div className="font-medium text-gray-900">{item.logisticsVO.receiverName} {item.logisticsVO.receiverPhone}</div>
+                      <div className="truncate">
+                        {item.logisticsVO.receiverProvince}
+                        {item.logisticsVO.receiverCity}
+                        {item.logisticsVO.receiverCountry}
+                        {item.logisticsVO.receiverAddress}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-gray-400">-</span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   ¥{item.totalPrice}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`badge ${statusColors[item.status]}`}>
-                    {statusLabels[item.status]}
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span className={`badge ${statusColors[item.status]}`}>
+                      {statusLabels[item.status] || item.status}
+                    </span>
+                    {item.afterSaleInfo && (
+                      <span className={`badge badge-sm ${afterSaleStatusColors[item.afterSaleInfo.status]}`}>
+                        {afterSaleStatusLabels[item.afterSaleInfo.status] || item.afterSaleInfo.status}
+                      </span>
+                    )}
+                    {item.hasAfterSale && !item.afterSaleInfo && (
+                      <span className="badge badge-sm badge-warning">有售后</span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                   <button
@@ -596,6 +655,50 @@ const OrdersPage = () => {
                     <p className="text-sm">活动名称: {orderDetail.promotion.name}</p>
                     <p className="text-sm">活动描述: {orderDetail.promotion.description}</p>
                     <p className="text-sm">优惠金额: ¥{orderDetail.promotion.multiPrize}</p>
+                  </div>
+                </div>
+              )}
+
+              {orderDetail.afterSaleInfo && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500">售后信息</label>
+                  <div className="bg-orange-50 p-3 rounded border border-orange-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">售后单号: {orderDetail.afterSaleInfo.afterSaleNo}</span>
+                      <span className={`badge ${afterSaleStatusColors[orderDetail.afterSaleInfo.status]}`}>
+                        {afterSaleStatusLabels[orderDetail.afterSaleInfo.status]}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      类型: {orderDetail.afterSaleInfo.type === 'ONLY_REFUND' ? '仅退款' : '退货退款'}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      申请时间: {orderDetail.afterSaleInfo.applyTime ? new Date(orderDetail.afterSaleInfo.applyTime).toLocaleString() : '-'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {orderDetail.logs && orderDetail.logs.length > 0 && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500 mb-2 block">订单状态变更历史</label>
+                  <div className="bg-gray-50 p-3 rounded max-h-64 overflow-y-auto">
+                    <div className="space-y-3">
+                      {orderDetail.logs.map((log, index) => (
+                        <div key={index} className="border-l-2 border-blue-500 pl-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className={`badge ${statusColors[log.status] || 'badge-ghost'} badge-sm`}>
+                              {log.statusName}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {new Date(log.timestamp).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600">{log.notes}</p>
+                          <p className="text-xs text-gray-400">操作者: {log.operator}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}

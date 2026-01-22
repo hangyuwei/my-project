@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  ShoppingBagIcon, 
-  UsersIcon, 
-  DocumentTextIcon, 
+import {
+  HomeIcon,
+  ShoppingBagIcon,
+  UsersIcon,
+  DocumentTextIcon,
   GiftIcon,
+  PhotoIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  ReceiptRefundIcon
 } from '@heroicons/react/24/outline';
 
 const AdminLayout = ({ children }) => {
@@ -14,10 +17,13 @@ const AdminLayout = ({ children }) => {
   const location = useLocation();
 
   const navigation = [
+    { name: '系统概览', href: '/', icon: HomeIcon },
     { name: '商品管理', href: '/goods', icon: ShoppingBagIcon },
     { name: '会员管理', href: '/users', icon: UsersIcon },
     { name: '订单管理', href: '/orders', icon: DocumentTextIcon },
+    { name: '售后管理', href: '/after-sales', icon: ReceiptRefundIcon },
     { name: '促销活动', href: '/promotions', icon: GiftIcon },
+    { name: '横幅管理', href: '/banners', icon: PhotoIcon },
   ];
 
   const isActive = (href) => location.pathname === href;

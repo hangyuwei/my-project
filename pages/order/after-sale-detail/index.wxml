@@ -1,0 +1,143 @@
+<view class="detail-page" wx:if="{{!pageLoading}}">
+  <!-- 状态卡片 -->
+  <view class="status-card status-{{afterSale.status}}">
+    <view class="status-icon">
+      <t-icon name="{{statusConfig.icon}}" size="80rpx" />
+    </view>
+    <view class="status-info">
+      <view class="status-title">{{statusConfig.title}}</view>
+      <view class="status-desc">{{statusConfig.desc}}</view>
+    </view>
+  </view>
+
+  <!-- 退款金额 -->
+  <view class="section amount-section">
+    <view class="section-row">
+      <text class="label">退款金额</text>
+      <text class="value amount">¥{{afterSale.displayAmount}}</text>
+    </view>
+    <view class="section-row">
+      <text class="label">售后类型</text>
+      <text class="value">{{afterSale.type === 'ONLY_REFUND' ? '仅退款' : '退货退款'}}</text>
+    </view>
+    <view class="section-row">
+      <text class="label">退款原因</text>
+      <text class="value">{{afterSale.reasonText}}</text>
+    </view>
+  </view>
+
+  <!-- 退货物流（退货退款且需要填写物流时显示） -->
+  <view class="section" wx:if="{{afterSale.type === 'RETURN_REFUND' && afterSale.status === 'WAIT_BUYER_RETURN'}}">
+    <view class="section-title">退货地址</view>
+    <view class="return-address">
+      <view class="address-info">
+        <text class="name">商家收货地址</text>
+        <text class="detail">请联系商家获取退货地址</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已填写的物流信息 -->
+  <view class="section" wx:if="{{afterSale.buyerLogistics}}">
+    <view class="section-title">退货物流</view>
+    <view class="section-row">
+      <text class="label">物流公司</text>
+      <text class="value">{{afterSale.buyerLogistics.company}}</text>
+    </view>
+    <view class="section-row">
+      <text class="label">物流单号</text>
+      <text class="value">{{afterSale.buyerLogistics.logisticsNo}}</text>
+    </view>
+  </view>
+
+  <!-- 凭证图片 -->
+  <view class="section" wx:if="{{afterSale.evidence && afterSale.evidence.length > 0}}">
+    <view class="section-title">凭证图片</view>
+    <view class="evidence-list">
+      <image
+        wx:for="{{afterSale.evidence}}"
+        wx:key="*this"
+        src="{{item}}"
+        mode="aspectFill"
+        class="evidence-image"
+        data-url="{{item}}"
+        bindtap="previewEvidence"
+      />
+    </view>
+  </view>
+
+  <!-- 售后单信息 -->
+  <view class="section">
+    <view class="section-title">售后信息</view>
+    <view class="section-row">
+      <text class="label">售后单号</text>
+      <text class="value">{{afterSale.afterSaleNo}}</text>
+    </view>
+    <view class="section-row">
+      <text class="label">申请时间</text>
+      <text class="value">{{afterSale.applyTimeFormatted}}</text>
+    </view>
+    <view class="section-row clickable" bindtap="goToOrder">
+      <text class="label">关联订单</text>
+      <view class="value-with-arrow">
+        <text>{{afterSale.orderNo}}</text>
+        <t-icon name="chevron-right" size="36rpx" color="#999" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <!-- 可取消状态 -->
+    <block wx:if="{{afterSale.status === 'APPLIED' || afterSale.status === 'SELLER_REJECTED'}}">
+      <button class="btn btn-secondary" bindtap="onCancelTap">撤销申请</button>
+    </block>
+
+    <!-- 需要填写物流 -->
+    <block wx:if="{{afterSale.status === 'WAIT_BUYER_RETURN'}}">
+      <button class="btn btn-primary" bindtap="openLogisticsPopup">填写物流单号</button>
+    </block>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading" wx:if="{{pageLoading}}">
+  <t-loading theme="circular" size="40rpx" />
+  <text>加载中...</text>
+</view>
+
+<!-- 填写物流弹窗 -->
+<t-popup visible="{{showLogisticsPopup}}" placement="bottom" bind:visible-change="closeLogisticsPopup">
+  <view class="logistics-popup">
+    <view class="popup-header">
+      <text>填写物流信息</text>
+      <t-icon name="close" size="40rpx" bindtap="closeLogisticsPopup" />
+    </view>
+    <view class="popup-content">
+      <view class="input-group">
+        <text class="input-label">物流公司</text>
+        <input
+          class="input-field"
+          placeholder="请输入物流公司名称"
+          value="{{logisticsCompany}}"
+          bindinput="onCompanyInput"
+        />
+      </view>
+      <view class="input-group">
+        <text class="input-label">物流单号</text>
+        <input
+          class="input-field"
+          placeholder="请输入物流单号"
+          value="{{logisticsNo}}"
+          bindinput="onLogisticsNoInput"
+        />
+      </view>
+    </view>
+    <view class="popup-footer">
+      <button class="btn btn-primary" bindtap="submitLogistics">确认提交</button>
+    </view>
+  </view>
+</t-popup>
+
+<t-toast id="t-toast" />
+<t-dialog id="t-dialog" />

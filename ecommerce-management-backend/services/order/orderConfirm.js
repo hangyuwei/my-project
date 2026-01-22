@@ -50,6 +50,17 @@ export function dispatchCommitPay(params) {
   if (shouldMock('order.dispatchCommitPay')) {
     return mockDispatchCommitPay(params);
   }
+  const app = getApp();
+  const openid = app?.globalData?.openid;
+  if (!openid) {
+    console.error('[order] openid missing, abort order creation');
+    return Promise.resolve({
+      data: { isSuccess: false },
+      success: false,
+      code: 'Fail',
+      msg: 'OpenID missing. Please relaunch and retry.',
+    });
+  }
   return callCloudFunction('commitPay', params || {}).then((real) => adaptCommitPay(real));
 }
 

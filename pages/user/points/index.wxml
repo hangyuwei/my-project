@@ -1,0 +1,65 @@
+<view class="points-page">
+  <!-- 加载状态 -->
+  <view wx:if="{{pageLoading}}" class="loading-container">
+    <t-loading theme="circular" size="40rpx" text="加载中..." />
+  </view>
+
+  <view wx:else>
+    <!-- 积分卡片 -->
+    <view class="points-card">
+      <view class="points-header">
+        <view class="points-label">我的积分</view>
+        <view class="points-value">{{userPoints}}</view>
+      </view>
+      <view class="points-actions">
+        <button
+          class="sign-in-btn {{!canSignIn ? 'disabled' : ''}}"
+          bind:tap="onSignIn"
+          disabled="{{!canSignIn}}"
+        >
+          {{hasSignedToday ? '已签到' : '每日签到'}}
+        </button>
+        <button class="exchange-btn" bind:tap="onExchangePoints">积分兑换</button>
+      </view>
+    </view>
+
+    <!-- 积分规则 -->
+    <view class="points-rules">
+      <view class="section-title">积分规则</view>
+      <view class="rules-list">
+        <view wx:for="{{pointsRules}}" wx:key="title" class="rule-item">
+          <view class="rule-main">
+            <view class="rule-title">{{item.title}}</view>
+            <view class="rule-points">{{item.points}}</view>
+          </view>
+          <view class="rule-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 积分明细 -->
+    <view class="points-history">
+      <view class="section-title">积分明细</view>
+      <view wx:if="{{pointsHistory.length === 0}}" class="empty-history">
+        <t-icon name="info-circle" size="96rpx" color="#ccc" />
+        <text class="empty-text">暂无积分记录</text>
+      </view>
+      <view wx:else class="history-list">
+        <view wx:for="{{pointsHistory}}" wx:key="id" class="history-item">
+          <view class="history-left">
+            <view class="history-reason">{{item.reason}}</view>
+            <view class="history-time">{{formatTime(item.time)}}</view>
+            <view wx:if="{{item.orderNo}}" class="history-extra">订单号: {{item.orderNo}}</view>
+            <view wx:if="{{item.goodsName}}" class="history-extra">商品: {{item.goodsName}}</view>
+            <view wx:if="{{item.couponName}}" class="history-extra">{{item.couponName}}</view>
+          </view>
+          <view class="history-points {{item.type === 'earn' ? 'earn' : 'use'}}">
+            {{item.points > 0 ? '+' : ''}}{{item.points}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <t-toast id="t-toast" />
+</view>

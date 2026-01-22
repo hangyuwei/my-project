@@ -23,7 +23,7 @@ const buildUrlMap = async (fileIds) => {
   return map;
 };
 
-const banners = [
+const fallbackBanners = [
   'https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner1.png',
   'https://tdesign.gtimg.com/miniprogram/template/retail/home/v2/banner2.png',
 ];
@@ -77,13 +77,67 @@ exports.main = async () => {
     .limit(10)
     .get();
 
-  const list = products.data || [];
+  // 展平嵌套的 data 字段
+  const rawProducts = products.data || [];
+  const list = rawProducts.map((item) => ({
+    _id: item._id,
+    ...(item.data || item),
+  }));
+
   const fileIds = list.map((item) => pickCoverSource(item));
   const urlMap = await buildUrlMap(fileIds);
   const goodsList = list.map((item) => mapCard(item, urlMap));
 
+  const bannersResult = await db
+    .collection('banners')
+    .orderBy('sort', 'asc')
+    .orderBy('createTime', 'desc')
+    .get()
+    .catch(() => ({ data: [] }));
+
+  // 展平嵌套的 data 字段
+  const rawBanners = bannersResult.data || [];
+  const flatBanners = rawBanners.map((item) => ({
+    _id: item._id,
+    ...(item.data || item),
+  }));
+
+  // 过滤启用的 banner
+  const bannerList = flatBanners.filter((item) => {
+    const status = item?.status;
+    if (status === undefined || status === null || status === '') return true;
+    if (status === 'active' || status === true || status === 1 || status === '1') return true;
+    if (status === 'inactive' || status === false || status === 0 || status === '0') return false;
+    if (status === '启用') return true;
+    if (status === '禁用') return false;
+    return true;
+  });
+
+  // 转换云文件 ID 为临时 URL
+  const bannerFileIds = bannerList
+    .map((item) => item.imageUrl || item.image || '')
+    .filter(Boolean);
+  const bannerUrlMap = await buildUrlMap(bannerFileIds);
+
+  // 组装最终的 banner 数据
+  const banners = bannerList.map((item) => {
+    const raw = item.imageUrl || item.image || '';
+    const image = bannerUrlMap[raw] || raw;
+    return {
+      id: item._id || item.id || '',
+      image,
+      linkUrl: item.linkUrl || item.url || '',
+      title: item.title || '',
+    };
+  });
+
+  const swiper = banners.length
+    ? banners.map((item) => item.image).filter(Boolean)
+    : fallbackBanners;
+
   return {
-    swiper: banners,
+    swiper,
+    banners,
     tabList,
     activityImg,
     goodsList,

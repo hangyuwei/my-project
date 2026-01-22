@@ -41,6 +41,22 @@ const UsersPage = () => {
     gold: 'bg-yellow-100 text-yellow-800'
   };
 
+  const statusLabels = {
+    pending_payment: '待付款',
+    pending: '待发货',
+    shipped: '已发货',
+    completed: '已完成',
+    refunded: '已退款'
+  };
+
+  const statusColors = {
+    pending_payment: 'badge-warning',
+    pending: 'badge-warning',
+    shipped: 'badge-info',
+    completed: 'badge-success',
+    refunded: 'badge-error'
+  };
+
   // 获取会员列表
   const fetchUsers = async (page = 1, search = '') => {
     try {
@@ -382,16 +398,8 @@ const UsersPage = () => {
                         <td>{order.num}</td>
                         <td>¥{order.totalPrice}</td>
                         <td>
-                          <span className={`badge ${
-                            order.status === 'completed' ? 'badge-success' :
-                            order.status === 'shipped' ? 'badge-info' :
-                            order.status === 'pending' ? 'badge-warning' :
-                            'badge-error'
-                          }`}>
-                            {order.status === 'completed' ? '已完成' :
-                             order.status === 'shipped' ? '已发货' :
-                             order.status === 'pending' ? '待发货' :
-                             '已退款'}
+                          <span className={`badge ${statusColors[order.status] || 'badge-ghost'}`}>
+                            {statusLabels[order.status] || order.orderStatusName || order.status || '未知'}
                           </span>
                         </td>
                         <td>{new Date(order.createTime).toLocaleDateString()}</td>

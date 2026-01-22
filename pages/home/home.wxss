@@ -105,3 +105,42 @@ page {
   --td-tab-item-color: #666;
   --td-tab-track-color: red;
 }
+
+.home-page-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 0 16rpx;
+}
+
+.home-page-section-header .section-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  position: relative;
+}
+
+.home-page-section-header .section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8rpx;
+  width: 48rpx;
+  height: 6rpx;
+  background-color: #fa4126;
+  border-radius: 3rpx;
+}
+
+.home-page-section-header .section-controls {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.home-page-section-header .section-more {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #999;
+  gap: 4rpx;
+}

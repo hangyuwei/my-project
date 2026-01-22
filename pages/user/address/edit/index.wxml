@@ -1,7 +1,7 @@
 <view class="address-detail">
   <view class="divider-line" />
   <t-location
-    title="获取微信收获地址"
+    title="获取微信收货地址"
     isCustomStyle
     t-class="address-detail-wx-location"
     bind:change="getWeixinAddress"

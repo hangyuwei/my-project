@@ -5,20 +5,59 @@ import { addLocalCartItem } from '../../services/cart/localCart';
 
 Page({
   data: {
+    categories: [],      // 分类列表
     categoryName: '',
     goodsList: [],
+    currentCategory: '', // 当前选中的分类
   },
 
-  async init() {
+  async init(categoryKey) {
     try {
-      const [categories, goodsList] = await Promise.all([getCategoryList(), fetchGoodsList(0, 20)]);
-      const categoryName = categories?.[0]?.name || '食品保健类';
+      const categories = await getCategoryList();
+      const firstCategory = categories?.[0];
+      // 默认选择第一个分类（全部商品，key为空字符串）
+      const selectedKey = categoryKey !== undefined ? categoryKey : (firstCategory?.key ?? '');
+      const selectedName = categories.find(c => c.key === selectedKey)?.name || firstCategory?.name || '全部商品';
+
+      // 调用 fetchGoodsList，如果 category 为空则不传递分类参数（显示全部）
+      let goodsList = await fetchGoodsList({
+        pageIndex: 0,
+        pageSize: 20,
+        ...(selectedKey ? { category: selectedKey } : {})
+      });
+
       this.setData({
-        categoryName,
-        goodsList,
+        categories,
+        categoryName: selectedName,
+        currentCategory: selectedKey,
+        goodsList: goodsList || [],
       });
     } catch (error) {
       console.error('err:', error);
+    }
+  },
+
+  // 切换分类
+  async onCategoryTap(e) {
+    const { key = '', name } = e.currentTarget.dataset;
+    if (key === this.data.currentCategory) return;
+
+    this.setData({
+      currentCategory: key,
+      categoryName: name,
+      goodsList: [],
+    });
+
+    // 加载该分类的商品，如果 key 为空则显示全部
+    try {
+      const goodsList = await fetchGoodsList({
+        pageIndex: 0,
+        pageSize: 20,
+        ...(key ? { category: key } : {})
+      });
+      this.setData({ goodsList: goodsList || [] });
+    } catch (error) {
+      console.error('Load category goods error:', error);
     }
   },
 
@@ -27,7 +66,7 @@ Page({
   },
 
   onLoad() {
-    this.init(true);
+    this.init();
   },
 
   onGoodsClick(e) {

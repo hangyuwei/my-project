@@ -23,7 +23,7 @@ Page({
     this.orderNo = query.orderNo;
     this.init();
     this.navbar = this.selectComponent('#navbar');
-    this.pullDownRefresh = this.selectComponent('#wr-pull-down-refresh');
+    this.pullDownRefresh = this.selectComponent('#t-pull-down-refresh');
   },
 
   onShow() {

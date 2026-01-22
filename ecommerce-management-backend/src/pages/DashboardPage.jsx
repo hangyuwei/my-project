@@ -42,6 +42,7 @@ const DashboardPage = () => {
   }, []);
 
   const statusLabels = {
+    pending_payment: '待付款',
     pending: '待发货',
     shipped: '已发货',
     completed: '已完成',
@@ -49,6 +50,7 @@ const DashboardPage = () => {
   };
 
   const statusColors = {
+    pending_payment: 'badge-warning',
     pending: 'badge-warning',
     shipped: 'badge-info',
     completed: 'badge-success',

@@ -37,9 +37,13 @@ function imageMogr(url, options) {
     url.indexOf('qlogo.cn') !== -1 ||
     url.indexOf('wxfile://') === 0 ||
     url.indexOf('http://tmp/wx') === 0 ||
-    url.indexOf('imageMogr2') !== -1
+    url.indexOf('imageMogr2') !== -1 ||
+    url.indexOf('tcb.qcloud.la') !== -1 ||
+    url.indexOf('.tcb.qcloud.la') !== -1 ||
+    url.indexOf('.myqcloud.com') !== -1 ||
+    (url.indexOf('?') !== -1 && (url.indexOf('sign=') !== -1 || url.indexOf('_signature=') !== -1))
   ) {
-    //qlogo.cn域名或者本地图片不做转换
+    //qlogo.cn域名、本地图片、云存储临时URL不做转换
     return url;
   } //强制转https
 
@@ -131,7 +135,8 @@ function getSrc(options) {
     });
   }
 
-  return '';
+  // 如果没有设置缩略图尺寸，直接返回原图
+  return options.src;
 }
 
 module.exports = {

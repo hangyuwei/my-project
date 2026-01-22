@@ -68,10 +68,10 @@ Component({
         this.selectorQuery.select(selector).boundingClientRect(resolve).exec();
       });
     },
-    onLoad(e) {
+    handleLoad(e) {
       this.triggerEvent('load', e.detail);
     },
-    onError(e) {
+    handleError(e) {
       this.triggerEvent('error', e.detail);
     },
   },

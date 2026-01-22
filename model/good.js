@@ -1950,8 +1950,39 @@ export function adaptGoodDetail(real = {}) {
 }
 
 export function adaptGoodsListItem(real = {}, options = {}) {
-  const detail = real && real.spuId && Array.isArray(real.skuList) ? real : adaptGoodDetail(real);
-  const sku = ensureArray(detail.skuList)[0] || {};
+  // 检查是否有 skuList 或 skus（云函数返回 skus）
+  const hasSkuData = real && real.spuId && (Array.isArray(real.skuList) || Array.isArray(real.skus));
+
+  // 如果云函数返回的数据已经有足够信息，直接使用，不回退到模拟数据
+  if (real && real.spuId && (real.name || real.title || real.goodsName) && real.price !== undefined) {
+    // 直接从云函数数据构建列表项
+    const goodsName = real.goodsName || real.name || real.title || '';
+    const skuImage = real.image || real.primaryImage || real.coverImage || '';
+    const stockQuantity = toInt(pickFirst(real.stock, real.spuStockQuantity, real.stockQuantity, 0), 0);
+    const price = real.price || 0;
+    const linePrice = real.linePrice;
+    const originPrice = linePrice && Number(linePrice) > Number(price) ? linePrice : undefined;
+
+    return {
+      spuId: real.spuId,
+      skuId: pickFirst(real.skuId, real.spuId),
+      storeId: pickFirst(real.storeId, 'local'),
+      thumb: skuImage,
+      title: goodsName,
+      goodsName,
+      skuImage,
+      price,
+      originPrice,
+      stockQuantity,
+      tags: ensureArray(real.tags),
+      category: real.category,
+    };
+  }
+
+  // 回退到完整的适配逻辑（用于详情页等需要完整数据的场景）
+  const detail = hasSkuData ? real : adaptGoodDetail(real);
+  const skuList = ensureArray(detail.skuList || detail.skus);
+  const sku = skuList[0] || {};
   const goodsName = detail.goodsName || detail.title;
   const skuImage = detail.skuImage || detail.primaryImage;
   const stockQuantity = toInt(

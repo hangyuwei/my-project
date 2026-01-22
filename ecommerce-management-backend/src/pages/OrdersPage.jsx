@@ -36,6 +36,7 @@ const OrdersPage = () => {
 
   const pageSize = 10;
   const statusLabels = {
+    pending_payment: '待付款',
     pending: '待发货',
     shipped: '已发货',
     completed: '已完成',
@@ -43,8 +44,9 @@ const OrdersPage = () => {
   };
 
   const statusColors = {
+    pending_payment: 'badge-warning',
     pending: 'badge-warning',
-    shipped: 'badge-info',
+    shipped: 'badge-primary',
     completed: 'badge-success',
     refunded: 'badge-error'
   };
@@ -53,6 +55,95 @@ const OrdersPage = () => {
     bronze: '铜牌会员',
     silver: '银牌会员',
     gold: '金牌会员'
+  };
+
+  const normalizeTime = (value) => {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    if (typeof value === 'number') return new Date(value);
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return null;
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric)) return new Date(numeric);
+      const parsed = new Date(trimmed);
+      if (!Number.isNaN(parsed.getTime())) return parsed;
+    }
+    return null;
+  };
+
+  const buildOrderTimeline = (order) => {
+    if (!order) return [];
+    const timeline = [];
+    const push = (label, time) => {
+      const date = normalizeTime(time);
+      if (!date) return;
+      timeline.push({ label, time: date });
+    };
+
+    push('创建订单', order.createTime);
+
+    const paymentTime =
+      order.paymentVO?.paySuccessTime ||
+      order.paymentVO?.payTime ||
+      order.payTime ||
+      order.paymentTime ||
+      order.paidTime ||
+      order.paySuccessTime;
+    push('支付成功', paymentTime);
+
+    const shipTime = order.shipTime || order.deliveryTime || order.deliverTime || order.sendTime;
+    push('已发货', shipTime);
+
+    const receiveTime = order.receiveTime || order.confirmTime || order.signTime;
+    push('确认收货', receiveTime);
+
+    const finishTime = order.finishTime || order.completeTime;
+    push('交易完成', finishTime);
+
+    push('订单取消', order.cancelTime);
+
+    const refundTime = order.refundTime || order.refundSuccessTime || order.refundedTime;
+    push('已退款', refundTime);
+
+    const updateTime = order.updateTime || order.updatedAt;
+    const updateDate = normalizeTime(updateTime);
+    const createDate = normalizeTime(order.createTime);
+    if (updateDate && (!createDate || updateDate.getTime() !== createDate.getTime())) {
+      const statusText = statusLabels[order.status] || order.orderStatusName || order.status || '';
+      push(`状态更新${statusText ? `为${statusText}` : ''}`, updateDate);
+    }
+
+    const seen = new Set();
+    return timeline
+      .sort((a, b) => a.time - b.time)
+      .filter((entry) => {
+        const key = `${entry.label}-${entry.time.getTime()}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map((entry) => ({
+        ...entry,
+        time: entry.time.toLocaleString(),
+      }));
+  };
+
+  const getOrderId = (order) => order?._id || order?.id;
+
+  const updateOrderStatus = async (order, status) => {
+    const id = getOrderId(order);
+    if (!id) {
+      alert('订单ID缺失，无法更新状态');
+      return;
+    }
+    try {
+      await batchUpdateOrders([id], status);
+      fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
+    } catch (error) {
+      console.error('更新订单状态失败:', error);
+      alert('更新失败，请重试');
+    }
   };
 
   // 获取订单列表
@@ -217,6 +308,8 @@ const OrdersPage = () => {
     }
   };
 
+  const timelineEntries = buildOrderTimeline(orderDetail);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -262,6 +355,7 @@ const OrdersPage = () => {
           className="select select-bordered"
         >
           <option value="">全部状态</option>
+          <option value="pending_payment">待付款</option>
           <option value="pending">待发货</option>
           <option value="shipped">已发货</option>
           <option value="completed">已完成</option>
@@ -296,26 +390,29 @@ const OrdersPage = () => {
       </div>
 
       {/* 订单列表 */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left">
+              <th className="px-4 py-3 text-left w-12">
                 <input type="checkbox" className="checkbox" />
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
                 订单信息
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-56">
                 商品信息
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-64">
+                收货地址
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                 总价
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                 状态
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                 操作
               </th>
             </tr>
@@ -323,59 +420,100 @@ const OrdersPage = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {orders.map((item) => (
               <tr key={item._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <input 
-                    type="checkbox" 
-                    className="checkbox" 
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
                     id={`order-${item._id}`}
                   />
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">{item.id}</div>
-                    <div className="text-sm text-gray-500">用户: {item.userId}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-xs font-medium text-gray-900">{item.id}</div>
+                    <div className="text-xs text-gray-500">用户: {item.userId.slice(0, 12)}...</div>
+                    <div className="text-xs text-gray-500">
                       {new Date(item.createTime).toLocaleDateString()}
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 py-3">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">SKU: {item.goodsSku}</div>
-                    <div className="text-sm text-gray-500">数量: {item.num}</div>
+                    <div className="text-xs font-medium text-gray-900 truncate max-w-xs">
+                      {item.goodsName || item.goodsSku || '未知商品'}
+                    </div>
+                    <div className="text-xs text-gray-500">SKU: {item.goodsSku?.slice(-10) || '-'}</div>
+                    <div className="text-xs text-gray-500">数量: {item.num}</div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-4 py-3">
+                  <div className="text-xs">
+                    {item.logisticsVO ? (
+                      <>
+                        <div className="font-medium text-gray-900">
+                          {item.logisticsVO.receiverName} {item.logisticsVO.receiverPhone}
+                        </div>
+                        <div className="text-gray-500 truncate max-w-xs">
+                          {item.logisticsVO.receiverProvince}
+                          {item.logisticsVO.receiverCity}
+                          {item.logisticsVO.receiverCountry}
+                        </div>
+                        <div className="text-gray-500 truncate max-w-xs">
+                          {item.logisticsVO.receiverAddress}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-gray-400">暂无地址</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-900">
                   ¥{item.totalPrice}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`badge ${statusColors[item.status]}`}>
-                    {statusLabels[item.status]}
-                  </span>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  {item.status === 'pending' ? (
+                    <button
+                      type="button"
+                      className={`badge badge-sm ${statusColors[item.status]} cursor-pointer select-none`}
+                      title="点击标记为已发货"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        updateOrderStatus(item, 'shipped');
+                      }}
+                    >
+                      {statusLabels[item.status]}
+                    </button>
+                  ) : (
+                    <span className={`badge badge-sm ${statusColors[item.status]}`}>
+                      {statusLabels[item.status]}
+                    </span>
+                  )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                  <button
-                    onClick={() => viewOrderDetail(item)}
-                    className="text-green-600 hover:text-green-900"
-                    title="查看详情"
-                  >
-                    <EyeIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => openModal(item)}
-                    className="text-blue-600 hover:text-blue-900"
-                    title="编辑"
-                  >
-                    <PencilIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => deleteOrder(item._id)}
-                    className="text-red-600 hover:text-red-900"
-                    title="删除"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => viewOrderDetail(item)}
+                      className="text-green-600 hover:text-green-900"
+                      title="查看详情"
+                    >
+                      <EyeIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => openModal(item)}
+                      className="text-blue-600 hover:text-blue-900"
+                      title="编辑"
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteOrder(item._id)}
+                      className="text-red-600 hover:text-red-900"
+                      title="删除"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -511,6 +649,7 @@ const OrdersPage = () => {
                   onChange={handleInputChange}
                   className="select select-bordered w-full"
                 >
+                  <option value="pending_payment">待付款</option>
                   <option value="pending">待发货</option>
                   <option value="shipped">已发货</option>
                   <option value="completed">已完成</option>
@@ -577,13 +716,33 @@ const OrdersPage = () => {
                 </div>
               )}
 
+              <div>
+                <label className="text-sm font-medium text-gray-500">收货地址</label>
+                <div className="bg-gray-50 p-3 rounded">
+                  {orderDetail.logisticsVO ? (
+                    <>
+                      <p className="text-sm">收货人: {orderDetail.logisticsVO.receiverName}</p>
+                      <p className="text-sm">联系电话: {orderDetail.logisticsVO.receiverPhone}</p>
+                      <p className="text-sm">
+                        收货地址: {orderDetail.logisticsVO.receiverProvince}
+                        {orderDetail.logisticsVO.receiverCity}
+                        {orderDetail.logisticsVO.receiverCountry}
+                        {orderDetail.logisticsVO.receiverAddress}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500">暂无收货地址信息</p>
+                  )}
+                </div>
+              </div>
+
               {orderDetail.goods && (
                 <div>
                   <label className="text-sm font-medium text-gray-500">商品信息</label>
                   <div className="bg-gray-50 p-3 rounded">
                     <p className="text-sm">商品名称: {orderDetail.goods.goodName}</p>
                     <p className="text-sm">SKU: {orderDetail.goods.sku}</p>
-                    <p className="text-sm">单价: ¥{orderDetail.goods.price}</p>
+                    <p className="text-sm">单价: ¥{(orderDetail.goods.price / 100).toFixed(2)}</p>
                     <p className="text-sm">数量: {orderDetail.num}</p>
                   </div>
                 </div>
@@ -599,6 +758,58 @@ const OrdersPage = () => {
                   </div>
                 </div>
               )}
+
+              <div>
+                <label className="text-sm font-medium text-gray-500">订单操作日志</label>
+                <div className="bg-gray-50 p-3 rounded space-y-2 max-h-60 overflow-y-auto">
+                  {orderDetail.logs && orderDetail.logs.length > 0 ? (
+                    orderDetail.logs.map((log, index) => (
+                      <div
+                        key={log._id || index}
+                        className="border-b border-gray-200 pb-2 last:border-b-0"
+                      >
+                        <div className="flex items-start justify-between text-sm">
+                          <div className="flex-1">
+                            <div className="font-medium text-gray-700">
+                              {log.statusName || log.status}
+                            </div>
+                            <div className="text-gray-600 mt-1">
+                              {log.notes}
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">
+                              操作人: {log.operator} · 操作: {log.action}
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-500 ml-2 whitespace-nowrap">
+                            {log.timestamp ? new Date(log.timestamp).toLocaleString() : ''}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">暂无操作日志</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-500">订单时间线</label>
+                <div className="bg-gray-50 p-3 rounded space-y-2">
+                  {timelineEntries.length > 0 ? (
+                    timelineEntries.map((item, index) => (
+                      <div
+                        key={`${item.label}-${item.time}-${index}`}
+                        className="flex items-start justify-between text-sm"
+                      >
+                        <span className="text-gray-700">{item.label}</span>
+                        <span className="text-gray-500">{item.time}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">暂无时间线数据</p>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="modal-action">

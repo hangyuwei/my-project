@@ -8,6 +8,17 @@ page view {
   padding-top: 20rpx;
 }
 
+.person-info__header {
+  padding: 20rpx 32rpx;
+  text-align: center;
+}
+
+.person-info__tips {
+  font-size: 26rpx;
+  color: #999;
+  line-height: 40rpx;
+}
+
 .person-info__btn {
   width: 100%;
   border: 2rpx solid #ddd;

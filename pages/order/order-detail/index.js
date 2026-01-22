@@ -3,6 +3,7 @@ import { OrderStatus, LogisticsIconMap } from '../config';
 import { fetchBusinessTime, fetchOrderDetail } from '../../../services/order/orderDetail';
 import Toast from 'tdesign-miniprogram/toast/index';
 import { getAddressPromise } from '../../../services/address/list';
+import { getAfterSaleEntry } from '../../../services/after-sale/index';
 
 Page({
   data: {
@@ -17,13 +18,15 @@ Page({
     logisticsNodes: [],
     /** 订单评论状态 */
     orderHasCommented: true,
+    /** 售后入口信息 */
+    afterSaleEntry: null,
   },
 
   onLoad(query) {
     this.orderNo = query.orderNo;
     this.init();
     this.navbar = this.selectComponent('#navbar');
-    this.pullDownRefresh = this.selectComponent('#wr-pull-down-refresh');
+    this.pullDownRefresh = this.selectComponent('#t-pull-down-refresh');
   },
 
   onShow() {
@@ -50,6 +53,8 @@ Page({
     this.getDetail()
       .then(() => {
         this.setData({ pageLoading: false });
+        // 获取售后入口信息
+        this.fetchAfterSaleEntry();
       })
       .catch((e) => {
         console.error(e);
@@ -69,7 +74,7 @@ Page({
 
   // 页面刷新，展示下拉刷新
   onPullDownRefresh_(e) {
-    const { callback } = e.detail;
+    const callback = e && e.detail && e.detail.callback;
     return this.getDetail().then(() => callback && callback());
   },
 
@@ -89,7 +94,7 @@ Page({
         statusDesc: order.orderStatusName,
         amount: order.paymentAmount,
         totalAmount: order.goodsAmountApp,
-        logisticsNo: order.logisticsVO.logisticsNo,
+        logisticsNo: order.logisticsVO ? order.logisticsVO.logisticsNo : '',
         goodsList: (order.orderItemVOs || []).map((goods) =>
           Object.assign({}, goods, {
             id: goods.id,
@@ -98,7 +103,7 @@ Page({
             skuId: goods.skuId,
             spuId: goods.spuId,
             specs: (goods.specifications || []).map((s) => s.specValue),
-            price: goods.tagPrice ? goods.tagPrice : goods.actualPrice, // 商品销售单价, 优先取限时活动价
+            price: goods.tagPrice ? goods.tagPrice : goods.actualPrice,
             num: goods.buyQuantity,
             titlePrefixTags: goods.tagText ? [{ text: goods.tagText }] : [],
             buttons: goods.buttonVOs || [],
@@ -117,7 +122,7 @@ Page({
         addressEditable:
           [OrderStatus.PENDING_PAYMENT, OrderStatus.PENDING_DELIVERY].includes(order.orderStatus) &&
           order.orderSubStatus !== -1, // 订单正在取消审核时不允许修改地址（但是返回的状态码与待发货一致）
-        isPaid: !!order.paymentVO.paySuccessTime,
+        isPaid: !!(order.paymentVO && order.paymentVO.paySuccessTime),
         invoiceStatus: this.datermineInvoiceStatus(order),
         invoiceDesc: order.invoiceDesc,
         invoiceType: order.invoiceVO?.invoiceType === 5 ? '电子普通发票' : '不开发票', //是否开票 0-不开 5-电子发票
@@ -268,6 +273,50 @@ Page({
   onOrderInvoiceView() {
     wx.navigateTo({
       url: `/pages/order/invoice/index?orderNo=${this.orderNo}`,
+    });
+  },
+
+  // 获取售后入口信息
+  async fetchAfterSaleEntry() {
+    try {
+      const entry = await getAfterSaleEntry(this.orderNo);
+      console.log('[售后入口]', entry);
+      console.log('[订单状态]', 'orderStatus:', this.data.order.orderStatus, 'isPending:', this.data.order.orderStatus === 5);
+      this.setData({ afterSaleEntry: entry });
+    } catch (error) {
+      console.error('[售后入口] 获取失败:', error);
+    }
+  },
+
+  // 点击售后按钮
+  onAfterSaleTap() {
+    const { afterSaleEntry, order } = this.data;
+
+    if (!afterSaleEntry) return;
+
+    if (afterSaleEntry.hasOngoing) {
+      // 有进行中的售后，跳转到售后详情页
+      wx.navigateTo({
+        url: `/pages/order/after-sale-detail/index?afterSaleId=${afterSaleEntry.afterSaleId}`,
+      });
+    } else if (afterSaleEntry.canApply) {
+      // 可以申请售后，跳转到售后申请页
+      wx.navigateTo({
+        url: `/pages/order/after-sale-apply/index?orderNo=${this.orderNo}&maxAmount=${afterSaleEntry.refundableAmount}&types=${afterSaleEntry.availableTypes.join(',')}`,
+      });
+    }
+  },
+
+  // 取消订单 - 跳转到售后申请页面
+  onCancelOrderTap() {
+    const { order } = this.data;
+    // 金额从分转换为元
+    const maxAmountFen = order.paymentAmount || order.totalAmount || 0;
+    const maxAmount = (maxAmountFen / 100).toFixed(2);
+    const orderNo = order.orderNo || this.orderNo;
+
+    wx.navigateTo({
+      url: `/pages/order/after-sale-apply/index?orderNo=${orderNo}&maxAmount=${maxAmount}&types=ONLY_REFUND`,
     });
   },
 });

@@ -1,5 +1,155 @@
 [
   {
+    "_id": "09c56b36-ef0f-4fce-978c-d6c8e9ce5e4f",
+    "type": "http",
+    "method": "POST",
+    "path": "/admin/api/login",
+    "query": {},
+    "bodySummary": "{\"password\":\"198024\"}",
+    "status": 401,
+    "rt": 1,
+    "responseSize": 157,
+    "createdAt": "2026-01-12T03:48:44.213Z"
+  },
+  {
+    "_id": "5e405878-4bde-41f4-aa34-547245f67407",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/products",
+    "query": {
+      "q": "",
+      "status": ""
+    },
+    "bodySummary": null,
+    "status": 401,
+    "rt": 0,
+    "responseSize": 153,
+    "createdAt": "2026-01-12T03:48:39.078Z"
+  },
+  {
+    "_id": "ef877e28-1e0e-4d9a-b999-f645a4bcee39",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/app.js",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 2,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T03:48:39.043Z"
+  },
+  {
+    "_id": "36881e10-b20f-4c33-a7bd-5e8f7574ffd0",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/styles.css",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 2,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T03:48:39.042Z"
+  },
+  {
+    "_id": "bb4c879f-3582-486b-b8e2-ed21bff3c560",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 1,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T03:48:39.019Z"
+  },
+  {
+    "_id": "152b445b-0a47-4e91-a21c-4cc0ca37156d",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/api/products",
+    "query": {
+      "q": "",
+      "status": ""
+    },
+    "bodySummary": null,
+    "status": 401,
+    "rt": 1,
+    "responseSize": 153,
+    "createdAt": "2026-01-12T03:47:57.009Z"
+  },
+  {
+    "_id": "09bef9e8-00d7-44f6-bde1-5d87f62a16e6",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/app.js",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 3,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T03:47:56.973Z"
+  },
+  {
+    "_id": "eeef2266-755f-44cf-b0e3-4dad790fa789",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin/styles.css",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 2,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T03:47:56.971Z"
+  },
+  {
+    "_id": "c803e8e9-0320-4a8a-922d-f8063cc2e1f4",
+    "type": "http",
+    "method": "GET",
+    "path": "/admin",
+    "query": {},
+    "bodySummary": null,
+    "status": 200,
+    "rt": 2,
+    "responseSize": 0,
+    "createdAt": "2026-01-12T03:47:56.944Z"
+  },
+  {
+    "_id": "4d97616b-ae96-44a9-9a65-7b34f392a7f4",
+    "type": "http",
+    "method": "GET",
+    "path": "/",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 0,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T03:47:52.384Z"
+  },
+  {
+    "_id": "d16344d2-db6b-4770-a918-1625a6d8d5cd",
+    "type": "http",
+    "method": "GET",
+    "path": "/favicon.ico",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 1,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T03:47:48.468Z"
+  },
+  {
+    "_id": "f1489b62-3de0-4f16-825a-0f3a87230022",
+    "type": "http",
+    "method": "GET",
+    "path": "/",
+    "query": {},
+    "bodySummary": null,
+    "status": 404,
+    "rt": 4,
+    "responseSize": 9,
+    "createdAt": "2026-01-12T03:47:48.420Z"
+  },
+  {
     "_id": "8584f05e-5f02-4f45-b5a9-7e0a12e8330a",
     "type": "http",
     "method": "GET",

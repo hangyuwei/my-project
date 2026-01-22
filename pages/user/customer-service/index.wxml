@@ -1,0 +1,79 @@
+<view class="customer-service-page">
+  <!-- 客服信息卡片 -->
+  <view class="service-info-card">
+    <view class="service-status">
+      <view class="status-dot {{isOnline ? 'online' : 'offline'}}"></view>
+      <text class="status-text">{{isOnline ? '客服在线' : '客服离线'}}</text>
+    </view>
+    <view class="service-details">
+      <view class="detail-item">
+        <t-icon name="phone" size="36rpx" color="#666" />
+        <text class="detail-text">{{serviceInfo.hotline}}</text>
+        <button class="action-btn" bind:tap="makePhoneCall">拨打</button>
+      </view>
+      <view class="detail-item">
+        <t-icon name="time" size="36rpx" color="#666" />
+        <text class="detail-text">{{serviceInfo.workTime}}</text>
+      </view>
+      <view class="detail-item">
+        <t-icon name="logo-wechat" size="36rpx" color="#666" />
+        <text class="detail-text">{{serviceInfo.wechat}}</text>
+        <button class="action-btn" bind:tap="copyWechat">复制</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷问题 -->
+  <view class="quick-questions">
+    <view class="section-title">常见问题</view>
+    <view class="questions-grid">
+      <view
+        wx:for="{{quickQuestions}}"
+        wx:key="id"
+        class="question-item"
+        data-question="{{item.question}}"
+        bind:tap="onQuickQuestionTap"
+      >
+        <t-icon name="{{item.icon}}" size="48rpx" color="#FF6B6B" />
+        <text class="question-text">{{item.question}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 聊天记录 -->
+  <view class="chat-container">
+    <view class="section-title">在线客服</view>
+    <view class="chat-messages">
+      <view
+        wx:for="{{chatHistory}}"
+        wx:key="id"
+        class="message-item {{item.type}}"
+      >
+        <view class="message-content">
+          <text class="message-text">{{item.content}}</text>
+        </view>
+        <view class="message-time">{{formatTime(item.time)}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 输入框 -->
+  <view class="input-container">
+    <view class="input-wrapper">
+      <input
+        class="message-input"
+        type="text"
+        placeholder="请输入您的问题..."
+        value="{{inputMessage}}"
+        bind:input="onInputChange"
+        confirm-type="send"
+        bind:confirm="sendMessage"
+      />
+      <button class="send-btn" bind:tap="sendMessage">发送</button>
+    </view>
+    <button class="transfer-btn" bind:tap="transferToHuman">
+      <t-icon name="user" size="32rpx" color="#fff" />
+      <text>转人工</text>
+    </button>
+  </view>
+</view>
