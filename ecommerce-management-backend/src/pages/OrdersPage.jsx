@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { PlusIcon, EyeIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  PlusIcon,
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  MagnifyingGlassIcon,
+  ArrowLeftIcon,
+  HomeIcon,
+  ArrowPathIcon,
+  TruckIcon,
+  CheckCircleIcon,
+  XCircleIcon
+} from '@heroicons/react/24/outline';
 import {
   getOrders,
   saveOrder as saveOrderApi,
@@ -10,13 +23,25 @@ import {
 import { useDebounce } from '../hooks/useDebounce';
 
 const OrdersPage = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  // 从 URL 参数读取初始状态筛选值
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  // 存储全部订单的统计数据（不受筛选影响）
+  const [orderStats, setOrderStats] = useState({
+    total: 0,
+    pending_payment: 0,
+    pending: 0,
+    shipped: 0,
+    completed: 0,
+    refunded: 0
+  });
 
   // 使用防抖，延迟500ms执行搜索
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -40,7 +65,9 @@ const OrdersPage = () => {
     pending: '待发货',
     shipped: '已发货',
     completed: '已完成',
-    refunded: '已退款'
+    refunded: '已退款',
+    after_sale: '售后中',
+    canceled: '已取消'
   };
 
   const statusColors = {
@@ -48,7 +75,9 @@ const OrdersPage = () => {
     pending: 'badge-warning',
     shipped: 'badge-primary',
     completed: 'badge-success',
-    refunded: 'badge-error'
+    refunded: 'badge-error',
+    after_sale: 'badge-info',
+    canceled: 'badge-ghost'
   };
 
   const gradeLabels = {
@@ -140,9 +169,29 @@ const OrdersPage = () => {
     try {
       await batchUpdateOrders([id], status);
       fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
+      fetchOrderStats(); // 刷新统计数据
     } catch (error) {
       console.error('更新订单状态失败:', error);
       alert('更新失败，请重试');
+    }
+  };
+
+  // 获取订单统计数据（不受筛选影响）
+  const fetchOrderStats = async () => {
+    try {
+      // 获取全部订单来统计各状态数量
+      const data = await getOrders({ page: 1, pageSize: 1000, search: '', status: '' });
+      const allOrders = data.list || [];
+      setOrderStats({
+        total: allOrders.length,
+        pending_payment: allOrders.filter(o => o.status === 'pending_payment').length,
+        pending: allOrders.filter(o => o.status === 'pending').length,
+        shipped: allOrders.filter(o => o.status === 'shipped').length,
+        completed: allOrders.filter(o => o.status === 'completed').length,
+        refunded: allOrders.filter(o => o.status === 'refunded').length
+      });
+    } catch (error) {
+      console.error('获取订单统计失败:', error);
     }
   };
 
@@ -165,6 +214,11 @@ const OrdersPage = () => {
       setSearchLoading(false);
     }
   };
+
+  // 初始化时获取统计数据
+  useEffect(() => {
+    fetchOrderStats();
+  }, []);
 
   useEffect(() => {
     fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
@@ -247,6 +301,7 @@ const OrdersPage = () => {
       
       closeModal();
       fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
+      fetchOrderStats(); // 刷新统计数据
     } catch (error) {
       console.error('保存订单失败:', error);
       alert('保存失败，请重试');
@@ -260,6 +315,7 @@ const OrdersPage = () => {
     try {
       await deleteOrderApi(id);
       fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
+      fetchOrderStats(); // 刷新统计数据
     } catch (error) {
       console.error('删除订单失败:', error);
       alert('删除失败，请重试');
@@ -296,7 +352,8 @@ const OrdersPage = () => {
     try {
       await batchUpdateOrders(selectedOrders.map((order) => order._id), newStatus);
       fetchOrders(currentPage, debouncedSearchTerm, statusFilter);
-      
+      fetchOrderStats(); // 刷新统计数据
+
       // 取消所有选择
       selectedOrders.forEach(order => {
         const checkbox = document.getElementById(`order-${order._id}`);
@@ -320,16 +377,89 @@ const OrdersPage = () => {
 
   return (
     <div className="space-y-6">
+      {/* 面包屑导航 */}
+      <div className="flex items-center space-x-2 text-sm text-gray-500">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center hover:text-blue-600 transition-colors"
+        >
+          <HomeIcon className="h-4 w-4 mr-1" />
+          首页
+        </button>
+        <span>/</span>
+        <span className="text-gray-900 font-medium">订单管理</span>
+      </div>
+
       {/* 页面标题和操作栏 */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">订单管理</h1>
-        <button
-          onClick={() => openModal()}
-          className="btn btn-primary"
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate('/')}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="返回首页"
+          >
+            <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">订单管理</h1>
+            <p className="text-sm text-gray-500 mt-1">共 {orderStats.total} 个订单</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => fetchOrders(currentPage, debouncedSearchTerm, statusFilter)}
+            className="btn btn-ghost btn-sm"
+            title="刷新"
+          >
+            <ArrowPathIcon className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="btn btn-primary"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            新增订单
+          </button>
+        </div>
+      </div>
+
+      {/* 订单状态统计卡片 */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div
+          className={`p-4 rounded-lg border cursor-pointer transition-all ${statusFilter === '' ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}
+          onClick={() => { setStatusFilter(''); setCurrentPage(1); }}
         >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          新增订单
-        </button>
+          <p className="text-sm text-gray-500">全部订单</p>
+          <p className="text-2xl font-bold text-gray-900">{orderStats.total}</p>
+        </div>
+        <div
+          className={`p-4 rounded-lg border cursor-pointer transition-all ${statusFilter === 'pending_payment' ? 'bg-orange-50 border-orange-300' : 'bg-white hover:bg-gray-50'}`}
+          onClick={() => { setStatusFilter('pending_payment'); setCurrentPage(1); }}
+        >
+          <p className="text-sm text-gray-500">待付款</p>
+          <p className="text-2xl font-bold text-orange-600">{orderStats.pending_payment}</p>
+        </div>
+        <div
+          className={`p-4 rounded-lg border cursor-pointer transition-all ${statusFilter === 'pending' ? 'bg-yellow-50 border-yellow-300' : 'bg-white hover:bg-gray-50'}`}
+          onClick={() => { setStatusFilter('pending'); setCurrentPage(1); }}
+        >
+          <p className="text-sm text-gray-500">待发货</p>
+          <p className="text-2xl font-bold text-yellow-600">{orderStats.pending}</p>
+        </div>
+        <div
+          className={`p-4 rounded-lg border cursor-pointer transition-all ${statusFilter === 'shipped' ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}
+          onClick={() => { setStatusFilter('shipped'); setCurrentPage(1); }}
+        >
+          <p className="text-sm text-gray-500">已发货</p>
+          <p className="text-2xl font-bold text-blue-600">{orderStats.shipped}</p>
+        </div>
+        <div
+          className={`p-4 rounded-lg border cursor-pointer transition-all ${statusFilter === 'completed' ? 'bg-green-50 border-green-300' : 'bg-white hover:bg-gray-50'}`}
+          onClick={() => { setStatusFilter('completed'); setCurrentPage(1); }}
+        >
+          <p className="text-sm text-gray-500">已完成</p>
+          <p className="text-2xl font-bold text-green-600">{orderStats.completed}</p>
+        </div>
       </div>
 
       {/* 搜索和筛选栏 */}
@@ -364,33 +494,36 @@ const OrdersPage = () => {
       </div>
 
       {/* 批量操作栏 */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
         <span className="text-sm text-gray-600">批量操作：</span>
         <button
           type="button"
-          className="btn btn-sm"
+          className="btn btn-sm btn-outline gap-1"
           onClick={() => batchUpdateStatus('shipped')}
         >
-          标记为已发货
+          <TruckIcon className="h-4 w-4" />
+          标记发货
         </button>
         <button
           type="button"
-          className="btn btn-sm"
+          className="btn btn-sm btn-outline btn-success gap-1"
           onClick={() => batchUpdateStatus('completed')}
         >
-          标记为已完成
+          <CheckCircleIcon className="h-4 w-4" />
+          标记完成
         </button>
         <button
           type="button"
-          className="btn btn-sm"
+          className="btn btn-sm btn-outline btn-error gap-1"
           onClick={() => batchUpdateStatus('refunded')}
         >
-          标记为已退款
+          <XCircleIcon className="h-4 w-4" />
+          标记退款
         </button>
       </div>
 
       {/* 订单列表 */}
-      <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
+      <div className="bg-white shadow rounded-lg overflow-hidden" style={{ overflowX: 'scroll' }}>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -473,7 +606,7 @@ const OrdersPage = () => {
                   {item.status === 'pending' ? (
                     <button
                       type="button"
-                      className={`badge badge-sm ${statusColors[item.status]} cursor-pointer select-none`}
+                      className={`badge badge-sm ${statusColors[item.status] || 'badge-ghost'} cursor-pointer select-none`}
                       title="点击标记为已发货"
                       onClick={(event) => {
                         event.preventDefault();
@@ -481,11 +614,11 @@ const OrdersPage = () => {
                         updateOrderStatus(item, 'shipped');
                       }}
                     >
-                      {statusLabels[item.status]}
+                      {statusLabels[item.status] || item.status || '未知'}
                     </button>
                   ) : (
-                    <span className={`badge badge-sm ${statusColors[item.status]}`}>
-                      {statusLabels[item.status]}
+                    <span className={`badge badge-sm ${statusColors[item.status] || 'badge-ghost'}`}>
+                      {statusLabels[item.status] || item.status || '未知'}
                     </span>
                   )}
                 </td>
@@ -522,20 +655,20 @@ const OrdersPage = () => {
       </div>
 
       {/* 分页 */}
-      <div className="flex justify-center">
+      <div className="flex justify-center py-4">
         <div className="join">
           <button
-            className="join-item btn"
+            className="join-item btn btn-sm"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
             上一页
           </button>
-          <button className="join-item btn btn-active">
+          <button className="join-item btn btn-sm btn-active pointer-events-none">
             {currentPage} / {totalPages}
           </button>
           <button
-            className="join-item btn"
+            className="join-item btn btn-sm"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(currentPage + 1)}
           >

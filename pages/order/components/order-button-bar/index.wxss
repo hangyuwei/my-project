@@ -29,10 +29,10 @@
   --td-button-extra-small-height: 72rpx;
 }
 
-.btn-bar .left .delete-btn {
+.btn-bar .left .left-btn {
   font-size: 22rpx;
 }
-.btn-bar .left .delete-btn::after {
+.btn-bar .left .left-btn::after {
   display: none;
 }
 

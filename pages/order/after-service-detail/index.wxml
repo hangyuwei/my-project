@@ -182,6 +182,10 @@
         circular="{{false}}"
         bindtap="onProofTap"
       />
+      <!-- 再次申请按钮（商家拒绝后显示） -->
+      <view class="reapply-bar" wx:if="{{service.canReapply}}">
+        <t-button theme="primary" size="large" block bindtap="onReapply">再次申请</t-button>
+      </view>
     </view>
   </t-pull-down-refresh>
 </view>

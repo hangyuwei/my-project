@@ -15,7 +15,7 @@ const OrderButtonTypes = {
 };
 
 // 根据订单状态生成按钮
-function generateButtonsByStatus(orderStatus) {
+function generateButtonsByStatus(orderStatus, hasCommented = false) {
   const buttons = [];
 
   switch (orderStatus) {
@@ -31,8 +31,11 @@ function generateButtonsByStatus(orderStatus) {
       buttons.push({ type: OrderButtonTypes.DELIVERY, name: '查看物流', primary: false });
       break;
     case 50: // 已完成/待评价
-      buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
-      buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: false });
+      // 只有未评价的订单才显示评价按钮
+      if (!hasCommented) {
+        buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
+      }
+      buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: !hasCommented ? false : true });
       buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
       break;
     case 80: // 已取消
@@ -131,7 +134,17 @@ export function getLocalOrders() {
 
   const storageKey = getStorageKey();
   const data = wx.getStorageSync(storageKey);
-  return Array.isArray(data) ? data : [];
+  const orders = Array.isArray(data) ? data : [];
+
+  // 每次获取时重新生成按钮，确保使用最新的按钮配置
+  return orders.map((order) => ({
+    ...order,
+    buttonVOs: generateButtonsByStatus(order.orderStatus, order.hasCommented === true),
+    orderItemVOs: (order.orderItemVOs || []).map((item) => ({
+      ...item,
+      buttonVOs: generateGoodsButtonsByStatus(order.orderStatus),
+    })),
+  }));
 }
 
 export function findLocalOrder(orderNo) {
@@ -311,7 +324,9 @@ export function updateLocalOrderStatus(orderNo, newStatus, newStatusName) {
   }
 
   order.orderStatus = newStatus;
-  order.orderStatusName = newStatusName;
+  if (newStatusName) {
+    order.orderStatusName = newStatusName;
+  }
 
   // 根据新状态更新按钮
   order.buttonVOs = generateButtonsByStatus(newStatus);
@@ -336,6 +351,64 @@ export function updateLocalOrderStatus(orderNo, newStatus, newStatusName) {
   wx.setStorageSync(storageKey, list);
   console.log('[订单] 订单状态已更新:', orderNo, newStatus, newStatusName);
   return true;
+}
+
+// 标记本地订单为已评价
+export function markLocalOrderCommented(orderNo) {
+  if (!orderNo) {
+    console.warn('[订单] 标记评价失败：订单号为空');
+    return false;
+  }
+
+  try {
+    const storageKey = getStorageKey();
+    const data = wx.getStorageSync(storageKey);
+    const orders = Array.isArray(data) ? data : [];
+
+    const order = orders.find((o) => o.orderNo === orderNo);
+    if (!order) {
+      console.warn('[订单] 标记评价失败：未找到订单', orderNo);
+      return false;
+    }
+
+    order.hasCommented = true;
+    order.commentTime = Date.now();
+
+    wx.setStorageSync(storageKey, orders);
+    console.log('[订单] 订单已标记为已评价:', orderNo);
+    return true;
+  } catch (error) {
+    console.error('[订单] 标记评价失败', error);
+    return false;
+  }
+}
+
+// 删除本地订单
+export function deleteLocalOrder(orderNo) {
+  if (!orderNo) {
+    console.warn('[订单] 删除订单失败：订单号为空');
+    return false;
+  }
+
+  try {
+    const storageKey = getStorageKey();
+    const data = wx.getStorageSync(storageKey);
+    const orders = Array.isArray(data) ? data : [];
+
+    const index = orders.findIndex((order) => order.orderNo === orderNo);
+    if (index === -1) {
+      console.warn('[订单] 删除订单失败：未找到订单', orderNo);
+      return false;
+    }
+
+    orders.splice(index, 1);
+    wx.setStorageSync(storageKey, orders);
+    console.log('[订单] 订单已删除:', orderNo);
+    return true;
+  } catch (error) {
+    console.error('[订单] 删除订单失败', error);
+    return false;
+  }
 }
 
 // 清除所有订单数据（用于调试或用户登出场景）

@@ -75,6 +75,20 @@ const mapOrderStatus = (orderStatus) => {
     if (!trimmed) return 'pending';
     const numeric = Number(trimmed);
     if (Number.isFinite(numeric)) return mapOrderStatus(numeric);
+    // 处理中文状态名
+    const chineseStatusMap = {
+      '待付款': 'pending_payment',
+      '待发货': 'pending',
+      '已发货': 'shipped',
+      '待收货': 'shipped',
+      '已完成': 'completed',
+      '已退款': 'refunded',
+      '售后中': 'after_sale',
+      '售后处理中': 'after_sale',
+    };
+    if (chineseStatusMap[trimmed]) {
+      return chineseStatusMap[trimmed];
+    }
     return trimmed;
   }
   switch (orderStatus) {
@@ -90,6 +104,9 @@ const mapOrderStatus = (orderStatus) => {
       return 'shipped';
     case 50:
       return 'completed';
+    case 60:
+    case 70:
+      return 'after_sale'; // 售后相关状态
     case 80:
       return 'refunded';
     default:
@@ -100,15 +117,15 @@ const mapOrderStatus = (orderStatus) => {
 const mapStatusToOrderStatus = (status) => {
   switch (normalizeStatus(status)) {
     case 'pending_payment':
-      return 5;
+      return [5];
     case 'pending':
-      return 10;
+      return [10];
     case 'shipped':
-      return 40;
+      return [20, 40]; // 20 和 40 都是已发货/待收货状态
     case 'completed':
-      return 50;
+      return [50]; // 只有 50 是已完成状态（30 已废弃）
     case 'refunded':
-      return 80;
+      return [80];
     default:
       return null;
   }
@@ -124,9 +141,13 @@ export const findPaged = async ({ page, pageSize, search, status, userId }) => {
 
   const normalizedStatus = normalizeStatus(status);
   if (normalizedStatus) {
-    const mappedStatus = mapStatusToOrderStatus(normalizedStatus);
-    if (mappedStatus !== null) {
-      conditions.push(_.or([{ status: normalizedStatus }, { orderStatus: mappedStatus }]));
+    const mappedStatuses = mapStatusToOrderStatus(normalizedStatus);
+    if (mappedStatuses !== null) {
+      // 匹配 status 字段或 orderStatus 字段中的任意一个值
+      conditions.push(_.or([
+        { status: normalizedStatus },
+        { orderStatus: _.in(mappedStatuses) }
+      ]));
     } else {
       conditions.push({ status: normalizedStatus });
     }
@@ -207,8 +228,13 @@ export const findPaged = async ({ page, pageSize, search, status, userId }) => {
     })
   );
 
+  // 如果有状态筛选，过滤掉 adaptOrder 转换后状态不匹配的订单
+  const filteredOrders = normalizedStatus
+    ? enrichedOrders.filter(order => order.status === normalizedStatus)
+    : enrichedOrders;
+
   return {
-    list: enrichedOrders,
+    list: filteredOrders,
     total: countResult.total || 0,
   };
 };

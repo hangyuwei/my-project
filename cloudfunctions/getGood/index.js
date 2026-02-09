@@ -212,6 +212,7 @@ exports.main = async (event = {}) => {
     title: product.goodName || product.goodsName || product.title || product.name || '',
     image: primaryImage,
     primaryImage,
+    primaryImageFileId: isCloudFileId(imageSource) ? imageSource : '',
     coverImage: primaryImage,
     skuImage,
     images,

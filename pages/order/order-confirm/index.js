@@ -170,7 +170,6 @@ Page({
             // 查找默认地址
             const defaultAddress = addressList.find((addr) => addr.isDefault === 1);
             if (defaultAddress) {
-              console.log('[订单确认] 自动选择默认地址:', defaultAddress);
               // 使用默认地址
               userAddressReq = {
                 ...defaultAddress,

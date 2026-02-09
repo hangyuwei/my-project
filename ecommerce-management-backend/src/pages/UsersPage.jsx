@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  MagnifyingGlassIcon,
+  EyeIcon,
+  ArrowLeftIcon,
+  HomeIcon,
+  ArrowPathIcon,
+  UserCircleIcon
+} from '@heroicons/react/24/outline';
 import {
   getUsers,
   saveUser as saveUserApi,
@@ -9,6 +20,7 @@ import {
 import { useDebounce } from '../hooks/useDebounce';
 
 const UsersPage = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -183,18 +195,98 @@ const UsersPage = () => {
 
   return (
     <div className="space-y-6">
-      
+      {/* 面包屑导航 */}
+      <div className="flex items-center space-x-2 text-sm text-gray-500">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center hover:text-blue-600 transition-colors"
+        >
+          <HomeIcon className="h-4 w-4 mr-1" />
+          首页
+        </button>
+        <span>/</span>
+        <span className="text-gray-900 font-medium">会员管理</span>
+      </div>
 
       {/* 页面标题和操作栏 */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">会员管理</h1>
-        <button
-          onClick={() => openModal()}
-          className="btn btn-primary"
-        >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          新增会员
-        </button>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate('/')}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="返回首页"
+          >
+            <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">会员管理</h1>
+            <p className="text-sm text-gray-500 mt-1">共 {users.length} 位会员</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => fetchUsers(currentPage, debouncedSearchTerm)}
+            className="btn btn-ghost btn-sm"
+            title="刷新"
+          >
+            <ArrowPathIcon className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="btn btn-primary"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            新增会员
+          </button>
+        </div>
+      </div>
+
+      {/* 会员等级统计卡片 */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="p-4 rounded-lg border bg-white hover:shadow-md transition-shadow">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+              <UserCircleIcon className="h-6 w-6 text-gray-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">全部会员</p>
+              <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 rounded-lg border bg-orange-50 hover:shadow-md transition-shadow">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+              <span className="text-orange-600 font-bold">铜</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">铜牌会员</p>
+              <p className="text-2xl font-bold text-orange-600">{users.filter(u => u.grade === 'bronze').length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 rounded-lg border bg-gray-50 hover:shadow-md transition-shadow">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-600 font-bold">银</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">银牌会员</p>
+              <p className="text-2xl font-bold text-gray-600">{users.filter(u => u.grade === 'silver').length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 rounded-lg border bg-yellow-50 hover:shadow-md transition-shadow">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+              <span className="text-yellow-600 font-bold">金</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">金牌会员</p>
+              <p className="text-2xl font-bold text-yellow-600">{users.filter(u => u.grade === 'gold').length}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 搜索栏 */}

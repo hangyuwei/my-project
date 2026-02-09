@@ -7,22 +7,19 @@ const orderResps = [
       saasId: '88888888',
       uid: '88888888205468',
       storeId: '1000',
-      skuId: '135676631',
+      skuId: '',
       numOfSku: 1,
       numOfSkuAvailable: 1,
-      refundableAmount: '26900',
+      refundableAmount: '0',
       refundableDiscountAmount: '0',
       shippingFeeIncluded: '0',
-      paidAmountEach: '26900',
+      paidAmountEach: '0',
       boughtQuantity: 1,
-      orderNo: '132222623132329291',
+      orderNo: '',
       goodsInfo: {
-        goodsName: '航天神舟牌鱼蛋白粉固体饮料',
-        skuImage: 'https://youke3.picui.cn/s1/2026/01/06/695c78fdae97a.png',
-        specInfo: [
-          { specId: '50456', specTitle: '颜色', specValue: '米色荷叶边' },
-          { specId: '50459', specTitle: '尺码', specValue: 'S' },
-        ],
+        goodsName: '',
+        skuImage: '',
+        specInfo: [],
       },
     },
     code: 'Success',
@@ -150,12 +147,32 @@ export function adaptApplyReasonList(real = {}) {
 }
 
 export function adaptApplyService(real = {}) {
-  if (real && real.data && real.data.rightsNo) return real;
+  console.log('[adaptApplyService] 输入数据:', JSON.stringify(real, null, 2));
+
+  // 如果已经有正确格式的数据，直接返回
+  if (real && real.data && real.data.rightsNo) {
+    console.log('[adaptApplyService] 已有rightsNo，直接返回');
+    return real;
+  }
+
   const source = ensureObject(real);
   const data = ensureObject(source.data || source);
-  return {
+
+  console.log('[adaptApplyService] 解析后的data:', JSON.stringify(data, null, 2));
+
+  // 获取售后单号，优先使用 afterSaleNo
+  const rightsNo = data.afterSaleNo || data.rightsNo;
+
+  if (!rightsNo) {
+    console.error('[adaptApplyService] 未找到售后单号!', { data });
+    throw new Error('售后单号获取失败');
+  }
+
+  console.log('[adaptApplyService] 最终售后单号:', rightsNo);
+
+  const result = {
     data: {
-      rightsNo: pickFirst(data.rightsNo, '123123423'),
+      rightsNo,
       saasId: pickFirst(data.saasId, '70000001'),
       uid: pickFirst(data.uid, '700000011070005'),
       storeId: pickFirst(data.storeId, '542'),
@@ -168,4 +185,7 @@ export function adaptApplyService(real = {}) {
     rt: 0,
     success: true,
   };
+
+  console.log('[adaptApplyService] 适配结果:', JSON.stringify(result, null, 2));
+  return result;
 }

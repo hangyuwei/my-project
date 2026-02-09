@@ -1,13 +1,20 @@
 import updateManager from './common/updateManager';
 import { config } from './config/index';
+import automation from './utils/automation/index';
 
 App({
   globalData: {
     userInfo: null,
     openid: null,
+    automation: automation, // 全局自动化实例
   },
 
   onLaunch: function () {
+    // 初始化 UI 自动化系统
+    automation.init({
+      maxRecords: 50 // 最多保存50条录制记录
+    });
+    console.log('[App] UI 自动化系统已初始化');
     if (typeof wx !== 'undefined' && wx.cloud) {
       // 鍒濆鍖栦簯寮€鍙戯紙鍗曞皬绋嬪簭妯″紡锛?
       wx.cloud.init({

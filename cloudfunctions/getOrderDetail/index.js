@@ -19,7 +19,7 @@ const OrderButtonTypes = {
 };
 
 // 根据订单状态生成按钮
-function generateButtonsByStatus(orderStatus) {
+function generateButtonsByStatus(orderStatus, hasCommented = false) {
   const buttons = [];
 
   switch (orderStatus) {
@@ -35,8 +35,11 @@ function generateButtonsByStatus(orderStatus) {
       buttons.push({ type: OrderButtonTypes.DELIVERY, name: '查看物流', primary: false });
       break;
     case 50: // 已完成/待评价
-      buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
-      buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: false });
+      // 只有未评价的订单才显示评价按钮
+      if (!hasCommented) {
+        buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
+      }
+      buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: !hasCommented ? false : true });
       buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
       break;
     case 80: // 已取消
@@ -220,7 +223,8 @@ exports.main = async (event, context) => {
     }
 
     // 根据订单状态生成按钮
-    const orderButtons = generateButtonsByStatus(order.orderStatus);
+    const hasCommented = order.hasCommented === true;
+    const orderButtons = generateButtonsByStatus(order.orderStatus, hasCommented);
     const goodsButtons = generateGoodsButtonsByStatus(order.orderStatus);
 
     // 应用转换后的 URL 和生成按钮

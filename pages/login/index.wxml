@@ -1,0 +1,90 @@
+<!--pages/login/index.wxml-->
+<view class="login-container">
+  <!-- 顶部装饰 -->
+  <view class="header-decoration">
+    <view class="circle circle-1"></view>
+    <view class="circle circle-2"></view>
+  </view>
+
+  <!-- Logo 区域 -->
+  <view class="logo-section">
+    <image class="logo" src="/assets/logo.png" mode="aspectFit"></image>
+    <text class="app-name">欢迎登录</text>
+    <text class="app-slogan">一键登录，快速体验</text>
+  </view>
+
+  <!-- 登录信息展示 -->
+  <view class="user-info-section" wx:if="{{userInfo}}">
+    <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+    <text class="nickname">{{userInfo.nickName}}</text>
+  </view>
+
+  <!-- 登录按钮区域 -->
+  <view class="login-actions">
+    <!-- 微信一键登录按钮 -->
+    <button 
+      class="login-btn primary-btn" 
+      open-type="getUserProfile"
+      bindtap="handleGetUserProfile"
+      wx:if="{{!userInfo}}"
+    >
+      <image class="btn-icon" src="/assets/wechat-icon.png" mode="aspectFit"></image>
+      <text>微信一键登录</text>
+    </button>
+
+    <!-- 已登录状态按钮 -->
+    <button 
+      class="login-btn success-btn" 
+      bindtap="handleEnterApp"
+      wx:if="{{userInfo}}"
+    >
+      <text>进入小程序</text>
+    </button>
+
+    <!-- 手机号登录按钮（可选） -->
+    <button 
+      class="login-btn secondary-btn" 
+      open-type="getPhoneNumber"
+      bindgetphonenumber="handleGetPhoneNumber"
+      wx:if="{{!userInfo}}"
+    >
+      <text>手机号快捷登录</text>
+    </button>
+  </view>
+
+  <!-- 协议说明 -->
+  <view class="agreement-section">
+    <checkbox-group bindchange="handleAgreementChange">
+      <label class="agreement-label">
+        <checkbox value="agree" checked="{{agreed}}" color="#FF5F15"/>
+        <text class="agreement-text">
+          我已阅读并同意
+          <text class="link" bindtap="handleShowAgreement" data-type="user">《用户协议》</text>
+          和
+          <text class="link" bindtap="handleShowAgreement" data-type="privacy">《隐私政策》</text>
+        </text>
+      </label>
+    </checkbox-group>
+  </view>
+
+  <!-- 其他登录方式 -->
+  <view class="other-login" wx:if="{{!userInfo}}">
+    <view class="divider">
+      <view class="line"></view>
+      <text class="text">其他登录方式</text>
+      <view class="line"></view>
+    </view>
+    <view class="other-methods">
+      <view class="method-item" bindtap="handleVisitorLogin">
+        <image class="method-icon" src="/assets/visitor-icon.png" mode="aspectFit"></image>
+        <text class="method-text">游客登录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部装饰 -->
+  <view class="footer-decoration">
+    <view class="wave wave-1"></view>
+    <view class="wave wave-2"></view>
+  </view>
+</view>

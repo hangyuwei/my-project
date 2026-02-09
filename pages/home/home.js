@@ -2,6 +2,7 @@ import { fetchHome } from '../../services/home/home';
 import { fetchGoodsList } from '../../services/good/fetchGoods';
 import { addLocalCartItem } from '../../services/cart/localCart';
 import Toast from 'tdesign-miniprogram/toast/index';
+import recorder from '../../utils/automation/recorder';
 
 Page({
   data: {
@@ -16,6 +17,8 @@ Page({
     interval: 5000,
     navigation: { type: 'dots' },
     swiperImageProps: { mode: 'scaleToFill' },
+    statusBarHeight: 20,
+    navBarHeight: 64,
   },
 
   goodListPagination: {
@@ -28,6 +31,14 @@ Page({
   },
 
   onLoad() {
+    // 获取系统信息设置导航栏高度
+    const systemInfo = wx.getSystemInfoSync();
+    const statusBarHeight = systemInfo.statusBarHeight || 20;
+    const navBarHeight = statusBarHeight + 44;
+    this.setData({
+      statusBarHeight,
+      navBarHeight,
+    });
     this.init();
   },
 
@@ -108,6 +119,12 @@ Page({
   },
 
   goodListClickHandle(e) {
+    // 记录点击商品事件
+    recorder.recordEvent('tap', {
+      target: { id: 'goods-item', dataset: { action: 'viewGoods' } },
+      detail: e.detail
+    });
+
     const { index } = e.detail;
     const { spuId } = this.data.goodsList[index];
     wx.navigateTo({
@@ -116,6 +133,12 @@ Page({
   },
 
   goodListAddCartHandle(e) {
+    // 记录加入购物车事件
+    recorder.recordEvent('tap', {
+      target: { id: 'add-cart-btn', dataset: { action: 'addCart' } },
+      detail: e.detail
+    });
+
     const { goods } = e.detail;
     if (!goods || !goods.spuId) {
       Toast({ context: this, selector: '#t-toast', message: '商品信息错误' });
@@ -134,10 +157,22 @@ Page({
   },
 
   navToSearchPage() {
+    // 记录搜索点击事件
+    recorder.recordEvent('tap', {
+      target: { id: 'search-bar', dataset: { action: 'search' } },
+      detail: {}
+    });
+
     wx.navigateTo({ url: '/pages/goods/search/index' });
   },
 
   navToActivityDetail({ detail }) {
+    // 记录活动点击事件
+    recorder.recordEvent('tap', {
+      target: { id: 'swiper-item', dataset: { action: 'viewActivity' } },
+      detail: detail
+    });
+
     const { index: promotionID = 0 } = detail || {};
     wx.navigateTo({
       url: `/pages/promotion/promotion-detail/index?promotion_id=${promotionID}`,
@@ -145,8 +180,44 @@ Page({
   },
 
   navToGoodsListPage() {
+    // 记录查看全部商品事件
+    recorder.recordEvent('tap', {
+      target: { id: 'view-all-btn', dataset: { action: 'viewAllGoods' } },
+      detail: {}
+    });
+
     wx.navigateTo({
       url: '/pages/goods/list/index',
     });
+  },
+
+  // 处理自动化回放事件
+  handleAutomationEvent(eventName, detail) {
+    console.log('[Home] 收到自动化事件:', eventName, detail);
+
+    if (eventName === 'automation-tap') {
+      const action = detail.dataset && detail.dataset.action;
+      switch (action) {
+        case 'search':
+          this.navToSearchPage();
+          break;
+        case 'viewAllGoods':
+          this.navToGoodsListPage();
+          break;
+        case 'viewGoods':
+          if (detail.detail && detail.detail.index !== undefined) {
+            this.goodListClickHandle({ detail: detail.detail });
+          }
+          break;
+        case 'addCart':
+          if (detail.detail && detail.detail.goods) {
+            this.goodListAddCartHandle({ detail: detail.detail });
+          }
+          break;
+        case 'viewActivity':
+          this.navToActivityDetail({ detail: detail.detail });
+          break;
+      }
+    }
   },
 });

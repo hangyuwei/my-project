@@ -5,3 +5,54 @@
 .cell--noborder .t-cell::after {
   border-bottom: none !important;
 }
+
+/* 全局修复：确保页面内容不会覆盖导航栏 */
+page {
+  overflow-x: hidden;
+  background-color: #f5f5f5;
+}
+
+/* ==================== 遮罩层和弹窗层级修复 ==================== */
+/* 基础遮罩层 */
+.t-overlay {
+  z-index: 11000 !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Popup 弹窗 */
+.t-popup {
+  z-index: 11001 !important;
+}
+
+.t-popup__content {
+  z-index: 11002 !important;
+}
+
+/* Dialog 对话框 - 需要更高的层级 */
+.t-dialog__wrapper {
+  z-index: 12000 !important;
+}
+
+/* 确保弹窗内容可点击 */
+.t-popup .popup-container {
+  position: relative;
+  z-index: 11003;
+}
+
+/* ==================== TabBar 样式修复 ==================== */
+/* 全局移除 TabBar 的边框和缝隙 */
+.t-tab-bar,
+.t-tab-bar__content,
+.t-tab-bar__item {
+  border: none !important;
+  border-top: none !important;
+}
+
+.t-tab-bar::before,
+.t-tab-bar::after,
+.t-tab-bar__content::before,
+.t-tab-bar__content::after {
+  display: none !important;
+  border: none !important;
+  height: 0 !important;
+}

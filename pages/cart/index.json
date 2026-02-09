@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "购物车",
+  "navigationStyle": "custom",
   "usingComponents": {
     "cart-group": "./components/cart-group/index",
     "cart-empty": "./components/cart-empty/index",

@@ -336,16 +336,26 @@ const mapCommentItem = (comment = {}, hasImage = false) => {
 export function adaptGoodsAllComments(real = {}, params = {}) {
   if (real && Array.isArray(real.pageList)) return real;
   const source = ensureObject(real);
-  const list = ensureArray(source.pageList || source.list || source.items);
-  if (!list.length) return getGoodsAllComments(params);
+  // 支持云函数返回格式 { success, data: { homePageComments, ... } }
+  const dataSource = source.data || source;
+  const list = ensureArray(dataSource.pageList || dataSource.list || dataSource.items || dataSource.homePageComments);
+  // 没有数据时返回空列表，不返回mock数据
+  if (!list.length) {
+    return {
+      pageNum: 1,
+      pageSize: 10,
+      totalCount: '0',
+      pageList: [],
+    };
+  }
 
   const hasImage = Boolean(params?.queryParameter?.hasImage);
   const mapped = list.map((item) => mapCommentItem(item, hasImage));
 
   return {
-    pageNum: toInt(pickFirst(source.pageNum, source.page, 1), 1),
-    pageSize: toInt(pickFirst(source.pageSize, source.limit, mapped.length), mapped.length),
-    totalCount: toString(pickFirst(source.totalCount, source.total, mapped.length), mapped.length),
+    pageNum: toInt(pickFirst(dataSource.pageNum, dataSource.page, source.pageNum, 1), 1),
+    pageSize: toInt(pickFirst(dataSource.pageSize, dataSource.limit, source.pageSize, mapped.length), mapped.length),
+    totalCount: toString(pickFirst(dataSource.totalCount, dataSource.total, source.totalCount, mapped.length), mapped.length),
     pageList: mapped,
   };
 }
@@ -353,14 +363,14 @@ export function adaptGoodsAllComments(real = {}, params = {}) {
 export function adaptGoodsCommentsCount(real = {}) {
   if (real && real.commentCount !== undefined) return real;
   const source = ensureObject(real);
-  if (!Object.keys(source).length) return getGoodsCommentsCount();
+  // 没有数据时返回0，不返回mock数据
   return {
     commentCount: toString(pickFirst(source.commentCount, source.total, 0)),
     badCount: toString(pickFirst(source.badCount, source.bad, 0)),
     middleCount: toString(pickFirst(source.middleCount, source.neutral, 0)),
     goodCount: toString(pickFirst(source.goodCount, source.good, 0)),
     hasImageCount: toString(pickFirst(source.hasImageCount, source.withImage, 0)),
-    goodRate: pickFirst(source.goodRate, source.rate, 0),
-    uidCount: toString(pickFirst(source.uidCount, 0)),
+    goodRate: pickFirst(source.goodRate, source.rate, 100),
+    uidCount: '0',
   };
 }

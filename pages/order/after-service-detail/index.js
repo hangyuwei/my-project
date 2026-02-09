@@ -39,14 +39,43 @@ Page({
   // 页面刷新，展示下拉刷新
   onPullDownRefresh_(e) {
     const callback = e && e.detail && e.detail.callback;
-    return this.getService().then(() => callback && callback());
+    return this.getService()
+      .then(() => callback && callback())
+      .catch((err) => {
+        wx.showToast({
+          title: err.message || '刷新失败',
+          icon: 'none',
+          duration: 2000,
+        });
+        callback && callback();
+      });
   },
 
   init() {
     this.setData({ pageLoading: true });
-    this.getService().then(() => {
-      this.setData({ pageLoading: false });
-    });
+    this.getService()
+      .then(() => {
+        this.setData({ pageLoading: false });
+      })
+      .catch((err) => {
+        this.setData({ pageLoading: false });
+        wx.showToast({
+          title: err.message || '获取售后详情失败',
+          icon: 'none',
+          duration: 2000,
+          mask: true,
+        });
+        setTimeout(() => {
+          wx.navigateBack({
+            delta: 1,
+            fail: () => {
+              wx.redirectTo({
+                url: '/pages/order/order-list/index',
+              });
+            },
+          });
+        }, 2000);
+      });
   },
 
   getService() {
@@ -96,6 +125,8 @@ Page({
         applyRemark: serviceRaw.rightsRefund.refundDesc, // 申请退款时的填写的说明
         buttons: serviceRaw.buttonVOs || [],
         logistics: serviceRaw.logisticsVO,
+        canReapply: serviceRaw.rights.rawStatus === 'SELLER_REJECTED', // 被拒绝的可以再次申请
+        orderNo: serviceRaw.rights.orderNo, // 订单号，用于再次申请
       };
       const proofs = serviceRaw.rights.rightsImageUrls || [];
       this.setData({
@@ -173,6 +204,19 @@ Page({
   onAddressCopy() {
     wx.setClipboardData({
       data: `${this.data.service.receiverName}  ${this.data.service.receiverPhone}\n${this.data.service.receiverAddress}`,
+    });
+  },
+
+  /** 再次申请售后 */
+  onReapply() {
+    const { service } = this.data;
+    if (!service.orderNo) {
+      wx.showToast({ title: '订单信息缺失', icon: 'none' });
+      return;
+    }
+    // 跳转到订单详情页，用户可以从那里再次申请售后
+    wx.navigateTo({
+      url: `/pages/order/order-detail/index?orderNo=${service.orderNo}`,
     });
   },
 

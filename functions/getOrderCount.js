@@ -1,4 +1,4 @@
-const { readDb, ensureArray } = require('./_helpers');
+const { readDb, ensureArray, normalizeOrderStatus } = require('./_helpers');
 
 const STATUS_LIST = [5, 10, 40, 50];
 
@@ -9,8 +9,8 @@ exports.main = async () => {
   );
   if (!list.length) return {};
   const counts = list.reduce((acc, item) => {
-    const status = Number(item.orderStatus);
-    if (!Number.isNaN(status)) {
+    const status = normalizeOrderStatus(item);
+    if (status !== null) {
       acc[status] = (acc[status] || 0) + 1;
     }
     return acc;

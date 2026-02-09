@@ -1,28 +1,46 @@
+/* 订单分组 - 毛玻璃卡片风格 */
 .order-group {
-  margin-bottom: 24rpx;
-  background-color: #ffffff;
-  border-radius: 16rpx 16rpx 0 0;
+  background: rgba(255,255,255,0.95);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow:
+    0 4rpx 20rpx rgba(26,26,46,0.08),
+    0 12rpx 40rpx rgba(26,26,46,0.04);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
 }
+
+/* 顶部标题栏 */
 .order-group .order-group__top {
-  padding: 24rpx 18rpx 24rpx 32rpx;
-  border-radius: 16rpx 16rpx 0 0;
+  padding: 28rpx 32rpx 20rpx 32rpx;
+  background: transparent;
 }
-.order-group__top___title {
+
+.order-group__top__title {
   font-size: 32rpx;
-  line-height: 48rpx;
-  font-weight: bold;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: 1rpx;
 }
+
 .order-group__top__note {
-  font-size: 28rpx;
+  font-size: 24rpx;
+  color: #d4af37;
+  font-weight: 600;
 }
+
+/* 订单状态内容区 */
 .order-group__content {
   overflow: hidden;
   width: 100%;
-  height: 164rpx;
+  height: auto;
+  min-height: 160rpx;
   display: flex;
-  background-color: #fff;
-  border-radius: 0 0 16rpx 16rpx;
+  background: linear-gradient(180deg, rgba(248,249,250,0) 0%, rgba(248,249,250,0.5) 100%);
+  padding: 12rpx 8rpx 24rpx 8rpx;
 }
+
+/* 单个订单状态项 */
 .order-group__item {
   overflow: hidden;
   display: flex;
@@ -30,27 +48,69 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-}
-.order-group__item:first-child {
-  border-radius: 0 0 0 16rpx;
-}
-.order-group__item:last-child {
-  border-radius: 0 0 16rpx 0;
-}
-.order-group__item__title {
-  font-size: 24rpx;
-  color: #666;
-  line-height: 32rpx;
-}
-.order-group__item__icon {
-  margin-bottom: 20rpx;
-  width: 56rpx;
-  height: 56rpx;
+  padding: 16rpx 0;
   position: relative;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 16rpx;
+  margin: 0 4rpx;
 }
-.order-group__top__title {
-  font-weight: bold;
+
+.order-group__item:active {
+  background: rgba(212,175,55,0.08);
+  transform: scale(0.95);
 }
+
+/* 图标容器 */
+.order-group__item__icon {
+  margin-bottom: 12rpx;
+  width: 80rpx;
+  height: 80rpx;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #f8f9fa 0%, #eef0f2 100%);
+  border-radius: 24rpx;
+  box-shadow:
+    0 4rpx 12rpx rgba(26,26,46,0.06),
+    inset 0 1rpx 0 rgba(255,255,255,0.8);
+  transition: all 0.25s ease;
+}
+
+.order-group__item:active .order-group__item__icon {
+  background: linear-gradient(145deg, #fff8e7 0%, #fef3d0 100%);
+  box-shadow:
+    0 4rpx 16rpx rgba(212,175,55,0.2),
+    inset 0 1rpx 0 rgba(255,255,255,0.9);
+}
+
+/* 图标颜色 - 深色调 */
+.order-group__item__icon .t-icon {
+  background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* 标题文字 */
+.order-group__item__title {
+  font-size: 22rpx;
+  color: #4a4a5a;
+  line-height: 32rpx;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+
+/* 左侧间距 */
 .order-group .order-group__left {
   margin-right: 0;
+}
+
+/* 徽章样式 - 金色调 */
+.order-group__item__icon .t-badge {
+  --td-badge-bg-color: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+}
+
+/* 移除分隔线，使用间距代替 */
+.order-group__item::after {
+  display: none;
 }

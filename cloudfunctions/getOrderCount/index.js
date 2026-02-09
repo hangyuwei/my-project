@@ -17,15 +17,21 @@ exports.main = async (event, context) => {
       { tabType: 5, name: '待付款' },      // OrderStatus.PENDING_PAYMENT
       { tabType: 10, name: '待发货' },     // OrderStatus.PENDING_DELIVERY
       { tabType: 40, name: '待收货' },     // OrderStatus.PENDING_RECEIPT
-      { tabType: 60, name: '已完成' },     // OrderStatus.COMPLETE
+      { tabType: 50, name: '已完成', values: [50, 60] }, // OrderStatus.COMPLETE
     ];
     const userScope = _.or([{ openid }, { uid: openid }, { userId: openid }]);
 
 
+    // 排除已删除的订单
+    const notDeleted = _.or([{ isDeleted: _.neq(true) }, { isDeleted: _.exists(false) }]);
+
     // 并行查询各状态订单数量
     const countPromises = statusList.map(async (status) => {
+      const statusQuery = status.values
+        ? _.or(status.values.map((value) => ({ orderStatus: value })))
+        : { orderStatus: status.tabType };
       const result = await db.collection('orders')
-        .where(_.and([userScope, { orderStatus: status.tabType }]))
+        .where(_.and([userScope, statusQuery, notDeleted]))
         .count();
 
       return {

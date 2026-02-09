@@ -90,6 +90,13 @@ function getButtons(status, type) {
  * @param {string} params.rightsNo - 售后单号
  */
 export function getRightsDetail({ rightsNo }) {
+  console.log('[获取售后详情] 参数 rightsNo:', rightsNo);
+
+  if (!rightsNo) {
+    console.error('[获取售后详情] 无效的售后单号:', rightsNo);
+    return Promise.reject(new Error('售后单号无效，请重新申请'));
+  }
+
   return wx.cloud.callFunction({
     name: 'afterSale',
     data: {
@@ -97,11 +104,14 @@ export function getRightsDetail({ rightsNo }) {
       afterSaleNo: rightsNo,
     },
   }).then(res => {
+    console.log('[获取售后详情] 云函数原始返回:', JSON.stringify(res, null, 2));
     if (!res.result || !res.result.success) {
+      console.error('[获取售后详情] 失败:', res.result);
       throw new Error(res.result?.error || '获取售后详情失败');
     }
 
     const item = res.result.data;
+    console.log('[获取售后详情] 售后数据:', JSON.stringify(item, null, 2));
     if (!item) {
       throw new Error('售后单不存在');
     }
@@ -135,6 +145,7 @@ export function getRightsDetail({ rightsNo }) {
         rightsReasonDesc: item.reasonText || '',
         createTime: String(item.createTime),
         rightsImageUrls: item.evidence || [],
+        rawStatus: item.status, // 保存原始状态用于判断是否可以再次申请
       },
       rightsItem: goodsList.map((goods, i) => ({
         goodsName: goods.goodsName || goods.title || '商品',

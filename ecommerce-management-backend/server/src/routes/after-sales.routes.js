@@ -2,8 +2,49 @@ import { Router } from 'express';
 import * as repo from '../repositories/after-sales.repo.js';
 import * as ordersRepo from '../repositories/orders.repo.js';
 import { sendData, sendError } from '../utils/response.js';
+import { cloudApp } from '../libs/cloudbase.js';
 
 const router = Router();
+
+// 简单的 API 认证中间件
+const authMiddleware = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'] || req.query.apiKey;
+  const validKey = process.env.ADMIN_API_KEY || 'admin-secret-key';
+
+  if (apiKey !== validKey) {
+    return sendError(res, 401, '未授权访问，请提供有效的 API Key');
+  }
+  next();
+};
+
+// 应用认证中间件到所有路由
+router.use(authMiddleware);
+
+// 辅助函数：将云存储fileID转换为临时URL
+const convertCloudFileIds = async (fileIds) => {
+  if (!fileIds || fileIds.length === 0) return [];
+
+  // 过滤出云存储文件ID
+  const cloudFileIds = fileIds.filter(id => id && typeof id === 'string' && id.startsWith('cloud://'));
+  if (cloudFileIds.length === 0) return fileIds;
+
+  try {
+    const result = await cloudApp.getTempFileURL({ fileList: cloudFileIds });
+    const urlMap = {};
+    if (result.fileList) {
+      result.fileList.forEach(file => {
+        if (file.tempFileURL) {
+          urlMap[file.fileID] = file.tempFileURL;
+        }
+      });
+    }
+    // 返回转换后的URL数组
+    return fileIds.map(id => urlMap[id] || id);
+  } catch (err) {
+    console.error('转换云存储URL失败:', err);
+    return fileIds;
+  }
+};
 
 // 获取售后列表
 router.get('/', async (req, res) => {
@@ -29,6 +70,12 @@ router.get('/:id', async (req, res) => {
     if (!result) {
       return sendError(res, 404, '售后单不存在');
     }
+
+    // 转换凭证图片的云存储URL
+    if (result.evidence && result.evidence.length > 0) {
+      result.evidence = await convertCloudFileIds(result.evidence);
+    }
+
     sendData(res, result);
   } catch (err) {
     console.error('获取售后详情失败:', err);

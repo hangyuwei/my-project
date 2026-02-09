@@ -77,7 +77,9 @@
   },
   "requiredPrivateInfos": ["chooseAddress"],
   "lazyCodeLoading": "requiredComponents",
-  "usingComponents": {},
+  "usingComponents": {
+    "automation-panel": "/components/automation-panel/automation-panel"
+  },
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",

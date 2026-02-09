@@ -439,3 +439,20 @@
   --td-button-default-color: #000;
   --td-button-primary-text-color: #fa4126;
 }
+
+/* 再次申请按钮 */
+.reapply-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16rpx 32rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background-color: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.reapply-bar .t-button {
+  --td-button-primary-bg-color: #fa4126;
+  --td-button-primary-text-color: #fff;
+}

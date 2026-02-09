@@ -2,14 +2,6 @@
 	<t-tag t-class="comments-header-tag {{commentType === '' ? 'comments-header-active' : ''}}" data-commentType="" bindtap="changeTag">
 		全部({{countObj.commentCount}})
 	</t-tag>
-	<t-tag
-	  t-class="comments-header-tag {{commentType === '5' ? 'comments-header-active' : ''}}"
-	  wx:if="{{countObj.uidCount !== '0'}}"
-	  data-commentType="5"
-	  bindtap="changeTag"
-	>
-		自己({{countObj.uidCount}})
-	</t-tag>
 	<t-tag t-class="comments-header-tag {{commentType === '4' ? 'comments-header-active' : ''}}" data-commentType="4" bindtap="changeTag">
 		带图({{countObj.hasImageCount}})
 	</t-tag>

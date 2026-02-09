@@ -134,36 +134,46 @@ Page({
 
   async refresh() {
     wx.showLoading({ title: 'loading' });
+
+    // 解析URL参数（优先使用）
+    const queryGoodsName = this.query.goodsName ? decodeURIComponent(this.query.goodsName) : '';
+    const queryGoodsImage = this.query.goodsImage ? decodeURIComponent(this.query.goodsImage) : '';
+    const querySpecs = this.query.specs ? decodeURIComponent(this.query.specs) : '';
+    const queryPrice = parseInt(this.query.price, 10) || 0;
+    const queryNum = parseInt(this.query.num, 10) || 1;
+
+    let apiData = {};
     try {
       const res = await this.getRightsPreview();
-      wx.hideLoading();
-      const goodsInfo = {
-        id: res.data.skuId,
-        thumb: res.data.goodsInfo && res.data.goodsInfo.skuImage,
-        title: res.data.goodsInfo && res.data.goodsInfo.goodsName,
-        spuId: res.data.spuId,
-        skuId: res.data.skuId,
-        specs: ((res.data.goodsInfo && res.data.goodsInfo.specInfo) || []).map((s) => s.specValue),
-        paidAmountEach: res.data.paidAmountEach,
-        boughtQuantity: res.data.boughtQuantity,
-      };
-      this.setData({
-        goodsInfo,
-        'serviceFrom.amount': {
-          max: res.data.refundableAmount,
-          current: res.data.refundableAmount,
-        },
-        'serviceFrom.returnNum': res.data.numOfSku,
-        amountTip: `最多可申请退款¥ ${priceFormat(res.data.refundableAmount, 2)}，含发货运费¥ ${priceFormat(
-          res.data.shippingFeeIncluded,
-          2,
-        )}`,
-        maxApplyNum: res.data.numOfSkuAvailable,
-      });
+      apiData = res.data || {};
     } catch (err) {
-      wx.hideLoading();
-      throw err;
+      console.warn('[申请售后] 获取预览失败，使用URL参数:', err.message);
     }
+
+    wx.hideLoading();
+
+    // 退款金额：优先用URL参数
+    const refundAmount = queryPrice > 0 ? queryPrice * queryNum : (parseInt(apiData.refundableAmount, 10) || 0);
+
+    const goodsInfo = {
+      id: this.query.skuId || apiData.skuId || '',
+      thumb: queryGoodsImage || apiData.goodsInfo?.skuImage || '',
+      title: queryGoodsName || apiData.goodsInfo?.goodsName || '商品',
+      spuId: this.query.spuId || apiData.spuId || '',
+      skuId: this.query.skuId || apiData.skuId || '',
+      specs: querySpecs ? [querySpecs] : (apiData.goodsInfo?.specInfo || []).map((s) => s.specValue),
+      paidAmountEach: queryPrice > 0 ? String(queryPrice) : (apiData.paidAmountEach || '0'),
+      boughtQuantity: queryNum || apiData.boughtQuantity || 1,
+      price: queryPrice,
+    };
+
+    this.setData({
+      goodsInfo,
+      'serviceFrom.amount': { max: refundAmount, current: refundAmount },
+      'serviceFrom.returnNum': queryNum || apiData.numOfSku || 1,
+      amountTip: `最多可申请退款¥ ${priceFormat(refundAmount, 2)}，含发货运费¥ 0.00`,
+      maxApplyNum: queryNum || apiData.numOfSkuAvailable || 1,
+    });
   },
 
   async getRightsPreview() {
@@ -180,13 +190,19 @@ Page({
 
   onApplyOnlyRefund() {
     wx.setNavigationBarTitle({ title: '申请退款' });
-    this.setData({ serviceRequireType: 'REFUND_MONEY' });
+    this.setData({
+      serviceRequireType: 'REFUND_MONEY',
+      serviceType: ServiceType.ONLY_REFUND // 设置售后类型为仅退款
+    });
     this.switchReceiptStatus(0);
   },
 
   onApplyReturnGoods() {
     wx.setNavigationBarTitle({ title: '申请退货退款' });
-    this.setData({ serviceRequireType: 'REFUND_GOODS' });
+    this.setData({
+      serviceRequireType: 'REFUND_GOODS',
+      serviceType: ServiceType.RETURN_GOODS // 设置售后类型为退货退款
+    });
     const orderStatus = parseInt(this.query.orderStatus);
     Promise.resolve()
       .then(() => {
@@ -208,7 +224,6 @@ Page({
         return;
       })
       .then(() => {
-        this.setData({ serviceType: ServiceType.RETURN_GOODS });
         this.switchReceiptStatus(1);
       });
   },
@@ -300,21 +315,29 @@ Page({
   },
 
   onAmountTap() {
+    // 确保 inputDialog 组件已初始化
+    if (!this.inputDialog) {
+      this.inputDialog = this.selectComponent('#input-dialog');
+    }
+
     this.setData({
       'serviceFrom.amount.temp': priceFormat(this.data.serviceFrom.amount.current),
       'serviceFrom.amount.focus': true,
       inputDialogVisible: true,
     });
-    this.inputDialog.setData({
-      cancelBtn: '取消',
-      confirmBtn: '确定',
-    });
-    this.inputDialog._onConfirm = () => {
-      this.setData({
-        'serviceFrom.amount.current': this.data.serviceFrom.amount.temp * 100,
+
+    if (this.inputDialog) {
+      this.inputDialog.setData({
+        cancelBtn: '取消',
+        confirmBtn: '确定',
       });
-    };
-    this.inputDialog._onCancel = () => {};
+      this.inputDialog._onConfirm = () => {
+        this.setData({
+          'serviceFrom.amount.current': this.data.serviceFrom.amount.temp * 100,
+        });
+      };
+      this.inputDialog._onCancel = () => {};
+    }
   },
 
   // 对输入的值进行过滤
@@ -354,13 +377,24 @@ Page({
   // 发起申请售后请求
   onSubmit() {
     this.submitCheck().then(() => {
+      // 确保售后类型已设置
+      if (!this.data.serviceType) {
+        Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '请先选择售后类型',
+          icon: 'error-circle',
+        });
+        return;
+      }
+
       const params = {
         rights: {
           orderNo: this.query.orderNo,
           refundRequestAmount: this.data.serviceFrom.amount.current,
           rightsImageUrls: this.data.serviceFrom.rightsImageUrls,
           rightsReasonDesc: this.data.serviceFrom.applyReason.desc,
-          rightsReasonType: this.data.serviceFrom.receiptStatus.status,
+          rightsReasonType: this.data.serviceFrom.receiptStatus.status || this.data.serviceFrom.applyReason.type,
           rightsType: this.data.serviceType,
         },
         rightsItem: [
@@ -371,25 +405,54 @@ Page({
             spuId: this.query.spuId,
           },
         ],
-        refundMemo: this.data.serviceFrom.remark.current,
+        refundMemo: this.data.serviceFrom.remark,
       };
+
       this.setData({ submitting: true });
       // 发起申请售后请求
       dispatchApplyService(params)
         .then((res) => {
+          if (!res || !res.data || !res.data.rightsNo) {
+            throw new Error('返回数据格式错误：缺少售后单号');
+          }
+
+          const rightsNo = res.data.rightsNo;
+
+          // 先显示成功提示，再跳转
           Toast({
             context: this,
             selector: '#t-toast',
             message: '申请成功',
             icon: '',
+            duration: 1500,
           });
 
-          wx.redirectTo({
-            url: `/pages/order/after-service-detail/index?rightsNo=${res.data.rightsNo}`,
-          });
+          // 延迟跳转，确保提示显示
+          setTimeout(() => {
+            this.setData({ submitting: false });
+            wx.redirectTo({
+              url: `/pages/order/after-service-detail/index?rightsNo=${rightsNo}`,
+              fail: (err) => {
+                console.error('[申请售后] 跳转失败:', err);
+                wx.showToast({
+                  title: '跳转失败，请在订单列表查看',
+                  icon: 'none',
+                });
+              }
+            });
+          }, 1500);
         })
-        .then(() => this.setData({ submitting: false }))
-        .catch(() => this.setData({ submitting: false }));
+        .catch((error) => {
+          console.error('[申请售后] 失败:', error);
+          this.setData({ submitting: false });
+          Toast({
+            context: this,
+            selector: '#t-toast',
+            message: error.message || '申请失败，请重试',
+            icon: 'error-circle',
+            duration: 2000,
+          });
+        });
     });
   },
 
@@ -411,19 +474,18 @@ Page({
 
   handleSuccess(e) {
     const { files } = e.detail;
+    // 保持 t-upload 需要的对象数组格式
     this.setData({
-      'sessionFrom.rightsImageUrls': files,
+      'serviceFrom.rightsImageUrls': files,
     });
   },
 
   handleRemove(e) {
     const { index } = e.detail;
-    const {
-      sessionFrom: { rightsImageUrls },
-    } = this.data;
+    const rightsImageUrls = [...this.data.serviceFrom.rightsImageUrls];
     rightsImageUrls.splice(index, 1);
     this.setData({
-      'sessionFrom.rightsImageUrls': rightsImageUrls,
+      'serviceFrom.rightsImageUrls': rightsImageUrls,
     });
   },
 

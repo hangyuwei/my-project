@@ -1,0 +1,139 @@
+/**
+ * 设计令牌 (Design Tokens)
+ * 统一的设计系统变量定义
+ * 创建日期: 2026-02-07
+ */
+
+page {
+  /* ==================== 颜色系统 ==================== */
+
+  /* 主色 - 统一为单一主色 #FA4126 */
+  --color-primary: #FA4126;
+  --color-primary-light: #FFECE9;
+  --color-primary-lighter: #FFF5F3;
+  --color-primary-dark: #E63B1F;
+  --color-primary-darker: #CC3419;
+
+  /* 文字颜色 */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+  --color-text-placeholder: #CCCCCC;
+  --color-text-disabled: #DDDDDD;
+  --color-text-white: #FFFFFF;
+
+  /* 背景颜色 */
+  --color-bg-page: #F5F5F5;
+  --color-bg-white: #FFFFFF;
+  --color-bg-card: #FFFFFF;
+  --color-bg-gray: #F7F8FA;
+  --color-bg-mask: rgba(0, 0, 0, 0.6);
+
+  /* 边框颜色 */
+  --color-border: #E5E5E5;
+  --color-border-light: #F0F0F0;
+  --color-border-dark: #CCCCCC;
+
+  /* 功能色 */
+  --color-success: #34C759;
+  --color-success-light: #E8F5E9;
+  --color-warning: #FF9500;
+  --color-warning-light: #FFF3E0;
+  --color-error: #FF3B30;
+  --color-error-light: #FFEBEE;
+  --color-info: #007AFF;
+  --color-info-light: #E3F2FD;
+
+  /* ==================== 字体系统 ==================== */
+
+  /* 字体大小 - 从10+种简化为6种 */
+  --font-size-display: 48rpx;   /* 大标题/展示文字 */
+  --font-size-h1: 36rpx;         /* 一级标题 */
+  --font-size-h2: 32rpx;         /* 二级标题 */
+  --font-size-body: 28rpx;       /* 正文/主要内容 */
+  --font-size-caption: 24rpx;    /* 辅助文字/说明 */
+  --font-size-tiny: 20rpx;       /* 极小文字/标签 */
+
+  /* 字体粗细 */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* 行高 */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.8;
+
+  /* ==================== 间距系统 ==================== */
+
+  /* 间距 - 统一为8rpx倍数 */
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
+  --spacing-2xl: 64rpx;
+  --spacing-3xl: 96rpx;
+
+  /* ==================== 圆角系统 ==================== */
+
+  --radius-none: 0;
+  --radius-sm: 4rpx;
+  --radius-md: 8rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 24rpx;
+  --radius-2xl: 32rpx;
+  --radius-full: 9999rpx;
+
+  /* ==================== 阴影系统 ==================== */
+
+  --shadow-none: none;
+  --shadow-sm: 0 2rpx 4rpx rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16rpx 48rpx rgba(0, 0, 0, 0.16);
+
+  /* ==================== 尺寸系统 ==================== */
+
+  /* 图标尺寸 */
+  --icon-size-xs: 32rpx;
+  --icon-size-sm: 40rpx;
+  --icon-size-md: 48rpx;
+  --icon-size-lg: 64rpx;
+  --icon-size-xl: 96rpx;
+
+  /* 按钮高度 */
+  --button-height-sm: 56rpx;
+  --button-height-md: 72rpx;
+  --button-height-lg: 88rpx;
+
+  /* 输入框高度 */
+  --input-height-sm: 56rpx;
+  --input-height-md: 72rpx;
+  --input-height-lg: 88rpx;
+
+  /* ==================== 动画系统 ==================== */
+
+  /* 动画时长 */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* 动画曲线 */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* ==================== Z-index 层级 ==================== */
+
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-toast: 1080;
+}

@@ -12,7 +12,12 @@
       "Bash(node -e:*)",
       "Bash(find:*)",
       "Bash(dir \"C:\\\\Users\\\\13811\\\\WeChatProjects\\\\miniprogram-1\\\\ecommerce-management-backend\\\\server\")",
-      "Bash(dir \"C:\\\\Users\\\\13811\\\\WeChatProjects\\\\miniprogram-1\\\\ecommerce-management-backend\\\\server\\\\data\" /s)"
+      "Bash(dir \"C:\\\\Users\\\\13811\\\\WeChatProjects\\\\miniprogram-1\\\\ecommerce-management-backend\\\\server\\\\data\" /s)",
+      "Bash(ls:*)",
+      "mcp__pencil__find_empty_space_on_canvas",
+      "mcp__pencil__batch_design",
+      "mcp__pencil__get_screenshot",
+      "Bash(dir \"C:\\\\Users\\\\13811\\\\WeChatProjects\\\\miniprogram-1\\\\ecommerce-management-backend\\\\server\\\\src\\\\services\")"
     ]
   }
 }

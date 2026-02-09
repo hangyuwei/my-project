@@ -80,7 +80,7 @@ Page({
         this.setData({
           pullDownRefreshing: false,
         });
-        Promise.reject(err);
+        console.error('[售后列表] 刷新失败:', err);
       });
   },
 
@@ -143,7 +143,7 @@ Page({
                 title: item.goodsName,
                 specs: (item.specInfo || []).map((s) => s.specValues || ''),
                 itemRefundAmount: item.itemRefundAmount,
-                rightsQuantity: item.itemRefundAmount,
+                rightsQuantity: item.buyQuantity || 1,
               })),
               storeId: _data.storeId,
               buttons: _data.buttonVOs || [],

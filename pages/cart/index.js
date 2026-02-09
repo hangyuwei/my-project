@@ -7,6 +7,8 @@ Page({
   data: {
     cartGroupData: null,
     isSettling: false, // 防止重复点击结算按钮
+    statusBarHeight: 20,
+    navBarHeight: 64,
   },
 
   // 调用自定义tabbar的init函数，使页面与tabbar激活状态保持一致
@@ -16,6 +18,14 @@ Page({
   },
 
   onLoad() {
+    // 获取系统信息设置导航栏高度
+    const systemInfo = wx.getSystemInfoSync();
+    const statusBarHeight = systemInfo.statusBarHeight || 20;
+    const navBarHeight = statusBarHeight + 44;
+    this.setData({
+      statusBarHeight,
+      navBarHeight,
+    });
     this.refreshData();
   },
 

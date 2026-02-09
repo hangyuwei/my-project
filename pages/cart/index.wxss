@@ -2,12 +2,366 @@
   padding-bottom: 100rpx;
 }
 
+/* ==================== 自定义导航栏 ==================== */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-title {
+  height: 44px;
+  line-height: 44px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #333333;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* ==================== 间距 ==================== */
 .gap {
   height: 100rpx;
   width: 100%;
 }
 
+/* ==================== TDesign 按钮样式 ==================== */
 .t-button {
   --td-button-default-color: #000;
-  --td-button-primary-text-color: #fa4126;
+  --td-button-primary-text-color: var(--color-primary);
+}
+
+/* ==================== 购物车页面容器 ==================== */
+.cart-page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 180rpx);
+}
+
+/* ==================== 购物车分组 ==================== */
+.cart-group {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.cart-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1rpx solid var(--color-border);
+  margin-bottom: var(--spacing-sm);
+}
+
+.cart-group-title {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ==================== 购物车商品项 ==================== */
+.cart-item {
+  display: flex;
+  padding: var(--spacing-sm) 0;
+  position: relative;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.cart-item:active {
+  background-color: var(--color-bg-gray);
+}
+
+.cart-item-checkbox {
+  margin-right: var(--spacing-sm);
+}
+
+.cart-item-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: var(--radius-md);
+  margin-right: var(--spacing-md);
+  object-fit: cover;
+}
+
+.cart-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cart-item-title {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.cart-item-specs {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.cart-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item-price {
+  font-size: var(--font-size-h2);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.cart-item-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* ==================== 滑动删除 ==================== */
+.cart-item-swipe {
+  position: relative;
+  overflow: hidden;
+}
+
+.cart-item-delete {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 120rpx;
+  background-color: var(--color-error);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-white);
+  font-size: var(--font-size-body);
+  transform: translateX(100%);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.cart-item-swipe.swiped .cart-item-delete {
+  transform: translateX(0);
+}
+
+/* ==================== 结算栏 ==================== */
+.cart-checkout-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-white);
+  padding: var(--spacing-md) var(--spacing-md) calc(env(safe-area-inset-bottom) + var(--spacing-md));
+  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.08);
+  z-index: var(--z-index-fixed);
+}
+
+.checkout-bar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkout-bar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.checkout-select-all {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+.checkout-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.checkout-total-label {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-tertiary);
+  margin-bottom: 4rpx;
+}
+
+.checkout-total-price {
+  font-size: var(--font-size-h1);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.checkout-button {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.checkout-button:active {
+  background-color: var(--color-primary-dark);
+  transform: scale(0.98);
+}
+
+.checkout-button.disabled {
+  background-color: var(--color-text-placeholder);
+  opacity: 0.6;
+}
+
+/* ==================== 空购物车状态 ==================== */
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl) var(--spacing-md);
+  min-height: 60vh;
+}
+
+.empty-cart-icon {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.empty-cart-text {
+  font-size: var(--font-size-body);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.empty-cart-button {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-body);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.empty-cart-button:active {
+  transform: scale(0.95);
+  background-color: var(--color-primary-dark);
+}
+
+/* ==================== 优惠券提示 ==================== */
+.cart-coupon-tip {
+  background: var(--color-warning-light);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin: var(--spacing-sm) var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.cart-coupon-icon {
+  font-size: var(--font-size-h2);
+  color: var(--color-warning);
+}
+
+.cart-coupon-text {
+  flex: 1;
+  font-size: var(--font-size-caption);
+  color: var(--color-warning);
+}
+
+/* ==================== 加载骨架屏 ==================== */
+.cart-skeleton {
+  padding: var(--spacing-md);
+}
+
+.skeleton-cart-item {
+  display: flex;
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-image {
+  width: 160rpx;
+  height: 160rpx;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  margin-right: var(--spacing-md);
+}
+
+.skeleton-info {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 32rpx;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ==================== 失效商品 ==================== */
+.cart-invalid-section {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.cart-invalid-header {
+  font-size: var(--font-size-body);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.cart-invalid-item {
+  opacity: 0.5;
+  position: relative;
+}
+
+.cart-invalid-item::after {
+  content: '已失效';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-text-white);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-caption);
 }

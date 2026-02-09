@@ -1,0 +1,151 @@
+<view class="automation-panel {{visible ? 'visible' : ''}}">
+  <!-- 拖拽手柄 -->
+  <view class="panel-handle" bindtap="togglePanel">
+    <text class="handle-icon">{{visible ? '▼' : '▲'}}</text>
+    <text class="handle-text">自动化</text>
+  </view>
+
+  <!-- 主面板 -->
+  <view class="panel-content" wx:if="{{visible}}">
+    <!-- 状态显示 -->
+    <view class="status-bar">
+      <view class="status-item">
+        <text class="status-label">状态:</text>
+        <text class="status-value {{statusClass}}">{{statusText}}</text>
+      </view>
+      <view class="status-item" wx:if="{{eventCount > 0}}">
+        <text class="status-label">事件:</text>
+        <text class="status-value">{{eventCount}}</text>
+      </view>
+      <view class="status-item" wx:if="{{duration > 0}}">
+        <text class="status-label">时长:</text>
+        <text class="status-value">{{durationText}}</text>
+      </view>
+    </view>
+
+    <!-- 录制控制 -->
+    <view class="control-section" wx:if="{{mode === 'record'}}">
+      <view class="section-title">录制控制</view>
+      <view class="button-group">
+        <button
+          class="control-btn {{isRecording ? 'danger' : 'primary'}}"
+          bindtap="toggleRecord"
+          size="mini"
+        >
+          {{isRecording ? '停止录制' : '开始录制'}}
+        </button>
+        <button
+          class="control-btn"
+          bindtap="pauseRecord"
+          disabled="{{!isRecording}}"
+          size="mini"
+        >
+          {{isPaused ? '恢复' : '暂停'}}
+        </button>
+        <button
+          class="control-btn"
+          bindtap="clearRecord"
+          disabled="{{isRecording}}"
+          size="mini"
+        >
+          清空
+        </button>
+      </view>
+    </view>
+
+    <!-- 回放控制 -->
+    <view class="control-section" wx:if="{{mode === 'play'}}">
+      <view class="section-title">回放控制</view>
+
+      <!-- 进度条 -->
+      <view class="progress-bar" wx:if="{{isPlaying}}">
+        <view class="progress-fill" style="width: {{progress}}%"></view>
+        <text class="progress-text">{{progress}}%</text>
+      </view>
+
+      <view class="button-group">
+        <button
+          class="control-btn {{isPlaying ? 'danger' : 'primary'}}"
+          bindtap="togglePlay"
+          disabled="{{!hasRecord}}"
+          size="mini"
+        >
+          {{isPlaying ? '停止回放' : '开始回放'}}
+        </button>
+        <button
+          class="control-btn"
+          bindtap="pausePlay"
+          disabled="{{!isPlaying}}"
+          size="mini"
+        >
+          {{isPaused ? '恢复' : '暂停'}}
+        </button>
+      </view>
+
+      <!-- 速度控制 -->
+      <view class="speed-control">
+        <text class="speed-label">速度: {{speed}}x</text>
+        <slider
+          class="speed-slider"
+          min="0.5"
+          max="5"
+          step="0.5"
+          value="{{speed}}"
+          bindchange="onSpeedChange"
+          show-value="{{false}}"
+        />
+      </view>
+    </view>
+
+    <!-- 录制列表 -->
+    <view class="control-section">
+      <view class="section-title">
+        <text>录制列表 ({{recordList.length}})</text>
+        <text class="refresh-btn" bindtap="loadRecords">刷新</text>
+      </view>
+
+      <scroll-view class="record-list" scroll-y="{{true}}">
+        <view
+          class="record-item {{selectedRecord === item.sessionId ? 'selected' : ''}}"
+          wx:for="{{recordList}}"
+          wx:key="sessionId"
+          bindtap="selectRecord"
+          data-session-id="{{item.sessionId}}"
+        >
+          <view class="record-info">
+            <text class="record-name">{{item.sessionId}}</text>
+            <text class="record-meta">{{item.eventCount}}个事件 · {{item.durationText}}</text>
+          </view>
+          <view class="record-actions">
+            <text class="action-btn" bindtap="playRecord" data-session-id="{{item.sessionId}}" catchtap="true">播放</text>
+            <text class="action-btn danger" bindtap="deleteRecord" data-session-id="{{item.sessionId}}" catchtap="true">删除</text>
+          </view>
+        </view>
+
+        <view class="empty-tip" wx:if="{{recordList.length === 0}}">
+          暂无录制记录
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 模式切换 -->
+    <view class="mode-switch">
+      <button
+        class="mode-btn {{mode === 'record' ? 'active' : ''}}"
+        bindtap="switchMode"
+        data-mode="record"
+        size="mini"
+      >
+        录制模式
+      </button>
+      <button
+        class="mode-btn {{mode === 'play' ? 'active' : ''}}"
+        bindtap="switchMode"
+        data-mode="play"
+        size="mini"
+      >
+        回放模式
+      </button>
+    </view>
+  </view>
+</view>

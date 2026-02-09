@@ -11,7 +11,7 @@
       t-class-left="order-group__left"
     >
       <button slot="note" class="avatar-button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <t-image src="{{personInfo.avatarUrl}}" t-class="avatarUrl" mode="aspectFill" />
+        <t-image src="{{personInfo.avatarUrl}}" t-class="avatarUrl" mode="aspectFill" bind:error="onAvatarError" />
       </button>
     </t-cell>
     <t-cell

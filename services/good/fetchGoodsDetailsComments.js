@@ -1,40 +1,53 @@
-import { config } from '../../config/index';
 import { callCloudFunction } from '../_utils/cloud';
-import { shouldMock } from '../_utils/shouldMock';
-import { adaptGoodsDetailsComments, adaptGoodsDetailsCommentsCount } from '../../model/detailsComments';
 
-/** 获取商品详情页评论数 */
-function mockFetchGoodDetailsCommentsCount(spuId = 0) {
-  const { delay } = require('../_utils/delay');
-  const {
-    getGoodsDetailsCommentsCount,
-  } = require('../../model/detailsComments');
-  return delay().then(() => getGoodsDetailsCommentsCount(spuId));
+/** 获取商品详情页评论统计 */
+export function getGoodsDetailsCommentsCount(spuId = '') {
+  return callCloudFunction('getComments', { spuId: String(spuId), type: 'count' })
+    .then((res) => {
+      if (res && res.success && res.data) {
+        return res.data;
+      }
+      // 返回默认值
+      return {
+        commentCount: 0,
+        goodCount: 0,
+        middleCount: 0,
+        badCount: 0,
+        hasImageCount: 0,
+        goodRate: 100,
+      };
+    })
+    .catch((error) => {
+      console.error('[获取评价统计失败]', error);
+      return {
+        commentCount: 0,
+        goodCount: 0,
+        middleCount: 0,
+        badCount: 0,
+        hasImageCount: 0,
+        goodRate: 100,
+      };
+    });
 }
 
-/** 获取商品详情页评论数 */
-export function getGoodsDetailsCommentsCount(spuId = 0) {
-  if (shouldMock('good.getGoodsDetailsCommentsCount')) {
-    return mockFetchGoodDetailsCommentsCount(spuId);
-  }
-  return callCloudFunction('getGoodsDetailsCommentsCount', { spuId }).then((real) =>
-    adaptGoodsDetailsCommentsCount(real),
-  );
-}
-
-/** 获取商品详情页评论 */
-function mockFetchGoodDetailsCommentList(spuId = 0) {
-  const { delay } = require('../_utils/delay');
-  const { getGoodsDetailsComments } = require('../../model/detailsComments');
-  return delay().then(() => getGoodsDetailsComments(spuId));
-}
-
-/** 获取商品详情页评论 */
-export function getGoodsDetailsCommentList(spuId = 0) {
-  if (shouldMock('good.getGoodsDetailsCommentList')) {
-    return mockFetchGoodDetailsCommentList(spuId);
-  }
-  return callCloudFunction('getGoodsDetailsCommentList', { spuId }).then((real) =>
-    adaptGoodsDetailsComments(real),
-  );
+/** 获取商品详情页评论列表 */
+export function getGoodsDetailsCommentList(spuId = '', pageNum = 1, pageSize = 10) {
+  return callCloudFunction('getComments', { spuId: String(spuId), type: 'list', pageNum, pageSize })
+    .then((res) => {
+      if (res && res.success && res.data) {
+        return res.data;
+      }
+      // 返回默认值
+      return {
+        homePageComments: [],
+        totalCount: 0,
+      };
+    })
+    .catch((error) => {
+      console.error('[获取评价列表失败]', error);
+      return {
+        homePageComments: [],
+        totalCount: 0,
+      };
+    });
 }

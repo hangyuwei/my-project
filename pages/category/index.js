@@ -9,6 +9,8 @@ Page({
     categoryName: '',
     goodsList: [],
     currentCategory: '', // 当前选中的分类
+    statusBarHeight: 20,
+    navBarHeight: 64,
   },
 
   async init(categoryKey) {
@@ -66,6 +68,14 @@ Page({
   },
 
   onLoad() {
+    // 获取系统信息设置导航栏高度
+    const systemInfo = wx.getSystemInfoSync();
+    const statusBarHeight = systemInfo.statusBarHeight || 20;
+    const navBarHeight = statusBarHeight + 44;
+    this.setData({
+      statusBarHeight,
+      navBarHeight,
+    });
     this.init();
   },
 

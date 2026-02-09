@@ -5,6 +5,82 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
 
+const STATUS_VALUE_MAP = {
+  pending_payment: 5,
+  pending: 10,
+  shipped: 40,
+  completed: 50,
+  refunded: 80,
+  canceled: 80,
+  cancelled: 80,
+  cancel: 80,
+};
+
+const STATUS_ALIAS_MAP = {
+  PendingPayment: 5,
+  'Pending payment': 5,
+  PendingShipment: 10,
+  'Pending shipment': 10,
+  PendingDelivery: 10,
+  'Pending delivery': 10,
+  PendingReceive: 40,
+  'Pending receipt': 40,
+  '待付款': 5,
+  '待发货': 10,
+  '待收货': 40,
+  '已发货': 40,
+  '已完成': 50,
+  '交易完成': 50,
+  '已取消': 80,
+  '已取消(未支付)': 80,
+  '已退款': 80,
+};
+
+const STATUS_NAME_MAP = {
+  5: '待付款',
+  10: '待发货',
+  40: '待收货',
+  50: '已完成',
+  80: '已取消',
+};
+
+const normalizeStatusValue = (value) => {
+  if (value === undefined || value === null || value === '') return null;
+  const num = Number(value);
+  if (!Number.isNaN(num)) {
+    if (num === 60) return 50;
+    return num;
+  }
+  const raw = String(value).trim();
+  const lower = raw.toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(STATUS_VALUE_MAP, lower)) {
+    return STATUS_VALUE_MAP[lower];
+  }
+  if (Object.prototype.hasOwnProperty.call(STATUS_ALIAS_MAP, raw)) {
+    return STATUS_ALIAS_MAP[raw];
+  }
+  return null;
+};
+
+const normalizeOrderStatus = (order = {}) => {
+  const direct = normalizeStatusValue(order.orderStatus ?? order.status);
+  if (direct !== null) return direct;
+  return normalizeStatusValue(order.orderStatusName ?? order.statusName);
+};
+
+const resolveStatusName = (order = {}, normalizedStatus = null) => {
+  // 优先使用订单自带的状态名称（例如"已退款"），避免被通用映射覆盖
+  const customStatusName = order.orderStatusName || order.statusName;
+  if (customStatusName && customStatusName !== '未知状态') {
+    return customStatusName;
+  }
+  const statusValue = normalizedStatus ?? normalizeStatusValue(order.orderStatus);
+  if (statusValue !== null && STATUS_NAME_MAP[statusValue]) {
+    return STATUS_NAME_MAP[statusValue];
+  }
+  return customStatusName || '未知状态';
+};
+
 // 订单按钮类型
 const OrderButtonTypes = {
   PAY: 1,           // 付款
@@ -19,7 +95,7 @@ const OrderButtonTypes = {
 };
 
 // 根据订单状态生成按钮
-function generateButtonsByStatus(orderStatus) {
+function generateButtonsByStatus(orderStatus, hasCommented = false, hasAfterSale = false) {
   const buttons = [];
 
   switch (orderStatus) {
@@ -28,18 +104,38 @@ function generateButtonsByStatus(orderStatus) {
       buttons.push({ type: OrderButtonTypes.CANCEL, name: '取消订单', primary: false });
       break;
     case 10: // 待发货
-      buttons.push({ type: OrderButtonTypes.APPLY_REFUND, name: '申请退款', primary: false });
+      // 有售后显示"查看售后"，否则显示"申请退款"
+      if (hasAfterSale) {
+        buttons.push({ type: OrderButtonTypes.VIEW_REFUND, name: '查看售后', primary: false });
+      } else {
+        buttons.push({ type: OrderButtonTypes.APPLY_REFUND, name: '申请退款', primary: false });
+      }
       break;
     case 40: // 待收货
       buttons.push({ type: OrderButtonTypes.CONFIRM, name: '确认收货', primary: true });
       buttons.push({ type: OrderButtonTypes.DELIVERY, name: '查看物流', primary: false });
+      // 有售后显示"查看售后"
+      if (hasAfterSale) {
+        buttons.push({ type: OrderButtonTypes.VIEW_REFUND, name: '查看售后', primary: false });
+      }
       break;
     case 50: // 已完成/待评价
-      buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
+      // 有售后显示"查看售后"
+      if (hasAfterSale) {
+        buttons.push({ type: OrderButtonTypes.VIEW_REFUND, name: '查看售后', primary: true });
+      }
+      // 只有未评价的订单才显示评价按钮
+      if (!hasCommented) {
+        buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: !hasAfterSale });
+      }
       buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: false });
       buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
       break;
     case 80: // 已取消
+      // 有售后显示"查看售后"
+      if (hasAfterSale) {
+        buttons.push({ type: OrderButtonTypes.VIEW_REFUND, name: '查看售后', primary: false });
+      }
       buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
       break;
   }
@@ -60,17 +156,6 @@ function generateGoodsButtonsByStatus(orderStatus) {
 }
 
 // 根据订单状态获取中文状态名称
-function getStatusName(orderStatus) {
-  const statusMap = {
-    5: '待付款',
-    10: '待发货',
-    40: '待收货',
-    50: '已完成',
-    80: '已取消',
-  };
-  return statusMap[orderStatus] || '未知状态';
-}
-
 // 检查是否是云存储 fileID
 const isCloudFileId = (url) => url && typeof url === 'string' && url.startsWith('cloud://');
 
@@ -95,14 +180,17 @@ exports.main = async (event, context) => {
   try {
     const { parameter = {} } = event;
     const { pageNum = 1, pageSize = 10, orderStatus } = parameter;
+    const normalizedFilter = normalizeStatusValue(orderStatus);
 
     // 构建查询条件
     const userScope = _.or([{ openid }, { uid: openid }, { userId: openid }]);
-    const conditions = [userScope];
-    if (orderStatus !== undefined && orderStatus !== -1) {
-      conditions.push({ orderStatus });
+    // 排除已删除的订单
+    const notDeleted = _.or([{ isDeleted: _.neq(true) }, { isDeleted: _.exists(false) }]);
+    const conditions = [userScope, notDeleted];
+    if (normalizedFilter !== null && normalizedFilter > -1) {
+      conditions.push({ orderStatus: normalizedFilter });
     }
-    const where = conditions.length > 1 ? _.and(conditions) : conditions[0];
+    const where = _.and(conditions);
 
     // 查询总数
     const countResult = await db.collection('orders')
@@ -234,13 +322,18 @@ exports.main = async (event, context) => {
     // 应用转换后的 URL 和生成按钮
     const finalOrders = orders.map(order => {
       // 根据订单状态生成按钮和状态名称
-      const orderButtons = generateButtonsByStatus(order.orderStatus);
-      const goodsButtons = generateGoodsButtonsByStatus(order.orderStatus);
-      const statusName = getStatusName(order.orderStatus);
+      const normalizedStatus = normalizeOrderStatus(order);
+      const statusValue = normalizedStatus !== null ? normalizedStatus : order.orderStatus;
+      const statusName = resolveStatusName(order, normalizedStatus);
+      const hasCommented = order.hasCommented === true;
+      const hasAfterSale = order.hasAfterSale === true;
+      const orderButtons = generateButtonsByStatus(statusValue, hasCommented, hasAfterSale);
+      const goodsButtons = generateGoodsButtonsByStatus(statusValue);
 
       if (!order.orderItemVOs || !Array.isArray(order.orderItemVOs)) {
         return {
           ...order,
+          orderStatus: statusValue,
           orderStatusName: statusName,
           buttonVOs: orderButtons,
         };
@@ -266,6 +359,7 @@ exports.main = async (event, context) => {
 
       return {
         ...order,
+        orderStatus: statusValue,
         orderStatusName: statusName,
         orderItemVOs: finalItems,
         buttonVOs: orderButtons,

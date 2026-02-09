@@ -1,4 +1,11 @@
-const { readDb, ensureArray, toNumber } = require('./_helpers');
+const {
+  readDb,
+  ensureArray,
+  toNumber,
+  normalizeStatusValue,
+  normalizeOrderStatus,
+  resolveStatusName,
+} = require('./_helpers');
 
 exports.main = async (event = {}) => {
   const db = readDb();
@@ -8,20 +15,30 @@ exports.main = async (event = {}) => {
   if (!list.length) return {};
   const param = event.parameter || {};
   const orderStatus = param.orderStatus ?? event.orderStatus;
+  const normalizedFilter = normalizeStatusValue(orderStatus);
   const pageNum = toNumber(param.pageNum || event.pageNum || 1, 1);
   const pageSize = toNumber(param.pageSize || event.pageSize || 10, 10);
 
   let orders = list;
-  if (orderStatus !== undefined && orderStatus !== null && Number(orderStatus) > -1) {
-    orders = orders.filter((item) => Number(item.orderStatus) === Number(orderStatus));
+  if (normalizedFilter !== null && normalizedFilter > -1) {
+    orders = orders.filter((item) => normalizeOrderStatus(item) === normalizedFilter);
   }
 
   const totalCount = orders.length;
   const start = (pageNum - 1) * pageSize;
+  const mappedOrders = orders.map((order) => {
+    const normalizedStatus = normalizeOrderStatus(order);
+    if (normalizedStatus === null) return order;
+    return {
+      ...order,
+      orderStatus: normalizedStatus,
+      orderStatusName: resolveStatusName(order, normalizedStatus),
+    };
+  });
   return {
     pageNum,
     pageSize,
     totalCount,
-    orders: orders.slice(start, start + pageSize),
+    orders: mappedOrders.slice(start, start + pageSize),
   };
 };

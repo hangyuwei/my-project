@@ -1,5 +1,7 @@
 import Toast from 'tdesign-miniprogram/toast/index';
 
+const DEFAULT_AVATAR = 'https://tdesign.gtimg.com/miniprogram/template/retail/usercenter/icon-user-center-avatar@2x.png';
+
 Page({
   data: {
     personInfo: {
@@ -17,13 +19,58 @@ Page({
   loadUserInfo() {
     const app = getApp();
     const globalUserInfo = app.globalData.userInfo;
+    const avatarUrl = (globalUserInfo && globalUserInfo.avatarUrl) || DEFAULT_AVATAR;
 
-    // 无论是否有 userInfo，都更新页面数据
-    this.setData({
-      personInfo: {
-        avatarUrl: (globalUserInfo && globalUserInfo.avatarUrl) || 'https://tdesign.gtimg.com/miniprogram/template/retail/usercenter/icon-user-center-avatar@2x.png',
-        nickName: (globalUserInfo && globalUserInfo.nickName) || '微信用户',
+    // 如果是 cloud:// 协议，需要转换为临时 URL
+    if (avatarUrl && avatarUrl.startsWith('cloud://')) {
+      this.convertCloudUrl(avatarUrl);
+      // 先显示默认头像，等转换完成后再更新
+      this.setData({
+        personInfo: {
+          avatarUrl: DEFAULT_AVATAR,
+          nickName: (globalUserInfo && globalUserInfo.nickName) || '微信用户',
+        },
+      });
+    } else {
+      this.setData({
+        personInfo: {
+          avatarUrl: avatarUrl,
+          nickName: (globalUserInfo && globalUserInfo.nickName) || '微信用户',
+        },
+      });
+    }
+  },
+
+  // 将 cloud:// 协议转换为临时 HTTPS URL
+  convertCloudUrl(cloudUrl) {
+    wx.cloud.getTempFileURL({
+      fileList: [cloudUrl],
+      success: res => {
+        if (res.fileList && res.fileList[0] && res.fileList[0].tempFileURL) {
+          this.setData({
+            'personInfo.avatarUrl': res.fileList[0].tempFileURL,
+          });
+        } else {
+          console.warn('获取临时URL失败，使用默认头像');
+          this.setData({
+            'personInfo.avatarUrl': DEFAULT_AVATAR,
+          });
+        }
       },
+      fail: err => {
+        console.error('转换云存储URL失败:', err);
+        this.setData({
+          'personInfo.avatarUrl': DEFAULT_AVATAR,
+        });
+      }
+    });
+  },
+
+  // 头像加载失败时使用默认头像
+  onAvatarError() {
+    console.warn('头像加载失败，使用默认头像');
+    this.setData({
+      'personInfo.avatarUrl': DEFAULT_AVATAR,
     });
   },
   // 选择头像
@@ -195,10 +242,7 @@ Page({
     try {
       const app = getApp();
 
-      // 清除全局用户信息
-      app.globalData.userInfo = null;
-      app.globalData.openid = null;
-
+      // 重要：先清除数据（此时 openid 还在，能正确定位到用户的存储 key）
       // 清除购物车数据
       const { clearAllCartData } = require('../../../services/cart/localCart');
       clearAllCartData();
@@ -206,6 +250,10 @@ Page({
       // 清除订单数据
       const { clearAllOrders } = require('../../../services/order/localOrders');
       clearAllOrders();
+
+      // 最后才清除全局用户信息（包括 openid）
+      app.globalData.userInfo = null;
+      app.globalData.openid = null;
 
       wx.hideLoading();
 

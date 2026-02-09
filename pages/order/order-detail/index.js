@@ -1,9 +1,59 @@
 import { formatTime } from '../../../utils/util';
-import { OrderStatus, LogisticsIconMap } from '../config';
+import { OrderStatus, LogisticsIconMap, OrderButtonTypes } from '../config';
 import { fetchBusinessTime, fetchOrderDetail } from '../../../services/order/orderDetail';
 import Toast from 'tdesign-miniprogram/toast/index';
+import Dialog from 'tdesign-miniprogram/dialog/index';
 import { getAddressPromise } from '../../../services/address/list';
 import { getAfterSaleEntry } from '../../../services/after-sale/index';
+import { updateLocalOrderStatus } from '../../../services/order/localOrders';
+
+// 订单状态中文名称映射
+const STATUS_NAME_MAP = {
+  5: '待付款',
+  10: '待发货',
+  40: '待收货',
+  50: '已完成',
+  80: '已取消',
+};
+
+// 获取中文状态名称
+const getStatusName = (status, fallbackName) => {
+  // 如果后端提供了明确的状态名称，优先使用（例如"已退款"）
+  if (fallbackName && fallbackName !== '未知状态') {
+    return fallbackName;
+  }
+  return STATUS_NAME_MAP[status] || fallbackName || '未知状态';
+};
+
+// 根据订单状态生成按钮
+const generateButtonsByStatus = (orderStatus, hasCommented = false) => {
+  const buttons = [];
+  switch (orderStatus) {
+    case 5: // 待付款
+      buttons.push({ type: OrderButtonTypes.PAY, name: '付款', primary: true });
+      buttons.push({ type: OrderButtonTypes.CANCEL, name: '取消订单', primary: false });
+      break;
+    case 10: // 待发货
+      buttons.push({ type: OrderButtonTypes.APPLY_REFUND, name: '申请退款', primary: false });
+      break;
+    case 40: // 待收货
+      buttons.push({ type: OrderButtonTypes.CONFIRM, name: '确认收货', primary: true });
+      buttons.push({ type: OrderButtonTypes.DELIVERY, name: '查看物流', primary: false });
+      break;
+    case 50: // 已完成
+      // 只有未评价的订单才显示评价按钮
+      if (!hasCommented) {
+        buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
+      }
+      buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: !hasCommented ? false : true });
+      buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
+      break;
+    case 80: // 已取消
+      buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
+      break;
+  }
+  return buttons;
+};
 
 Page({
   data: {
@@ -91,7 +141,7 @@ Page({
         storeId: order.storeId,
         storeName: order.storeName,
         status: order.orderStatus,
-        statusDesc: order.orderStatusName,
+        statusDesc: getStatusName(order.orderStatus, order.orderStatusName),
         amount: order.paymentAmount,
         totalAmount: order.goodsAmountApp,
         logisticsNo: order.logisticsVO ? order.logisticsVO.logisticsNo : '',
@@ -109,7 +159,8 @@ Page({
             buttons: goods.buttonVOs || [],
           }),
         ),
-        buttons: order.buttonVOs || [],
+        hasCommented: order.hasCommented === true,
+        buttons: (order.buttonVOs && order.buttonVOs.length > 0) ? order.buttonVOs : generateButtonsByStatus(order.orderStatus, order.hasCommented === true),
         createTime: order.createTime,
         receiverAddress: this.composeAddress(order),
         groupInfoVo: order.groupInfoVo,
@@ -280,8 +331,6 @@ Page({
   async fetchAfterSaleEntry() {
     try {
       const entry = await getAfterSaleEntry(this.orderNo);
-      console.log('[售后入口]', entry);
-      console.log('[订单状态]', 'orderStatus:', this.data.order.orderStatus, 'isPending:', this.data.order.orderStatus === 5);
       this.setData({ afterSaleEntry: entry });
     } catch (error) {
       console.error('[售后入口] 获取失败:', error);

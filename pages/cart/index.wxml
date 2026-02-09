@@ -1,3 +1,8 @@
+<!-- 自定义导航栏 -->
+<view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+  <view class="navbar-title">购物车</view>
+</view>
+<view style="padding-top: {{navBarHeight}}px;">
 <!-- 分层购物车 -->
 <block wx:if="{{cartGroupData.isNotEmpty}}">
   <cart-group
@@ -27,5 +32,6 @@
 </block>
 <!-- 购物车空态 -->
 <cart-empty wx:else bind:handleClick="onGotoHome" />
+</view>
 <t-toast id="t-toast" />
 <t-dialog id="t-dialog" />

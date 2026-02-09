@@ -23,21 +23,46 @@ exports.main = async (event, context) => {
       openid: openid
     }).get();
 
-    // 静默登录模式：只返回 openid 和已有用户信息，不创建新用户
+    // 静默登录模式：返回 openid 和用户信息，如果用户不存在则自动创建
     if (silentLogin) {
       if (userQuery.data && userQuery.data.length > 0) {
         console.log('静默登录 - 用户已存在');
+        // 更新最后登录时间
+        const userId = userQuery.data[0]._id;
+        await db.collection('user').doc(userId).update({
+          data: {
+            lastLoginTime: new Date(),
+          }
+        });
         return {
           success: true,
           openid,
           userInfo: userQuery.data[0],
         };
       } else {
-        console.log('静默登录 - 用户不存在');
+        // 用户不存在，自动创建新用户记录
+        console.log('静默登录 - 用户不存在，自动创建');
+        const newUserData = {
+          openid,
+          appid,
+          unionid,
+          nickName: '微信用户',
+          avatarUrl: '',
+          createTime: new Date(),
+          lastLoginTime: new Date(),
+        };
+        const createResult = await db.collection('user').add({
+          data: newUserData
+        });
+        console.log('静默登录 - 新用户创建成功');
         return {
           success: true,
           openid,
-          userInfo: null,
+          isNewUser: true,
+          userInfo: {
+            _id: createResult._id,
+            ...newUserData
+          },
         };
       }
     }

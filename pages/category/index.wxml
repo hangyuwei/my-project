@@ -1,4 +1,8 @@
-<view class="category-page">
+<!-- 自定义导航栏 -->
+<view class="custom-navbar" style="padding-top: {{statusBarHeight}}px;">
+  <view class="navbar-title">分类</view>
+</view>
+<view class="category-page" style="padding-top: {{navBarHeight}}px;">
   <!-- 左侧分类导航 -->
   <scroll-view class="category-sidebar" scroll-y>
     <view

@@ -1,7 +1,12 @@
+/* 遮罩层样式 */
+.t-popup__overlay {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
 .popup-container {
   background-color: #ffffff;
   position: relative;
-  z-index: 100;
+  z-index: 11001;
   border-radius: 16rpx 16rpx 0 0;
   padding-bottom: calc(env(safe-area-inset-bottom) + 20rpx);
 }

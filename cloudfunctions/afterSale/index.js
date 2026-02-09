@@ -182,7 +182,9 @@ async function getAfterSaleEntry(event, openid) {
 
 // 申请售后
 async function applyAfterSale(event, openid) {
-  const { orderNo, itemId, type, amount, reasonCode, reasonText, evidence } = event;
+  const { orderNo, itemId, type, amount, reasonCode, reasonText, remark, evidence } = event;
+
+  console.log('[申请售后] 参数:', { orderNo, type, amount, reasonCode, reasonText, remark, evidence });
 
   // 校验
   if (!orderNo) {
@@ -210,19 +212,20 @@ async function applyAfterSale(event, openid) {
   const order = orderResult.data[0];
 
   // 校验金额不超过可退金额
-  // 数据库中金额以分为单位，用户传入的是元，转换为分进行对比
+  // 前端传入的金额已经是分为单位
   const refundableAmountFen = order.paymentAmount || order.totalAmount || 0;
-  const amountFen = Math.round(amount * 100); // 元转分
+  const amountFen = Math.round(amount); // 确保是整数
   if (amountFen > refundableAmountFen) {
-    return { success: false, error: '退款金额超出可退金额' };
+    console.error('[申请售后] 退款金额超出限制:', { amountFen, refundableAmountFen });
+    return { success: false, error: `退款金额超出可退金额（最多可退¥${(refundableAmountFen / 100).toFixed(2)}）` };
   }
 
-  // 检查是否有进行中的售后
+  // 检查是否有进行中的售后（排除已完成、已取消、已拒绝的售后）
   const existingAfterSale = await db.collection('after_sales')
     .where({
       orderNo,
       openid,
-      status: _.nin([AfterSaleStatus.REFUNDED, AfterSaleStatus.CANCELED])
+      status: _.nin([AfterSaleStatus.REFUNDED, AfterSaleStatus.CANCELED, AfterSaleStatus.SELLER_REJECTED])
     })
     .get();
 
@@ -252,9 +255,10 @@ async function applyAfterSale(event, openid) {
     openid,
     type,
     applyAmount: amountFen, // 以分为单位存储
-    applyAmountYuan: amount, // 同时存储元，方便展示
+    applyAmountYuan: (amountFen / 100).toFixed(2), // 转换为元，方便展示
     reasonCode: reasonCode || '',
     reasonText: reasonText || '',
+    remark: remark || '', // 用户填写的退款说明
     evidence: evidence || [],
     status: AfterSaleStatus.APPLIED,
     statusDesc: AfterSaleStatusDesc[AfterSaleStatus.APPLIED],
@@ -272,9 +276,18 @@ async function applyAfterSale(event, openid) {
     updateTime: Date.now(),
   };
 
+  console.log('[申请售后] 准备插入数据:', { afterSaleNo, orderNo, amountFen });
+
   const result = await db.collection('after_sales').add({
     data: afterSaleData,
   });
+
+  console.log('[申请售后] 数据库插入结果:', result);
+
+  if (!result._id) {
+    console.error('[申请售后] 数据库插入失败，未返回ID');
+    return { success: false, error: '创建售后单失败' };
+  }
 
   // 更新订单标记
   await db.collection('orders')
@@ -287,7 +300,7 @@ async function applyAfterSale(event, openid) {
       }
     });
 
-  console.log('[售后服务] 申请成功:', afterSaleNo);
+  console.log('[售后服务] 申请成功:', afterSaleNo, '数据库ID:', result._id);
 
   return {
     success: true,

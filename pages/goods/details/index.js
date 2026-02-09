@@ -13,6 +13,32 @@ const imgPrefix = `${cdnBase}/`;
 
 const recLeftImg = `${imgPrefix}common/rec-left.png`;
 const recRightImg = `${imgPrefix}common/rec-right.png`;
+
+/** 检查是否是云存储fileID */
+const isCloudFileId = (url) => typeof url === 'string' && url.startsWith('cloud://');
+
+/** 批量转换云存储URL为临时URL */
+const convertCloudUrls = async (urls) => {
+  const cloudIds = urls.filter(isCloudFileId);
+  if (cloudIds.length === 0) return urls;
+
+  try {
+    const res = await wx.cloud.getTempFileURL({ fileList: [...new Set(cloudIds)] });
+    const urlMap = {};
+    if (res.fileList) {
+      res.fileList.forEach((file) => {
+        if (file.tempFileURL) {
+          urlMap[file.fileID] = file.tempFileURL;
+        }
+      });
+    }
+    return urls.map((url) => urlMap[url] || url);
+  } catch (e) {
+    console.error('[商品详情] 转换云存储URL失败', e);
+    return urls;
+  }
+};
+
 const obj2Params = (obj = {}, encode = false) => {
   const result = [];
   Object.keys(obj).forEach((key) => result.push(`${key}=${encode ? encodeURIComponent(obj[key]) : obj[key]}`));
@@ -272,6 +298,7 @@ Page({
       skuId: String(skuId),
       title: goodsTitle,
       thumb: details.primaryImage || '',
+      thumbFileId: details.primaryImageFileId || '',
       price,
       originPrice,
       stockQuantity: typeof details.spuStockQuantity === 'number' ? details.spuStockQuantity : 999,
@@ -381,90 +408,101 @@ Page({
     });
   },
 
-  getDetail(spuId) {
-    Promise.all([fetchGood(spuId), fetchActivityList()]).then((res) => {
-      const [details, activityList] = res;
+  async getDetail(spuId) {
+    const [details, activityList] = await Promise.all([fetchGood(spuId), fetchActivityList()]);
 
-      console.log('=== 小程序端调试 ===');
-      console.log('fetchGood 返回的 details:', details);
-      console.log('details.description:', details?.description);
+    console.log('=== 小程序端调试 ===');
+    console.log('fetchGood 返回的 details:', details);
+    console.log('details.description:', details?.description);
 
-      const normalizedDetail = normalizeDetailBlocks(details?.detail || []);
-      const detailTextFromBlocks = normalizedDetail
-        .filter((block) => block && block.type === 'text' && typeof block.value === 'string')
-        .map((block) => block.value)
-        .join('\n');
-      const detailText = details?.description || detailTextFromBlocks;
+    const normalizedDetail = normalizeDetailBlocks(details?.detail || []);
+    const detailTextFromBlocks = normalizedDetail
+      .filter((block) => block && block.type === 'text' && typeof block.value === 'string')
+      .map((block) => block.value)
+      .join('\n');
+    const detailText = details?.description || detailTextFromBlocks;
 
-      console.log('最终的 detailText:', detailText);
-      console.log('detailText 长度:', detailText ? detailText.length : 0);
+    console.log('最终的 detailText:', detailText);
+    console.log('detailText 长度:', detailText ? detailText.length : 0);
 
-      const nextDetails = {
-        ...details,
-        detail: normalizedDetail,
-        detailText,
-      };
-      const skuArray = [];
-      const {
-        skuList,
-        primaryImage,
-        isPutOnSale,
-        minSalePrice,
-        maxSalePrice,
-        maxLinePrice,
-        soldNum,
-      } = nextDetails;
-      const hasSpec = Array.isArray(nextDetails.specList) && nextDetails.specList.length > 0;
-      skuList.forEach((item) => {
-        skuArray.push({
-          skuId: item.skuId,
-          quantity: item.stockInfo ? item.stockInfo.stockQuantity : 0,
-          specInfo: item.specInfo,
-        });
+    // 转换云存储URL为临时URL
+    let images = details?.images || [];
+    let primaryImage = details?.primaryImage || '';
+    if (images.length > 0 || primaryImage) {
+      const allUrls = primaryImage ? [primaryImage, ...images] : images;
+      const convertedUrls = await convertCloudUrls(allUrls);
+      if (primaryImage) {
+        primaryImage = convertedUrls[0];
+        images = convertedUrls.slice(1);
+      } else {
+        images = convertedUrls;
+      }
+    }
+
+    const nextDetails = {
+      ...details,
+      primaryImage,
+      images,
+      detail: normalizedDetail,
+      detailText,
+    };
+    const skuArray = [];
+    const {
+      skuList,
+      isPutOnSale,
+      minSalePrice,
+      maxSalePrice,
+      maxLinePrice,
+      soldNum,
+    } = nextDetails;
+    const hasSpec = Array.isArray(nextDetails.specList) && nextDetails.specList.length > 0;
+    skuList.forEach((item) => {
+      skuArray.push({
+        skuId: item.skuId,
+        quantity: item.stockInfo ? item.stockInfo.stockQuantity : 0,
+        specInfo: item.specInfo,
       });
-      const promotionArray = [];
-      activityList.forEach((item) => {
-        promotionArray.push({
-          tag: item.promotionSubCode === 'MYJ' ? '满减' : '满折',
-          label: '满100元减99.9元',
-        });
+    });
+    const promotionArray = [];
+    activityList.forEach((item) => {
+      promotionArray.push({
+        tag: item.promotionSubCode === 'MYJ' ? '满减' : '满折',
+        label: '满100元减99.9元',
       });
-      this.setData({
-        details: nextDetails,
-        activityList,
-        isStock: nextDetails.spuStockQuantity > 0,
-        maxSalePrice: maxSalePrice ? parseInt(maxSalePrice) : 0,
-        maxLinePrice: maxLinePrice ? parseInt(maxLinePrice) : 0,
-        minSalePrice: minSalePrice ? parseInt(minSalePrice) : 0,
-        list: promotionArray,
-        skuArray: skuArray,
-        primaryImage,
-        isAllSelectedSku: !hasSpec,
-        soldout: isPutOnSale === 0,
-        soldNum,
-      });
+    });
+    this.setData({
+      details: nextDetails,
+      activityList,
+      isStock: nextDetails.spuStockQuantity > 0,
+      maxSalePrice: maxSalePrice ? parseInt(maxSalePrice) : 0,
+      maxLinePrice: maxLinePrice ? parseInt(maxLinePrice) : 0,
+      minSalePrice: minSalePrice ? parseInt(minSalePrice) : 0,
+      list: promotionArray,
+      skuArray: skuArray,
+      primaryImage,
+      isAllSelectedSku: !hasSpec,
+      soldout: isPutOnSale === 0,
+      soldNum,
     });
   },
 
-  async getCommentsList() {
+  async getCommentsList(spuId) {
     try {
-      const code = 'Success';
-      const data = await getGoodsDetailsCommentList();
-      const { homePageComments } = data;
-      if (code.toUpperCase() === 'SUCCESS') {
-        const nextState = {
-          commentsList: homePageComments.map((item) => {
-            return {
-              goodsSpu: item.spuId,
-              userName: item.userName || '',
-              commentScore: item.commentScore,
-              commentContent: item.commentContent || '用户未填写评价',
-              userHeadUrl: item.isAnonymity ? this.anonymityAvatar : item.userHeadUrl || this.anonymityAvatar,
-            };
-          }),
-        };
-        this.setData(nextState);
-      }
+      const data = await getGoodsDetailsCommentList(spuId || this.data.spuId);
+      const { homePageComments = [] } = data;
+      const defaultAvatar = 'https://tdesign.gtimg.com/miniprogram/template/retail/common/default-avatar.png';
+      const nextState = {
+        commentsList: homePageComments.map((item) => {
+          return {
+            goodsSpu: item.spuId,
+            userName: item.userName || '匿名用户',
+            commentScore: item.commentScore || 5,
+            commentContent: item.commentContent || '用户未填写评价',
+            userHeadUrl: item.isAnonymity ? defaultAvatar : (item.userHeadUrl || defaultAvatar),
+          };
+        }),
+      };
+      this.setData(nextState);
     } catch (error) {
       console.error('comments error:', error);
     }
@@ -487,27 +525,23 @@ Page({
   },
 
   /** 获取评价统计 */
-  async getCommentsStatistics() {
+  async getCommentsStatistics(spuId) {
     try {
-      const code = 'Success';
-      const data = await getGoodsDetailsCommentsCount();
-      if (code.toUpperCase() === 'SUCCESS') {
-        const { badCount, commentCount, goodCount, goodRate, hasImageCount, middleCount } = data;
-        const nextState = {
-          commentsStatistics: {
-            badCount: parseInt(`${badCount}`),
-            commentCount: parseInt(`${commentCount}`),
-            goodCount: parseInt(`${goodCount}`),
-            /** 后端返回百分比后数据但没有限制位数 */
-            goodRate: Math.floor(goodRate * 10) / 10,
-            hasImageCount: parseInt(`${hasImageCount}`),
-            middleCount: parseInt(`${middleCount}`),
-          },
-        };
-        this.setData(nextState);
-      }
+      const data = await getGoodsDetailsCommentsCount(spuId || this.data.spuId);
+      const { badCount = 0, commentCount = 0, goodCount = 0, goodRate = 100, hasImageCount = 0, middleCount = 0 } = data;
+      const nextState = {
+        commentsStatistics: {
+          badCount: parseInt(`${badCount}`) || 0,
+          commentCount: parseInt(`${commentCount}`) || 0,
+          goodCount: parseInt(`${goodCount}`) || 0,
+          goodRate: Math.floor((goodRate || 100) * 10) / 10,
+          hasImageCount: parseInt(`${hasImageCount}`) || 0,
+          middleCount: parseInt(`${middleCount}`) || 0,
+        },
+      };
+      this.setData(nextState);
     } catch (error) {
-      console.error('comments statiistics error:', error);
+      console.error('comments statistics error:', error);
     }
   },
 

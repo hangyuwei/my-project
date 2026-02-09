@@ -453,6 +453,15 @@ const AfterSalesPage = () => {
                 </p>
               </div>
 
+              {selectedItem.remark && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500">退款说明</label>
+                  <p className="text-sm text-gray-900 bg-gray-50 p-3 rounded whitespace-pre-wrap">
+                    {selectedItem.remark}
+                  </p>
+                </div>
+              )}
+
               {selectedItem.evidence && selectedItem.evidence.length > 0 && (
                 <div>
                   <label className="text-sm font-medium text-gray-500">凭证图片</label>

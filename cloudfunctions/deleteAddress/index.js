@@ -3,6 +3,7 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 const db = cloud.database();
+const _ = db.command;
 
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
@@ -20,11 +21,43 @@ exports.main = async (event, context) => {
       };
     }
 
-    // 软删除：只标记为已删除，不真正删除数据
-    const result = await db.collection('address').doc(addressId).update({
+    // 从 user 集合获取用户
+    const userResult = await db.collection('user')
+      .where(_.or([
+        { openid },
+        { _openid: openid },
+      ]))
+      .get();
+
+    if (!userResult.data || userResult.data.length === 0) {
+      return {
+        success: false,
+        error: '用户不存在',
+      };
+    }
+
+    const user = userResult.data[0];
+    let addresses = user.addresses || [];
+
+    // 查找地址
+    const addressIndex = addresses.findIndex(addr => addr.addressId === addressId);
+
+    if (addressIndex < 0) {
+      return {
+        success: false,
+        error: '地址不存在',
+      };
+    }
+
+    // 软删除：标记为已删除
+    addresses[addressIndex].deleted = true;
+    addresses[addressIndex].deleteTime = Date.now();
+
+    // 更新用户文档
+    await db.collection('user').doc(user._id).update({
       data: {
-        deleted: true,
-        deleteTime: String(Date.now()),
+        addresses,
+        updateTime: Date.now(),
       },
     });
 

@@ -7,8 +7,16 @@ const handleResponse = async (res) => {
   return data?.data ?? data;
 };
 
+// 获取 API Key（可以从环境变量或配置中获取）
+const getApiKey = () => {
+  return import.meta.env?.VITE_ADMIN_API_KEY || 'admin-secret-key';
+};
+
 const apiFetch = async (path, options = {}) => {
-  const headers = { ...(options.headers || {}) };
+  const headers = {
+    'x-api-key': getApiKey(),
+    ...(options.headers || {})
+  };
   const isFormData =
     typeof FormData !== 'undefined' && options.body instanceof FormData;
   if (options.body && !headers['Content-Type'] && !isFormData) {

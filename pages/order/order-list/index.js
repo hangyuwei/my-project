@@ -1,6 +1,54 @@
-import { OrderStatus } from '../config';
+import { OrderStatus, OrderButtonTypes } from '../config';
 import { fetchOrders, fetchOrdersCount } from '../../../services/order/orderList';
 import { cosThumb } from '../../../utils/util';
+
+// 订单状态中文名称映射
+const STATUS_NAME_MAP = {
+  5: '待付款',
+  10: '待发货',
+  40: '待收货',
+  50: '已完成',
+  80: '已取消',
+};
+
+// 获取中文状态名称
+const getStatusName = (status, fallbackName) => {
+  // 如果后端提供了明确的状态名称，优先使用（例如"已退款"）
+  if (fallbackName && fallbackName !== '未知状态') {
+    return fallbackName;
+  }
+  return STATUS_NAME_MAP[status] || fallbackName || '未知状态';
+};
+
+// 根据订单状态生成按钮
+const generateButtonsByStatus = (orderStatus, hasCommented = false) => {
+  const buttons = [];
+  switch (orderStatus) {
+    case 5: // 待付款
+      buttons.push({ type: OrderButtonTypes.PAY, name: '付款', primary: true });
+      buttons.push({ type: OrderButtonTypes.CANCEL, name: '取消订单', primary: false });
+      break;
+    case 10: // 待发货
+      buttons.push({ type: OrderButtonTypes.APPLY_REFUND, name: '申请退款', primary: false });
+      break;
+    case 40: // 待收货
+      buttons.push({ type: OrderButtonTypes.CONFIRM, name: '确认收货', primary: true });
+      buttons.push({ type: OrderButtonTypes.DELIVERY, name: '查看物流', primary: false });
+      break;
+    case 50: // 已完成
+      // 只有未评价的订单才显示评价按钮
+      if (!hasCommented) {
+        buttons.push({ type: OrderButtonTypes.COMMENT, name: '评价', primary: true });
+      }
+      buttons.push({ type: OrderButtonTypes.REBUY, name: '再次购买', primary: !hasCommented ? false : true });
+      buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
+      break;
+    case 80: // 已取消
+      buttons.push({ type: OrderButtonTypes.DELETE, name: '删除订单', primary: false });
+      break;
+  }
+  return buttons;
+};
 
 Page({
   page: {
@@ -50,13 +98,13 @@ Page({
 
   onPullDownRefresh_() {
     this.setData({ pullDownRefreshing: true });
-    this.refreshList(this.data.curTab)
+    this.refreshList(this.data.curTab, true)
       .then(() => {
         this.setData({ pullDownRefreshing: false });
       })
       .catch((err) => {
         this.setData({ pullDownRefreshing: false });
-        Promise.reject(err);
+        console.error('[订单列表] 刷新失败:', err);
       });
   },
 
@@ -90,7 +138,7 @@ Page({
               storeId: order.storeId,
               storeName: order.storeName,
               status: order.orderStatus,
-              statusDesc: order.orderStatusName,
+              statusDesc: getStatusName(order.orderStatus, order.orderStatusName),
               amount: order.paymentAmount,
               totalAmount: order.totalAmount,
               logisticsNo: order.logisticsVO ? order.logisticsVO.logisticsNo : '',
@@ -106,21 +154,18 @@ Page({
                 num: goods.buyQuantity,
                 titlePrefixTags: goods.tagText ? [{ text: goods.tagText }] : [],
               })),
-              buttons: order.buttonVOs || [],
+              hasCommented: order.hasCommented === true,
+              buttons: (order.buttonVOs && order.buttonVOs.length > 0) ? order.buttonVOs : generateButtonsByStatus(order.orderStatus, order.hasCommented === true),
               groupInfoVo: order.groupInfoVo,
               freightFee: order.freightFee,
             };
           });
         }
-        return new Promise((resolve) => {
-          if (reset) {
-            this.setData({ orderList: [] }, () => resolve());
-          } else resolve();
-        }).then(() => {
-          this.setData({
-            orderList: this.data.orderList.concat(orderList),
-            listLoading: orderList.length > 0 ? 0 : 2,
-          });
+        // reset 为 true 时直接替换列表，避免下拉刷新时闪烁
+        const newOrderList = reset ? orderList : this.data.orderList.concat(orderList);
+        this.setData({
+          orderList: newOrderList,
+          listLoading: orderList.length > 0 ? 0 : 2,
         });
       })
       .catch((err) => {
@@ -155,12 +200,17 @@ Page({
     });
   },
 
-  refreshList(status = -1) {
+  refreshList(status = -1, keepList = false) {
     this.page = {
       size: this.page.size,
       num: 1,
     };
-    this.setData({ curTab: status, orderList: [] });
+    // keepList 为 true 时保留当前列表，避免下拉刷新时闪烁
+    if (keepList) {
+      this.setData({ curTab: status });
+    } else {
+      this.setData({ curTab: status, orderList: [] });
+    }
 
     return Promise.all([this.getOrderList(status, true), this.getOrdersCount()]);
   },

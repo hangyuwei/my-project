@@ -89,6 +89,7 @@ export function addLocalCartItem(item = {}, quantity = 1) {
       skuId,
       title: item.title || '',
       thumb: item.thumb || '',
+      thumbFileId: item.thumbFileId || '',
       price: item.price || 0,
       originPrice: item.originPrice || item.price || 0,
       quantity: qty,

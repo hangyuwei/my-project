@@ -1,0 +1,12 @@
+{
+  "name": "auto-git-push",
+  "version": "1.0.0",
+  "description": "Auto commit and push on file changes",
+  "scripts": {
+    "watch": "node watch-and-push.js"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "simple-git": "^3.19.1"
+  }
+}

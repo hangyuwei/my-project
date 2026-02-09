@@ -95,10 +95,15 @@ Page({
 
   onShow() {
     this.getTabBar().init();
-    this.init();
+    // 只在首次进入时加载用户信息
+    if (!this._hasLoaded) {
+      this._hasLoaded = true;
+      this.init();
+    }
   },
   onPullDownRefresh() {
-    this.init();
+    // 下拉刷新时不重新加载用户信息，避免头像闪烁
+    wx.stopPullDownRefresh();
   },
 
   init() {
@@ -113,13 +118,27 @@ Page({
 
     if (globalUserInfo) {
       // 已注册用户，显示用户信息
-      this.setData({
-        userInfo: {
-          avatarUrl: globalUserInfo.avatarUrl || '',
-          nickName: globalUserInfo.nickName || '微信用户',
-        },
-        currAuthStep: globalUserInfo.nickName && globalUserInfo.nickName !== '微信用户' ? 3 : 2,
-      });
+      const avatarUrl = globalUserInfo.avatarUrl || '';
+
+      // 如果是 cloud:// 协议，需要转换为临时 URL
+      if (avatarUrl && avatarUrl.startsWith('cloud://')) {
+        this.convertCloudUrl(avatarUrl);
+        this.setData({
+          userInfo: {
+            avatarUrl: '', // 先显示默认头像
+            nickName: globalUserInfo.nickName || '微信用户',
+          },
+          currAuthStep: globalUserInfo.nickName && globalUserInfo.nickName !== '微信用户' ? 3 : 2,
+        });
+      } else {
+        this.setData({
+          userInfo: {
+            avatarUrl: avatarUrl,
+            nickName: globalUserInfo.nickName || '微信用户',
+          },
+          currAuthStep: globalUserInfo.nickName && globalUserInfo.nickName !== '微信用户' ? 3 : 2,
+        });
+      }
     } else if (openid) {
       // 有 openid 但没有 userInfo，说明是新用户，显示默认状态
       this.setData({
@@ -136,6 +155,23 @@ Page({
       }, 500);
     }
     wx.stopPullDownRefresh();
+  },
+
+  // 将 cloud:// 协议转换为临时 HTTPS URL
+  convertCloudUrl(cloudUrl) {
+    wx.cloud.getTempFileURL({
+      fileList: [cloudUrl],
+      success: res => {
+        if (res.fileList && res.fileList[0] && res.fileList[0].tempFileURL) {
+          this.setData({
+            'userInfo.avatarUrl': res.fileList[0].tempFileURL,
+          });
+        }
+      },
+      fail: err => {
+        console.error('转换云存储URL失败:', err);
+      }
+    });
   },
 
   fetUseriInfoHandle() {

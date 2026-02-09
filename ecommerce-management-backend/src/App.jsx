@@ -12,7 +12,7 @@ import TestPage from './pages/TestPage'
 import './App.css'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [, setIsLoggedIn] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -29,8 +29,6 @@ function App() {
     )
   }
 
-  console.log('渲染主应用UI');
-  
   return (
     <Router>
       <AdminLayout>

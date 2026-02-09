@@ -22,19 +22,9 @@ const BannersPage = () => {
     try {
       setLoading(true);
       const data = await getBanners();
-      console.log('🔍 获取到的原始数据:', data);
       const list = data.list || [];
-      console.log('🔍 Banner 列表:', list);
       const nextPreview = {};
       list.forEach((item) => {
-        console.log('🔍 处理 Banner 项:', {
-          _id: item._id,
-          title: item.title,
-          imageUrl: item.imageUrl,
-          imageTempUrl: item.imageTempUrl,
-          hasImageUrl: !!item.imageUrl,
-          hasImageTempUrl: !!item.imageTempUrl
-        });
         if (item.imageUrl && item.imageTempUrl) {
           nextPreview[item.imageUrl] = item.imageTempUrl;
         }
@@ -42,11 +32,9 @@ const BannersPage = () => {
       if (Object.keys(nextPreview).length) {
         setPreviewMap((prev) => ({ ...prev, ...nextPreview }));
       }
-      console.log('🔍 预览映射:', nextPreview);
-      console.log('🔍 最终 Banner 数据:', list);
       setBanners(list);
     } catch (error) {
-      console.error('❌ 获取横幅列表失败:', error);
+      console.error('获取横幅列表失败:', error);
     } finally {
       setLoading(false);
     }

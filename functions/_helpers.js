@@ -101,6 +101,82 @@ const createOrderFromEvent = (event = {}, db) => {
   return order;
 };
 
+const STATUS_VALUE_MAP = {
+  pending_payment: 5,
+  pending: 10,
+  shipped: 40,
+  completed: 50,
+  refunded: 80,
+  canceled: 80,
+  cancelled: 80,
+  cancel: 80,
+};
+
+const STATUS_ALIAS_MAP = {
+  PendingPayment: 5,
+  'Pending payment': 5,
+  PendingShipment: 10,
+  'Pending shipment': 10,
+  PendingDelivery: 10,
+  'Pending delivery': 10,
+  PendingReceive: 40,
+  'Pending receipt': 40,
+  '待付款': 5,
+  '待发货': 10,
+  '待收货': 40,
+  '已发货': 40,
+  '已完成': 50,
+  '交易完成': 50,
+  '已取消': 80,
+  '已取消(未支付)': 80,
+  '已退款': 80,
+};
+
+const STATUS_NAME_MAP = {
+  5: '待付款',
+  10: '待发货',
+  40: '待收货',
+  50: '已完成',
+  80: '已取消',
+};
+
+const normalizeStatusValue = (value) => {
+  if (value === undefined || value === null || value === '') return null;
+  const num = Number(value);
+  if (!Number.isNaN(num)) {
+    if (num === 60) return 50;
+    return num;
+  }
+  const raw = String(value).trim();
+  const lower = raw.toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(STATUS_VALUE_MAP, lower)) {
+    return STATUS_VALUE_MAP[lower];
+  }
+  if (Object.prototype.hasOwnProperty.call(STATUS_ALIAS_MAP, raw)) {
+    return STATUS_ALIAS_MAP[raw];
+  }
+  return null;
+};
+
+const normalizeOrderStatus = (order = {}) => {
+  const direct = normalizeStatusValue(order.orderStatus ?? order.status);
+  if (direct !== null) return direct;
+  return normalizeStatusValue(order.orderStatusName ?? order.statusName);
+};
+
+const resolveStatusName = (order = {}, normalizedStatus = null) => {
+  // 优先使用订单自带的状态名称（例如"已退款"），避免被通用映射覆盖
+  const customStatusName = order.orderStatusName || order.statusName;
+  if (customStatusName && customStatusName !== '未知状态') {
+    return customStatusName;
+  }
+  const statusValue = normalizedStatus ?? normalizeStatusValue(order.orderStatus);
+  if (statusValue !== null && STATUS_NAME_MAP[statusValue]) {
+    return STATUS_NAME_MAP[statusValue];
+  }
+  return customStatusName || '未知状态';
+};
+
 module.exports = {
   readDb,
   writeDb,
@@ -113,4 +189,7 @@ module.exports = {
   generateId,
   nowIso,
   createOrderFromEvent,
+  normalizeStatusValue,
+  normalizeOrderStatus,
+  resolveStatusName,
 };

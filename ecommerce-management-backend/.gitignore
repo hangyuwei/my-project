@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-node_modules/
-=======
 # Logs
 logs
 *.log
@@ -25,5 +22,3 @@ dist-ssr
 *.sln
 *.sw?
 .env.local
-.env.local
->>>>>>> 392b113 (init: first commit)

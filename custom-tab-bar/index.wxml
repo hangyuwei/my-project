@@ -2,14 +2,18 @@
  value="{{active}}"
  bindchange="onChange"
  split="{{false}}"
+ bordered="{{false}}"
+ t-class="custom-tab-bar"
+ safe-area-inset-bottom="{{true}}"
 >
 	<t-tab-bar-item
 	 wx:for="{{list}}"
 	 wx:for-item="item"
 	 wx:for-index="index"
 	 wx:key="index"
+	 t-class="custom-tab-bar-item tab-item-{{index}}"
 	>
-		<view class="custom-tab-bar-wrapper">
+		<view class="custom-tab-bar-wrapper tab-wrapper-{{index}}">
 			<t-icon prefix="wr" name="{{item.icon}}" size="48rpx" />
 			<view class="text">{{ item.text }}</view>
 		</view>

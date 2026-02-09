@@ -40,10 +40,14 @@
       data-order="{{order}}"
       bindcardtap="onOrderCardTap"
       useLogoSlot
+      useTopRightSlot
     >
       <view slot="top-left" class="order-number">
         <text decode>订单号&nbsp;</text>
         {{order.orderNo}}
+      </view>
+      <view slot="top-right" class="order-status">
+        {{order.statusDesc}}
       </view>
       <specs-goods-card
         wx:for="{{order.goodsList}}"

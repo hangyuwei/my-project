@@ -9,13 +9,9 @@ export const config = {
   mockServices: [
     'activity.fetchActivity',
     'activity.fetchActivityList',
-    'comments.fetchComments',
-    'comments.fetchCommentsCount',
     'coupon.fetchCouponList',
     'coupon.fetchCouponDetail',
     'good.createGoods',
-    'good.getGoodsDetailsCommentsCount',
-    'good.getGoodsDetailsCommentList',
     'good.getSearchHistory',
     'good.getSearchPopular',
     'good.getCommentDetail',
@@ -34,6 +30,12 @@ export const config = {
     'good.fetchGoodsListSearch',
     'good.fetchGood',
     'good.getSearchResult',
+    // 售后相关服务 - 只有提交售后申请需要真实云函数
+    // fetchRightsPreview 和 fetchApplyReasonList 使用 mock 数据即可（静态列表）
+    'order.dispatchApplyService',
+    // 地址相关服务 - 使用真实云函数
+    'address.fetchDeliveryAddress',
+    'address.fetchDeliveryAddressList',
   ],
 };
 

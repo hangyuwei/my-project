@@ -6,7 +6,7 @@
       wx:for-item="leftBtn"
       size="extra-small"
       shape="round"
-      t-class="{{isBtnMax ? 't-button--max':'t-button'}}  order-btn delete-btn"
+      t-class="{{isBtnMax ? 't-button--max':'t-button'}}  order-btn left-btn"
       hover-class="order-btn--active"
       catchtap="onOrderBtnTap"
       data-type="{{leftBtn.type}}"
