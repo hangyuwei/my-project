@@ -1,3 +1,5 @@
+import { DEFAULT_AVATAR_URL, normalizeAvatarUrl } from '../../../../../constants/avatar';
+
 Component({
   externalClasses: ['wr-class'],
   options: {
@@ -15,6 +17,9 @@ Component({
     userHeadUrl: {
       type: String,
       value: '',
+      observer(value) {
+        this.syncAvatar(value);
+      },
     },
     userName: {
       type: String,
@@ -39,6 +44,8 @@ Component({
   },
 
   data: {
+    defaultAvatarUrl: DEFAULT_AVATAR_URL,
+    safeUserHeadUrl: DEFAULT_AVATAR_URL,
     showMoreStatus: false,
     showContent: false,
     hideText: false,
@@ -47,5 +54,22 @@ Component({
     isDisabled: true,
     startColors: ['#FFC51C', '#DDDDDD'],
   },
-  methods: {},
+  lifetimes: {
+    attached() {
+      this.syncAvatar(this.properties.userHeadUrl);
+    },
+  },
+  methods: {
+    syncAvatar(url) {
+      this.setData({
+        safeUserHeadUrl: normalizeAvatarUrl(url),
+      });
+    },
+    onAvatarError() {
+      if (this.data.safeUserHeadUrl === DEFAULT_AVATAR_URL) return;
+      this.setData({
+        safeUserHeadUrl: DEFAULT_AVATAR_URL,
+      });
+    },
+  },
 });

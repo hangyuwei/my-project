@@ -1,6 +1,7 @@
 import { OrderStatus, OrderButtonTypes } from '../config';
 import { fetchOrders, fetchOrdersCount } from '../../../services/order/orderList';
 import { cosThumb } from '../../../utils/util';
+import { checkLoginStatus } from '../../../utils/login';
 
 // 订单状态中文名称映射
 const STATUS_NAME_MAP = {
@@ -62,6 +63,7 @@ Page({
       { key: OrderStatus.PENDING_PAYMENT, text: '待付款', info: '' },
       { key: OrderStatus.PENDING_DELIVERY, text: '待发货', info: '' },
       { key: OrderStatus.PENDING_RECEIPT, text: '待收货', info: '' },
+      { key: OrderStatus.PENDING_COMMENT, text: '待评价', info: '' },
       { key: OrderStatus.COMPLETE, text: '已完成', info: '' },
     ],
     curTab: -1,
@@ -74,6 +76,19 @@ Page({
   },
 
   onLoad(query) {
+    // 检查登录状态
+    if (!checkLoginStatus()) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后查看订单',
+        showCancel: false,
+        success: () => {
+          wx.navigateBack();
+        }
+      });
+      return;
+    }
+
     let status = parseInt(query.status);
     status = this.data.tabs.map((t) => t.key).includes(status) ? status : -1;
     this.init(status);

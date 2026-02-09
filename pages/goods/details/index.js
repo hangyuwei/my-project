@@ -8,6 +8,8 @@ import {
 } from '../../../services/good/fetchGoodsDetailsComments';
 
 import { cdnBase } from '../../../config/index';
+import { DEFAULT_AVATAR_URL, normalizeAvatarUrl } from '../../../constants/avatar';
+import { checkLoginStatus } from '../../../utils/login';
 
 const imgPrefix = `${cdnBase}/`;
 
@@ -63,6 +65,7 @@ const normalizeDetailBlocks = (detail = []) => {
 Page({
   data: {
     commentsList: [],
+    defaultAvatarUrl: DEFAULT_AVATAR_URL,
     commentsStatistics: {
       badCount: 0,
       commentCount: 0,
@@ -109,6 +112,9 @@ Page({
     selectedAttrStr: '',
     skuArray: [],
     primaryImage: '',
+    // 登录弹窗相关
+    showLoginSheet: false,
+    pendingAction: null, // 记录用户登录前想要执行的操作
     specImg: '',
     isSpuSelectPopupShow: false,
     isAllSelectedSku: false,
@@ -256,7 +262,71 @@ Page({
     }
   },
 
+  /**
+   * 检查登录状态
+   * 如果未登录,显示登录弹窗并记录待执行的操作
+   * @param {string} action - 待执行的操作类型 ('addCart' | 'getCoupon')
+   * @returns {boolean} 是否已登录
+   */
+  checkLogin(action) {
+    const isLoggedIn = checkLoginStatus();
+    if (!isLoggedIn) {
+      this.setData({
+        showLoginSheet: true,
+        pendingAction: action,
+      });
+      return false;
+    }
+    return true;
+  },
+
+  /**
+   * 关闭登录弹窗
+   */
+  handleCloseLoginSheet() {
+    this.setData({
+      showLoginSheet: false,
+      pendingAction: null,
+    });
+  },
+
+  /**
+   * 登录成功回调
+   * 执行用户登录前想要执行的操作
+   */
+  handleLoginSuccess(e) {
+    console.log('[商品详情] 登录成功:', e.detail);
+    const { pendingAction } = this.data;
+
+    // 关闭登录弹窗
+    this.handleCloseLoginSheet();
+
+    // 执行待执行的操作
+    if (pendingAction === 'addCart') {
+      // 延迟执行,确保弹窗关闭动画完成
+      setTimeout(() => {
+        this.addCart();
+      }, 300);
+    } else if (pendingAction === 'getCoupon') {
+      // 领取优惠券逻辑
+      setTimeout(() => {
+        Toast({
+          context: this,
+          selector: '#t-toast',
+          message: '优惠券领取成功',
+          icon: 'success',
+          duration: 2000,
+        });
+      }, 300);
+    }
+  },
+
   addCart() {
+    // 检查登录状态
+    if (!this.checkLogin('addCart')) {
+      return;
+    }
+
     const { isAllSelectedSku, details, selectItem, buyNum } = this.data;
     if (!isAllSelectedSku) {
       Toast({
@@ -403,6 +473,11 @@ Page({
   },
 
   showPromotionPopup() {
+    // 检查登录状态
+    if (!this.checkLogin('getCoupon')) {
+      return;
+    }
+
     this.setData({
       isShowPromotionPop: true,
     });
@@ -490,7 +565,6 @@ Page({
     try {
       const data = await getGoodsDetailsCommentList(spuId || this.data.spuId);
       const { homePageComments = [] } = data;
-      const defaultAvatar = 'https://tdesign.gtimg.com/miniprogram/template/retail/common/default-avatar.png';
       const nextState = {
         commentsList: homePageComments.map((item) => {
           return {
@@ -498,7 +572,7 @@ Page({
             userName: item.userName || '匿名用户',
             commentScore: item.commentScore || 5,
             commentContent: item.commentContent || '用户未填写评价',
-            userHeadUrl: item.isAnonymity ? defaultAvatar : (item.userHeadUrl || defaultAvatar),
+            userHeadUrl: item.isAnonymity ? DEFAULT_AVATAR_URL : normalizeAvatarUrl(item.userHeadUrl),
           };
         }),
       };
@@ -506,6 +580,15 @@ Page({
     } catch (error) {
       console.error('comments error:', error);
     }
+  },
+
+  onCommentAvatarError(e) {
+    const { index } = e.currentTarget.dataset;
+    const avatarIndex = Number(index);
+    if (Number.isNaN(avatarIndex)) return;
+    this.setData({
+      [`commentsList[${avatarIndex}].userHeadUrl`]: DEFAULT_AVATAR_URL,
+    });
   },
 
   onShareAppMessage() {

@@ -59,6 +59,8 @@ exports.main = async (event, context) => {
         return await getAfterSaleList(event, openid);
       case 'buyerShip':
         return await buyerShip(event, openid);
+      case 'getRefundedSkus':
+        return await getRefundedSkus(event, openid);
       default:
         return { success: false, error: '未知操作' };
     }
@@ -70,7 +72,7 @@ exports.main = async (event, context) => {
 
 // 获取售后入口信息（判断是否可以申请售后，显示什么按钮）
 async function getAfterSaleEntry(event, openid) {
-  const { orderNo, itemId } = event;
+  const { orderNo, itemId, skuId } = event;
 
   // 获取订单信息
   const orderResult = await db.collection('orders')
@@ -110,13 +112,20 @@ async function getAfterSaleEntry(event, openid) {
     };
   }
 
-  // 检查是否有进行中的售后
+  // 构建查询条件：检查是否有进行中的售后
+  const existingQuery = {
+    orderNo,
+    openid,
+    status: _.nin([AfterSaleStatus.REFUNDED, AfterSaleStatus.CANCELED])
+  };
+
+  // 如果指定了 skuId，只检查该商品的售后状态
+  if (skuId) {
+    existingQuery.skuId = skuId;
+  }
+
   const existingAfterSale = await db.collection('after_sales')
-    .where({
-      orderNo,
-      openid,
-      status: _.nin([AfterSaleStatus.REFUNDED, AfterSaleStatus.CANCELED])
-    })
+    .where(existingQuery)
     .get();
 
   if (existingAfterSale.data && existingAfterSale.data.length > 0) {
@@ -131,6 +140,29 @@ async function getAfterSaleEntry(event, openid) {
         buttonText: '查看售后进度',
       }
     };
+  }
+
+  // 如果指定了 skuId，检查该商品是否已退款成功
+  if (skuId) {
+    const refundedAfterSale = await db.collection('after_sales')
+      .where({
+        orderNo,
+        openid,
+        skuId,
+        status: AfterSaleStatus.REFUNDED
+      })
+      .get();
+
+    if (refundedAfterSale.data && refundedAfterSale.data.length > 0) {
+      return {
+        success: true,
+        data: {
+          canApply: false,
+          hasRefunded: true,
+          reason: '该商品已退款成功',
+        }
+      };
+    }
   }
 
   // 根据订单状态判断可申请的售后类型
@@ -182,9 +214,9 @@ async function getAfterSaleEntry(event, openid) {
 
 // 申请售后
 async function applyAfterSale(event, openid) {
-  const { orderNo, itemId, type, amount, reasonCode, reasonText, remark, evidence } = event;
+  const { orderNo, itemId, type, amount, reasonCode, reasonText, remark, evidence, skuId, goodsInfo } = event;
 
-  console.log('[申请售后] 参数:', { orderNo, type, amount, reasonCode, reasonText, remark, evidence });
+  console.log('[申请售后] 参数:', { orderNo, type, amount, reasonCode, reasonText, remark, evidence, skuId, goodsInfo });
 
   // 校验
   if (!orderNo) {
@@ -211,26 +243,74 @@ async function applyAfterSale(event, openid) {
 
   const order = orderResult.data[0];
 
-  // 校验金额不超过可退金额
-  // 前端传入的金额已经是分为单位
-  const refundableAmountFen = order.paymentAmount || order.totalAmount || 0;
-  const amountFen = Math.round(amount); // 确保是整数
-  if (amountFen > refundableAmountFen) {
-    console.error('[申请售后] 退款金额超出限制:', { amountFen, refundableAmountFen });
-    return { success: false, error: `退款金额超出可退金额（最多可退¥${(refundableAmountFen / 100).toFixed(2)}）` };
+  // 获取订单商品列表
+  const allGoodsList = order.orderItemVOs || order.goodsList || [];
+
+  // 根据 skuId 筛选目标商品
+  let targetGoodsList = allGoodsList;
+  let targetGoodsAmount = order.paymentAmount || order.totalAmount || 0;
+
+  if (skuId) {
+    // 商品级别售后：只处理指定商品
+    targetGoodsList = allGoodsList.filter(g =>
+      g.skuId === skuId || g.sku === skuId || g.id === skuId
+    );
+
+    if (targetGoodsList.length === 0 && goodsInfo) {
+      // 如果通过 skuId 找不到，使用前端传递的商品信息
+      targetGoodsList = [goodsInfo];
+    }
+
+    // 计算该商品的可退金额
+    if (targetGoodsList.length > 0) {
+      const goods = targetGoodsList[0];
+      const goodsPrice = parseInt(goods.price || goods.actualPrice || goods.goodsPaymentPrice || goods.paidAmountEach || 0, 10);
+      const goodsNum = parseInt(goods.num || goods.quantity || goods.buyQuantity || 1, 10);
+      targetGoodsAmount = goodsPrice * goodsNum;
+    }
   }
 
-  // 检查是否有进行中的售后（排除已完成、已取消、已拒绝的售后）
+  // 校验金额不超过可退金额
+  const amountFen = Math.round(amount); // 确保是整数
+  if (amountFen > targetGoodsAmount) {
+    console.error('[申请售后] 退款金额超出限制:', { amountFen, targetGoodsAmount });
+    return { success: false, error: `退款金额超出可退金额（最多可退¥${(targetGoodsAmount / 100).toFixed(2)}）` };
+  }
+
+  // 构建查询条件：检查是否有进行中的售后
+  const existingQuery = {
+    orderNo,
+    openid,
+    status: _.nin([AfterSaleStatus.REFUNDED, AfterSaleStatus.CANCELED, AfterSaleStatus.SELLER_REJECTED])
+  };
+
+  // 如果是商品级别售后，只检查该商品
+  if (skuId) {
+    existingQuery.skuId = skuId;
+  }
+
   const existingAfterSale = await db.collection('after_sales')
-    .where({
-      orderNo,
-      openid,
-      status: _.nin([AfterSaleStatus.REFUNDED, AfterSaleStatus.CANCELED, AfterSaleStatus.SELLER_REJECTED])
-    })
+    .where(existingQuery)
     .get();
 
   if (existingAfterSale.data && existingAfterSale.data.length > 0) {
-    return { success: false, error: '该订单已有进行中的售后申请' };
+    return { success: false, error: skuId ? '该商品已有进行中的售后申请' : '该订单已有进行中的售后申请' };
+  }
+
+  // 如果是商品级别售后，检查该商品是否已退款成功
+  if (skuId) {
+    const refundedAfterSale = await db.collection('after_sales')
+      .where({
+        orderNo,
+        openid,
+        skuId,
+        status: AfterSaleStatus.REFUNDED
+      })
+      .get();
+
+    if (refundedAfterSale.data && refundedAfterSale.data.length > 0) {
+      return { success: false, error: '该商品已退款成功，无法重复申请' };
+    }
   }
 
   // 生成售后单号
@@ -254,6 +334,7 @@ async function applyAfterSale(event, openid) {
     orderId: order._id,
     openid,
     type,
+    skuId: skuId || '',  // 保存商品标识，空字符串表示整单售后
     applyAmount: amountFen, // 以分为单位存储
     applyAmountYuan: (amountFen / 100).toFixed(2), // 转换为元，方便展示
     reasonCode: reasonCode || '',
@@ -262,11 +343,11 @@ async function applyAfterSale(event, openid) {
     evidence: evidence || [],
     status: AfterSaleStatus.APPLIED,
     statusDesc: AfterSaleStatusDesc[AfterSaleStatus.APPLIED],
-    // 订单信息快照（包括原订单状态）
+    // 订单信息快照（只包含目标商品）
     orderSnapshot: {
-      goodsList: order.orderItemVOs || order.goodsList || [],
-      paymentAmount: order.paymentAmount,
-      totalAmount: order.totalAmount,
+      goodsList: targetGoodsList,  // 只保存目标商品，不是所有商品
+      paymentAmount: targetGoodsAmount,  // 该商品的金额
+      totalAmount: order.totalAmount,  // 订单总金额（用于参考）
       orderStatus: order.orderStatus,
       orderStatusName: orderStatusNames[order.orderStatus] || '未知',
     },
@@ -276,7 +357,7 @@ async function applyAfterSale(event, openid) {
     updateTime: Date.now(),
   };
 
-  console.log('[申请售后] 准备插入数据:', { afterSaleNo, orderNo, amountFen });
+  console.log('[申请售后] 准备插入数据:', { afterSaleNo, orderNo, amountFen, skuId, targetGoodsCount: targetGoodsList.length });
 
   const result = await db.collection('after_sales').add({
     data: afterSaleData,
@@ -289,7 +370,7 @@ async function applyAfterSale(event, openid) {
     return { success: false, error: '创建售后单失败' };
   }
 
-  // 更新订单标记
+  // 更新订单标记（保留兼容性，但不再作为唯一标识）
   await db.collection('orders')
     .doc(order._id)
     .update({
@@ -300,7 +381,7 @@ async function applyAfterSale(event, openid) {
       }
     });
 
-  console.log('[售后服务] 申请成功:', afterSaleNo, '数据库ID:', result._id);
+  console.log('[售后服务] 申请成功:', afterSaleNo, '数据库ID:', result._id, 'skuId:', skuId);
 
   return {
     success: true,
@@ -686,4 +767,39 @@ async function buyerShip(event, openid) {
   console.log('[售后服务] 买家已发货:', afterSaleId);
 
   return { success: true };
+}
+
+// 获取订单中已退款成功的商品 skuId 列表
+async function getRefundedSkus(event, openid) {
+  const { orderNo } = event;
+
+  if (!orderNo) {
+    return { success: false, error: '订单号不能为空' };
+  }
+
+  // 查询该订单所有已退款成功的售后单
+  const refundedAfterSales = await db.collection('after_sales')
+    .where({
+      orderNo,
+      openid,
+      status: AfterSaleStatus.REFUNDED
+    })
+    .get();
+
+  // 提取已退款的 skuId 列表
+  const refundedSkuIds = [];
+  if (refundedAfterSales.data && refundedAfterSales.data.length > 0) {
+    refundedAfterSales.data.forEach(afterSale => {
+      if (afterSale.skuId) {
+        refundedSkuIds.push(afterSale.skuId);
+      }
+    });
+  }
+
+  console.log('[售后服务] 获取已退款商品:', { orderNo, refundedSkuIds });
+
+  return {
+    success: true,
+    data: refundedSkuIds,
+  };
 }

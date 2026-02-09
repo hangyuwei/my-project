@@ -33,5 +33,12 @@
 <!-- 购物车空态 -->
 <cart-empty wx:else bind:handleClick="onGotoHome" />
 </view>
+<!-- 登录弹窗 -->
+<login-sheet
+  visible="{{showLoginSheet}}"
+  bind:close="handleCloseLoginSheet"
+  bind:success="handleLoginSuccess"
+  successTip="登录成功,即将进入结算"
+/>
 <t-toast id="t-toast" />
 <t-dialog id="t-dialog" />

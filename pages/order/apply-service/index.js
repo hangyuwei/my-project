@@ -406,6 +406,8 @@ Page({
           },
         ],
         refundMemo: this.data.serviceFrom.remark,
+        // 传递商品信息，用于云函数保存到售后单快照
+        goodsInfo: this.data.goodsInfo,
       };
 
       this.setData({ submitting: true });

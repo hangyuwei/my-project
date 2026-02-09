@@ -1,6 +1,7 @@
 import updateManager from './common/updateManager';
 import { config } from './config/index';
 import automation from './utils/automation/index';
+import { checkStaticAssetsHealth } from './utils/resourceHealthCheck';
 
 App({
   globalData: {
@@ -16,43 +17,77 @@ App({
     });
     console.log('[App] UI 自动化系统已初始化');
     if (typeof wx !== 'undefined' && wx.cloud) {
-      // 鍒濆鍖栦簯寮€鍙戯紙鍗曞皬绋嬪簭妯″紡锛?
+      // 初始化云开发（单小程序模式）
       wx.cloud.init({
         env: config.cloudEnvId,
         traceUser: true,
       });
 
-      // 闈欓粯鑾峰彇 openid锛堜笉鍒涘缓鐢ㄦ埛璁板綍锛?
+      // 静默获取 openid（不创建用户记录）
       this.getOpenid();
     }
+
+    this.runStaticAssetHealthCheck();
   },
 
   onShow: function () {
     updateManager();
   },
 
-  // 闈欓粯鑾峰彇 openid锛堜笉鍒涘缓鐢ㄦ埛璁板綍锛?
-  // 浣跨敤浜戝紑鍙戞ā鏉?wx-user-v2 鐨勭敤鎴蜂俊鎭幏鍙?
+  runStaticAssetHealthCheck: function () {
+    try {
+      if (typeof wx === 'undefined' || typeof wx.request !== 'function') return;
+
+      let envVersion = 'unknown';
+      if (typeof wx.getAccountInfoSync === 'function') {
+        const accountInfo = wx.getAccountInfoSync() || {};
+        envVersion = (accountInfo.miniProgram && accountInfo.miniProgram.envVersion) || 'unknown';
+      }
+
+      if (envVersion === 'release') return;
+
+      setTimeout(() => {
+        checkStaticAssetsHealth().catch((error) => {
+          console.warn('[StaticAssetCheck] Check failed:', error);
+        });
+      }, 0);
+    } catch (error) {
+      console.warn('[StaticAssetCheck] Init failed:', error);
+    }
+  },
+
+  // 静默获取 openid（不创建用户记录）
+  // 使用云开发模板 wx-user-v2 的用户信息获取
   getOpenid: function () {
     return new Promise((resolve) => {
+      // 检查是否已退出登录
+      const hasLoggedOut = wx.getStorageSync('hasLoggedOut');
+
       // 使用 login 云函数进行静默登录，获取 openid
       wx.cloud.callFunction({
         name: 'login',
         data: { silentLogin: true },
         success: res => {
-          console.log('[wx-user-v2] 鑾峰彇鐢ㄦ埛淇℃伅鎴愬姛:', res);
+          console.log('[wx-user-v2] 获取用户信息成功:', res);
           if (res.result) {
             const { openid, userInfo } = res.result;
             this.globalData.openid = openid;
 
-            // 濡傛灉鏈夌敤鎴蜂俊鎭紝淇濆瓨鍒?globalData
+            // 如果用户已退出登录，不恢复用户信息
+            if (hasLoggedOut) {
+              console.log('[App] 用户已退出登录，不自动恢复登录状态');
+              resolve({ openid });
+              return;
+            }
+
+            // 如果有用户信息，保存到 globalData
             if (userInfo) {
               this.globalData.userInfo = userInfo;
             }
 
             resolve(res.result);
           } else {
-            // 浣跨敤榛樿 openid锛屼笉闃诲娴佺▼
+            // 使用默认 openid，不阻塞流程
             this.setDefaultOpenid();
             resolve({ openid: this.globalData.openid });
           }
@@ -66,7 +101,7 @@ App({
     });
   },
 
-  // 璁剧疆榛樿 openid锛堢敤浜庝簯寮€鍙戞湭閰嶇疆鏃剁殑闄嶇骇鏂规锛?
+  // 设置默认 openid（用于云开发未配置时的降级方案）
   setDefaultOpenid: function () {
     if (this.globalData.openid) return;
     const storageKey = 'local_openid';
@@ -83,37 +118,42 @@ App({
     console.log('use default openid:', defaultOpenid);
   },
 
-  // 鐧诲綍/娉ㄥ唽鍑芥暟锛堝甫澶村儚鍜屾樀绉帮級
+  // 登录/注册函数（可选带头像和昵称）
   login: function (nickName, avatarUrl) {
     return new Promise((resolve, reject) => {
-      console.log('寮€濮嬫敞鍐?鐧诲綍...', { nickName, avatarUrl });
+      console.log('开始注册/登录...', { nickName, avatarUrl });
+
+      // 登录时清除退出登录标记
+      wx.removeStorageSync('hasLoggedOut');
+
+      // 构建请求数据，只有传入参数时才包含
+      const data = {};
+      if (nickName) data.nickName = nickName;
+      if (avatarUrl) data.avatarUrl = avatarUrl;
 
       wx.cloud.callFunction({
         name: 'login',
-        data: {
-          nickName,
-          avatarUrl,
-        },
+        data: data,
         success: res => {
-          console.log('鐧诲綍鎴愬姛:', res);
+          console.log('登录成功:', res);
           if (res.result && res.result.success) {
             this.globalData.userInfo = res.result.userInfo;
             this.globalData.openid = res.result.openid;
             resolve(res.result);
           } else {
-            console.error('鐧诲綍澶辫触:', res.result);
+            console.error('登录失败:', res.result);
             reject(res.result);
           }
         },
         fail: err => {
-          console.error('鐧诲綍浜戝嚱鏁拌皟鐢ㄥけ璐?', err);
+          console.error('登录云函数调用失败:', err);
           reject(err);
         }
       });
     });
   },
 
-  // 鏇存柊鐢ㄦ埛淇℃伅
+  // 更新用户信息
   updateUserInfo: function (nickName, avatarUrl) {
     return new Promise((resolve, reject) => {
       wx.cloud.callFunction({
@@ -123,7 +163,7 @@ App({
           avatarUrl,
         },
         success: res => {
-          console.log('鏇存柊鐢ㄦ埛淇℃伅鎴愬姛:', res);
+          console.log('更新用户信息成功:', res);
           if (res.result && res.result.success) {
             this.globalData.userInfo = res.result.userInfo;
             resolve(res.result.userInfo);
@@ -132,7 +172,7 @@ App({
           }
         },
         fail: err => {
-          console.error('鏇存柊鐢ㄦ埛淇℃伅澶辫触:', err);
+          console.error('更新用户信息失败:', err);
           reject(err);
         }
       });

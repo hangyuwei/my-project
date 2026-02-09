@@ -53,6 +53,7 @@ exports.main = async (event, context) => {
         data: {
           orderStatus: 10,
           orderStatusName: '待发货',
+          status: 'pending',
           payTime: now,
           paySuccessTime: now,
           updateTime: now,

@@ -14,17 +14,42 @@ Component({
         // 判定有传goodsIndex ，则认为是商品button bar, 仅显示申请售后按钮
         if (this.properties?.goodsIndex !== null) {
           const goods = order.goodsList[Number(this.properties.goodsIndex)];
-          const rightButtons = (goods.buttons || [])
-            .filter((b) => b.type == OrderButtonTypes.APPLY_REFUND)
-            .map((button) => ({
-              ...button,
-              openType: button.openType || '',
-            }));
-          this.setData({
-            buttons: {
-              left: [],
-              right: rightButtons,
-            },
+          if (!goods) {
+            this.setData({ buttons: { left: [], right: [] } });
+            return;
+          }
+
+          // 检查该商品是否有进行中的售后
+          this.checkGoodsAfterSaleStatus(order.orderNo, goods.skuId).then(afterSaleInfo => {
+            let rightButtons = [];
+
+            if (afterSaleInfo && afterSaleInfo.hasOngoing) {
+              // 有进行中的售后，显示"查看售后"按钮
+              rightButtons = [{
+                type: OrderButtonTypes.VIEW_REFUND,
+                name: '查看售后',
+                primary: false,
+                afterSaleId: afterSaleInfo.afterSaleId,
+              }];
+            } else if (afterSaleInfo && afterSaleInfo.hasRefunded) {
+              // 已退款成功，不显示按钮（商品应该已被过滤，这里是兜底）
+              rightButtons = [];
+            } else {
+              // 可以申请售后
+              rightButtons = (goods.buttons || [])
+                .filter((b) => b.type == OrderButtonTypes.APPLY_REFUND)
+                .map((button) => ({
+                  ...button,
+                  openType: button.openType || '',
+                }));
+            }
+
+            this.setData({
+              buttons: {
+                left: [],
+                right: rightButtons,
+              },
+            });
           });
           return;
         }
@@ -92,9 +117,35 @@ Component({
   },
 
   methods: {
+    // 检查商品的售后状态
+    async checkGoodsAfterSaleStatus(orderNo, skuId) {
+      if (!orderNo || !skuId) {
+        return null;
+      }
+
+      try {
+        const res = await wx.cloud.callFunction({
+          name: 'afterSale',
+          data: {
+            action: 'getEntry',
+            orderNo,
+            skuId,
+          }
+        });
+
+        if (res.result && res.result.success) {
+          return res.result.data;
+        }
+        return null;
+      } catch (e) {
+        console.error('[商品按钮] 检查售后状态失败:', e);
+        return null;
+      }
+    },
+
     // 点击【订单操作】按钮，根据按钮类型分发
     onOrderBtnTap(e) {
-      const { type } = e.currentTarget.dataset;
+      const { type, aftersaleid } = e.currentTarget.dataset;
       switch (type) {
         case OrderButtonTypes.DELETE:
           this.onDelete(this.data.order);
@@ -112,7 +163,7 @@ Component({
           this.onApplyRefund(this.data.order);
           break;
         case OrderButtonTypes.VIEW_REFUND:
-          this.onViewRefund(this.data.order);
+          this.onViewRefund(this.data.order, aftersaleid);
           break;
         case OrderButtonTypes.COMMENT:
           this.onAddComment(this.data.order);
@@ -518,7 +569,15 @@ Component({
       });
     },
 
-    onViewRefund(order) {
+    onViewRefund(order, afterSaleId) {
+      // 如果有直接传入的 afterSaleId，直接跳转
+      if (afterSaleId) {
+        wx.navigateTo({
+          url: `/pages/order/after-sale-detail/index?afterSaleId=${afterSaleId}`,
+        });
+        return;
+      }
+
       // 查询该订单的售后记录
       wx.showLoading({ title: '加载中...', mask: true });
 

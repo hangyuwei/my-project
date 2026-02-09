@@ -132,8 +132,29 @@ Page({
     const params = {
       parameter: this.orderNo,
     };
-    return fetchOrderDetail(params).then((res) => {
+    return fetchOrderDetail(params).then(async (res) => {
       const order = res.data;
+
+      // 获取已退款成功的商品 skuId 列表
+      let refundedSkuIds = [];
+      try {
+        const refundedResult = await wx.cloud.callFunction({
+          name: 'afterSale',
+          data: { action: 'getRefundedSkus', orderNo: order.orderNo }
+        });
+        if (refundedResult.result && refundedResult.result.success) {
+          refundedSkuIds = refundedResult.result.data || [];
+        }
+      } catch (e) {
+        console.error('[订单详情] 获取已退款商品失败:', e);
+      }
+
+      // 过滤掉已退款成功的商品
+      const filteredOrderItems = (order.orderItemVOs || []).filter(goods => {
+        const skuId = goods.skuId || goods.sku;
+        return !refundedSkuIds.includes(skuId);
+      });
+
       const _order = {
         id: order.orderId,
         orderNo: order.orderNo,
@@ -145,7 +166,7 @@ Page({
         amount: order.paymentAmount,
         totalAmount: order.goodsAmountApp,
         logisticsNo: order.logisticsVO ? order.logisticsVO.logisticsNo : '',
-        goodsList: (order.orderItemVOs || []).map((goods) =>
+        goodsList: filteredOrderItems.map((goods) =>
           Object.assign({}, goods, {
             id: goods.id,
             thumb: goods.goodsPictureUrl,
@@ -164,6 +185,8 @@ Page({
         createTime: order.createTime,
         receiverAddress: this.composeAddress(order),
         groupInfoVo: order.groupInfoVo,
+        // 保存已退款商品数量，用于显示提示
+        refundedGoodsCount: refundedSkuIds.length,
       };
       this.setData({
         order,

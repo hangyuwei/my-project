@@ -8,11 +8,18 @@
   bind:gotoUserEditPage="gotoUserEditPage"
 />
 <view class="content-wrapper">
-  <view class="order-group-wrapper">
+  <view class="order-group-wrapper" wx:if="{{isLoggedIn}}">
     <t-order-group orderTagInfos="{{orderTagInfos}}" bind:onClickTop="jumpAllOrder" bind:onClickItem="jumpNav" />
   </view>
+  <view class="order-group-wrapper" wx:else>
+    <view class="login-tip-box" bindtap="showLoginSheet">
+      <text class="login-tip-text">登录后查看订单</text>
+      <t-icon name="chevron-right" size="32rpx" />
+    </view>
+  </view>
   <view wx:for="{{menuData}}" wx:key="item" class="cell-box">
-    <t-cell-group>
+    <!-- 退出登录只在已登录时显示 -->
+    <t-cell-group wx:if="{{item[0].type !== 'logout' || isLoggedIn}}">
       <t-cell
         wx:for="{{item}}"
         wx:for-item="xitem"
@@ -44,4 +51,11 @@
     <view class="popup-close" bind:tap="closeMakePhone">取消</view>
   </view>
 </t-popup>
+<!-- 登录弹窗 -->
+<login-sheet
+  visible="{{showLoginSheet}}"
+  bind:close="handleCloseLoginSheet"
+  bind:success="handleLoginSuccess"
+  successTip="登录成功,欢迎回来"
+/>
 <t-toast id="t-toast" />

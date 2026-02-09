@@ -187,7 +187,18 @@ exports.main = async (event, context) => {
     // 排除已删除的订单
     const notDeleted = _.or([{ isDeleted: _.neq(true) }, { isDeleted: _.exists(false) }]);
     const conditions = [userScope, notDeleted];
-    if (normalizedFilter !== null && normalizedFilter > -1) {
+
+    // 特殊处理：51 表示待评价（已完成但未评价的订单）
+    const isPendingComment = orderStatus === 51 || normalizedFilter === 51;
+
+    if (isPendingComment) {
+      // 待评价：orderStatus=50 且 hasCommented!=true
+      conditions.push({ orderStatus: 50 });
+      conditions.push(_.or([
+        { hasCommented: _.neq(true) },
+        { hasCommented: _.exists(false) }
+      ]));
+    } else if (normalizedFilter !== null && normalizedFilter > -1) {
       conditions.push({ orderStatus: normalizedFilter });
     }
     const where = _.and(conditions);

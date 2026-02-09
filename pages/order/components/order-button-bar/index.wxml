@@ -10,6 +10,7 @@
       hover-class="order-btn--active"
       catchtap="onOrderBtnTap"
       data-type="{{leftBtn.type}}"
+      data-afterSaleId="{{leftBtn.afterSaleId}}"
     >
       {{leftBtn.name}}
     </t-button>
@@ -26,6 +27,7 @@
       hover-class="order-btn--active"
       catchtap="onOrderBtnTap"
       data-type="{{rightBtn.type}}"
+      data-afterSaleId="{{rightBtn.afterSaleId}}"
       open-type="{{ rightBtn.openType }}"
       data-share="{{ rightBtn.dataShare }}"
     >

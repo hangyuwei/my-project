@@ -380,3 +380,31 @@ wr-order-goods-card:not(:first-child) .wr-goods-card {
   font-size: var(--font-size-caption);
   color: var(--color-text-tertiary);
 }
+
+/* ==================== 订单状态和评价标签 ==================== */
+.order-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.order-status {
+  color: var(--color-primary);
+  font-size: var(--font-size-body);
+}
+
+.comment-tag {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-sm);
+}
+
+.comment-tag.pending {
+  background-color: #fff3e0;
+  color: #ff9800;
+}
+
+.comment-tag.done {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}

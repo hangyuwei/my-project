@@ -1,3 +1,5 @@
+import { DEFAULT_AVATAR_URL } from '../../../../constants/avatar';
+
 const AuthStepType = {
   ONE: 1,
   TWO: 2,
@@ -23,7 +25,7 @@ Component({
     },
   },
   data: {
-    defaultAvatarUrl: 'https://tdesign.gtimg.com/miniprogram/template/retail/usercenter/icon-user-center-avatar@2x.png',
+    defaultAvatarUrl: DEFAULT_AVATAR_URL,
     AuthStepType,
   },
   methods: {

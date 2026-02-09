@@ -56,6 +56,7 @@ exports.main = async (event, context) => {
         data: {
           orderStatus: 50,
           orderStatusName: '已完成',
+          status: 'completed',
           completeTime: Date.now(),
           updateTime: Date.now(),
         },

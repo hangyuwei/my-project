@@ -19,6 +19,7 @@
           gap="6"
           color="{{['#ffc51c', '#ddd']}}"
           data-item="goodRateValue"
+          placement=""
         />
       </view>
     </view>
@@ -61,6 +62,7 @@
         gap="6"
         color="{{['#ffc51c', '#ddd']}}"
         data-item="conveyRateValue"
+        placement=""
       />
     </view>
   </view>
@@ -74,6 +76,7 @@
         gap="6"
         color="{{['#ffc51c', '#ddd']}}"
         data-item="serviceRateValue"
+        placement=""
       />
     </view>
   </view>

@@ -2,6 +2,7 @@ import Dialog from 'tdesign-miniprogram/dialog/index';
 import Toast from 'tdesign-miniprogram/toast/index';
 import { fetchCartGroupData } from '../../services/cart/cart';
 import { removeLocalCartItem, updateLocalCartItemQuantity } from '../../services/cart/localCart';
+import { checkLoginStatus } from '../../utils/login';
 
 Page({
   data: {
@@ -9,6 +10,8 @@ Page({
     isSettling: false, // 防止重复点击结算按钮
     statusBarHeight: 20,
     navBarHeight: 64,
+    // 登录弹窗相关
+    showLoginSheet: false,
   },
 
   // 调用自定义tabbar的init函数，使页面与tabbar激活状态保持一致
@@ -287,7 +290,53 @@ Page({
     // 调用接口改变全选
   },
 
+  /**
+   * 检查登录状态
+   * 如果未登录,显示登录弹窗
+   * @returns {boolean} 是否已登录
+   */
+  checkLogin() {
+    const isLoggedIn = checkLoginStatus();
+    if (!isLoggedIn) {
+      this.setData({
+        showLoginSheet: true,
+      });
+      return false;
+    }
+    return true;
+  },
+
+  /**
+   * 关闭登录弹窗
+   */
+  handleCloseLoginSheet() {
+    this.setData({
+      showLoginSheet: false,
+    });
+  },
+
+  /**
+   * 登录成功回调
+   * 登录成功后自动执行结算操作
+   */
+  handleLoginSuccess(e) {
+    console.log('[购物车] 登录成功:', e.detail);
+
+    // 关闭登录弹窗
+    this.handleCloseLoginSheet();
+
+    // 延迟执行结算,确保弹窗关闭动画完成
+    setTimeout(() => {
+      this.onToSettle();
+    }, 300);
+  },
+
   onToSettle() {
+    // 检查登录状态
+    if (!this.checkLogin()) {
+      return;
+    }
+
     // 防止重复点击
     if (this.data.isSettling) {
       return;

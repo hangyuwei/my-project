@@ -20,6 +20,23 @@ page {
   margin-bottom: 20rpx;
 }
 
+/* 未登录时的登录提示 */
+.login-tip-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.login-tip-text {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+  margin-right: 8rpx;
+}
+
 .order-group-note {
   font-size: 26rpx;
   color: var(--color-text-secondary);

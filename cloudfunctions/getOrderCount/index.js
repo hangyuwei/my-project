@@ -17,6 +17,7 @@ exports.main = async (event, context) => {
       { tabType: 5, name: '待付款' },      // OrderStatus.PENDING_PAYMENT
       { tabType: 10, name: '待发货' },     // OrderStatus.PENDING_DELIVERY
       { tabType: 40, name: '待收货' },     // OrderStatus.PENDING_RECEIPT
+      { tabType: 51, name: '待评价' },     // OrderStatus.PENDING_COMMENT (虚拟状态)
       { tabType: 50, name: '已完成', values: [50, 60] }, // OrderStatus.COMPLETE
     ];
     const userScope = _.or([{ openid }, { uid: openid }, { userId: openid }]);
@@ -27,11 +28,23 @@ exports.main = async (event, context) => {
 
     // 并行查询各状态订单数量
     const countPromises = statusList.map(async (status) => {
-      const statusQuery = status.values
-        ? _.or(status.values.map((value) => ({ orderStatus: value })))
-        : { orderStatus: status.tabType };
+      let conditions = [userScope, notDeleted];
+
+      // 特殊处理：51 表示待评价（已完成但未评价的订单）
+      if (status.tabType === 51) {
+        conditions.push({ orderStatus: 50 });
+        conditions.push(_.or([
+          { hasCommented: _.neq(true) },
+          { hasCommented: _.exists(false) }
+        ]));
+      } else if (status.values) {
+        conditions.push(_.or(status.values.map((value) => ({ orderStatus: value }))));
+      } else {
+        conditions.push({ orderStatus: status.tabType });
+      }
+
       const result = await db.collection('orders')
-        .where(_.and([userScope, statusQuery, notDeleted]))
+        .where(_.and(conditions))
         .count();
 
       return {

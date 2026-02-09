@@ -1,6 +1,7 @@
 import Toast from 'tdesign-miniprogram/toast/index';
+import { DEFAULT_AVATAR_URL } from '../../../constants/avatar';
 
-const DEFAULT_AVATAR = 'https://tdesign.gtimg.com/miniprogram/template/retail/usercenter/icon-user-center-avatar@2x.png';
+const DEFAULT_AVATAR = DEFAULT_AVATAR_URL;
 
 Page({
   data: {
@@ -217,11 +218,11 @@ Page({
     }
   },
 
-  // 切换账号登录
+  // 退出登录
   openUnbindConfirm() {
     wx.showModal({
-      title: '切换账号',
-      content: '确定要切换账号吗？当前账号信息将被清除。',
+      title: '退出登录',
+      content: '确定要退出登录吗？',
       confirmText: '确定',
       cancelText: '取消',
       success: (res) => {
@@ -232,10 +233,10 @@ Page({
     });
   },
 
-  // 切换账号
+  // 执行退出登录
   switchAccount() {
     wx.showLoading({
-      title: '切换中...',
+      title: '退出中...',
       mask: true,
     });
 
@@ -251,16 +252,23 @@ Page({
       const { clearAllOrders } = require('../../../services/order/localOrders');
       clearAllOrders();
 
+      // 清除登录 token 和用户信息存储
+      const { clearLoginInfo } = require('../../../utils/login');
+      clearLoginInfo();
+
       // 最后才清除全局用户信息（包括 openid）
       app.globalData.userInfo = null;
       app.globalData.openid = null;
+
+      // 设置退出登录标记，防止自动重新登录
+      wx.setStorageSync('hasLoggedOut', true);
 
       wx.hideLoading();
 
       Toast({
         context: this,
         selector: '#t-toast',
-        message: '已切换账号',
+        message: '已退出登录',
         theme: 'success',
         duration: 1500,
       });
@@ -273,11 +281,11 @@ Page({
       }, 1500);
     } catch (error) {
       wx.hideLoading();
-      console.error('切换账号失败:', error);
+      console.error('退出登录失败:', error);
       Toast({
         context: this,
         selector: '#t-toast',
-        message: '切换失败',
+        message: '退出失败',
         theme: 'error',
       });
     }

@@ -68,9 +68,14 @@
           <t-icon name="chevron-right" size="40rpx" color="#BBBBBB" />
         </view>
       </view>
-      <view class="comment-item-wrap" wx:for="{{ commentsList }}" wx:for-item="commentItem" wx:key="goodsSpu">
+      <view class="comment-item-wrap" wx:for="{{ commentsList }}" wx:for-item="commentItem" wx:for-index="index" wx:key="goodsSpu">
         <view class="comment-item-head">
-          <t-image src="{{commentItem.userHeadUrl}}" t-class="comment-item-avatar" />
+          <t-image
+            src="{{commentItem.userHeadUrl || defaultAvatarUrl}}"
+            t-class="comment-item-avatar"
+            data-index="{{index}}"
+            bind:error="onCommentAvatarError"
+          />
           <view class="comment-head-right">
             <view class="comment-username">{{commentItem.userName}}</view>
             <t-rate
@@ -166,6 +171,12 @@
     bind:closePromotionPopup="closePromotionPopup"
     show="{{isShowPromotionPop}}"
     bind:promotionChange="promotionChange"
+  />
+  <!-- 登录弹窗 -->
+  <login-sheet
+    visible="{{showLoginSheet}}"
+    bind:close="handleCloseLoginSheet"
+    bind:success="handleLoginSuccess"
   />
 </view>
 <t-toast id="t-toast" />

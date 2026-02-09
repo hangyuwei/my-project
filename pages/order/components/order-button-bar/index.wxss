@@ -29,11 +29,16 @@
   --td-button-extra-small-height: 72rpx;
 }
 
-.btn-bar .left .left-btn {
-  font-size: 22rpx;
+.btn-bar .left {
+  display: flex;
+  align-items: center;
 }
-.btn-bar .left .left-btn::after {
-  display: none;
+
+.btn-bar .left .left-btn {
+  font-size: 24rpx;
+  --td-button-default-color: #333333;
+  --td-button-default-bg-color: transparent;
+  --td-button-default-border-color: #dddddd;
 }
 
 .btn-bar .right .normal {

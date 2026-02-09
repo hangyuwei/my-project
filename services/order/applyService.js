@@ -89,6 +89,9 @@ export function dispatchApplyService(params) {
       reasonText: params.rights?.rightsReasonDesc,
       remark: params.refundMemo || '', // 用户填写的退款说明
       evidence: evidence,
+      // 商品级别售后：传递商品标识和信息
+      skuId: params.rightsItem?.[0]?.skuId || '',
+      goodsInfo: params.goodsInfo || null,
     }
   }).then(res => {
     console.log('[申请售后] 云函数返回:', JSON.stringify(res, null, 2));

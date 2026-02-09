@@ -1,5 +1,6 @@
 import { fetchUserCenter } from '../../services/usercenter/fetchUsercenter';
 import Toast from 'tdesign-miniprogram/toast/index';
+import { checkLoginStatus, getUserInfo, logout } from '../../utils/login';
 
 const menuData = [
   [
@@ -31,6 +32,15 @@ const menuData = [
       icon: 'service',
     },
   ],
+  [
+    {
+      title: '退出登录',
+      tit: '',
+      url: '',
+      type: 'logout',
+      icon: '',
+    },
+  ],
 ];
 
 const orderTagInfos = [
@@ -59,7 +69,7 @@ const orderTagInfos = [
     title: '待评价',
     iconName: 'comment',
     orderNum: 0,
-    tabType: 50,  // 已完成订单可以评价
+    tabType: 51,  // 待评价（虚拟状态，筛选未评价的已完成订单）
     status: 1,
   },
   {
@@ -84,6 +94,8 @@ const getDefaultData = () => ({
   currAuthStep: 1,
   showKefu: true,
   versionNo: '',
+  showLoginSheet: false, // 登录弹窗
+  isLoggedIn: false, // 登录状态
 });
 
 Page({
@@ -95,10 +107,47 @@ Page({
 
   onShow() {
     this.getTabBar().init();
-    // 只在首次进入时加载用户信息
-    if (!this._hasLoaded) {
-      this._hasLoaded = true;
-      this.init();
+
+    // 检查登录状态
+    const isLoggedIn = checkLoginStatus();
+    this.setData({ isLoggedIn });
+
+    if (!isLoggedIn) {
+      // 未登录,显示登录弹窗
+      this.setData({
+        showLoginSheet: true,
+        userInfo: {
+          avatarUrl: '',
+          nickName: '未登录',
+          phoneNumber: '',
+        },
+        currAuthStep: 1,
+      });
+    } else {
+      // 已登录,加载用户信息
+      const savedUserInfo = getUserInfo();
+      const app = getApp();
+      const globalUserInfo = app.globalData.userInfo;
+
+      // 优先使用全局数据，其次使用本地存储
+      const avatarUrl = globalUserInfo?.avatarUrl || savedUserInfo?.avatar || '';
+      const nickName = globalUserInfo?.nickName || savedUserInfo?.nickname || '微信用户';
+
+      this.setData({
+        userInfo: {
+          avatarUrl: avatarUrl,
+          nickName: nickName,
+          phoneNumber: savedUserInfo?.phone || '',
+        },
+        currAuthStep: 2,
+        showLoginSheet: false,
+      });
+
+      // 只在首次进入时加载用户信息
+      if (!this._hasLoaded) {
+        this._hasLoaded = true;
+        this.init();
+      }
     }
   },
   onPullDownRefresh() {
@@ -223,6 +272,11 @@ Page({
         wx.navigateTo({ url: '/pages/user/points/index' });
         break;
       }
+      case 'logout': {
+        // 退出登录
+        this.handleLogout();
+        break;
+      }
       default: {
         Toast({
           context: this,
@@ -265,13 +319,17 @@ Page({
   },
 
   gotoUserEditPage() {
-    const { currAuthStep } = this.data;
-    if (currAuthStep >= 2) {
+    const { currAuthStep, isLoggedIn } = this.data;
+
+    // 检查是否真正登录(使用我们的登录状态)
+    if (isLoggedIn && currAuthStep >= 2) {
       // 已登录，跳转个人信息页
       wx.navigateTo({ url: '/pages/user/person-info/index' });
     } else {
-      // 未登录，重新加载
-      this.loadUserInfo();
+      // 未登录，显示登录弹窗
+      this.setData({
+        showLoginSheet: true,
+      });
     }
   },
 
@@ -281,5 +339,66 @@ Page({
     this.setData({
       versionNo: envVersion === 'release' ? version : envVersion,
     });
+  },
+
+  /**
+   * 退出登录
+   */
+  async handleLogout() {
+    const confirmed = await logout();
+    if (confirmed) {
+      // 重置页面数据
+      this.setData({
+        userInfo: {
+          avatarUrl: '',
+          nickName: '未登录',
+          phoneNumber: '',
+        },
+        currAuthStep: 1,
+        isLoggedIn: false,
+        showLoginSheet: true,
+      });
+    }
+  },
+
+  /**
+   * 关闭登录弹窗
+   */
+  handleCloseLoginSheet() {
+    this.setData({
+      showLoginSheet: false,
+    });
+  },
+
+  /**
+   * 显示登录弹窗
+   */
+  showLoginSheet() {
+    this.setData({
+      showLoginSheet: true,
+    });
+  },
+
+  /**
+   * 登录成功回调
+   */
+  handleLoginSuccess(e) {
+    console.log('[个人中心] 登录成功:', e.detail);
+    const { userInfo } = e.detail;
+
+    // 更新页面数据
+    this.setData({
+      userInfo: {
+        avatarUrl: userInfo.avatar || '',
+        nickName: userInfo.nickname || '微信用户',
+        phoneNumber: userInfo.phone || '',
+      },
+      currAuthStep: 2,
+      isLoggedIn: true,
+      showLoginSheet: false,
+    });
+
+    // 加载用户数据
+    this.init();
   },
 });

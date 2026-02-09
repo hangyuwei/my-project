@@ -104,6 +104,12 @@ exports.main = async (event = {}) => {
   const keyword = typeof event.keyword === 'string' ? event.keyword.trim() : '';
   const category = typeof event.category === 'string' ? event.category.trim() : '';
   const rawStatus = typeof event.status === 'string' ? event.status.trim() : '';
+
+  // 排序参数：sort=0 综合排序，sort=1 价格排序
+  // sortType=0 价格升序（低到高），sortType=1 价格降序（高到低）
+  const sort = normalizeNumber(event.sort, 0);
+  const sortType = normalizeNumber(event.sortType, 0);
+
   let statusValues = [];
   if (rawStatus) {
     const upper = rawStatus.toUpperCase();
@@ -135,8 +141,19 @@ exports.main = async (event = {}) => {
   }
   const whereClause = conditions.length > 1 ? db.command.and(conditions) : conditions[0] || {};
 
-  const dataQuery = db.collection('goods').where(whereClause);
+  let dataQuery = db.collection('goods').where(whereClause);
   const total = await dataQuery.count();
+
+  // 应用排序
+  if (sort === 1) {
+    // 价格排序
+    const sortOrder = sortType === 1 ? 'desc' : 'asc';
+    dataQuery = dataQuery.orderBy('price', sortOrder);
+  } else {
+    // 综合排序：按创建时间倒序
+    dataQuery = dataQuery.orderBy('createTime', 'desc');
+  }
+
   const res = await dataQuery.skip(skip).limit(pageSize).get();
 
   // 展平嵌套的 data 字段
