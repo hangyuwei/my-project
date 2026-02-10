@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>春节健康指南 - 6招远离节日病</title>
+  <style>
+    /* 基础变量 */
+    :root {
+      --primary-red: #D4364C;
+      --primary-gold: #F5A623;
+      --success-green: #52C41A;
+      --warning-orange: #FA8C16;
+      --danger-red: #FF4D4F;
+      --bg-light: #FFF5F5;
+      --bg-white: #FFFFFF;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --text-light: #999999;
+      --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      line-height: 1.6;
+      max-width: 450px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      background: linear-gradient(135deg, #D4364C 0%, #A01E32 100%);
+      padding: 30px 20px 50px;
+      overflow: hidden;
+    }
+
+    .hero-decoration {
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFF;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #FFF;
+      line-height: 1.3;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .hero-tags .tag {
+      background: rgba(255, 255, 255, 0.15);
+      color: #FFF;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-lantern {
+      position: absolute;
+      width: 20px;
+      height: 30px;
+      background: linear-gradient(180deg, #FFD700 0%, #FF6B00 100%);
+      border-radius: 50%;
+      top: 10px;
+      animation: swing 3s ease-in-out infinite;
+    }
+
+    .hero-lantern.left { left: 30px; }
+    .hero-lantern.right { right: 50px; animation-delay: 0.5s; }
+
+    @keyframes swing {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    /* Warning Card */
+    .warning-card {
+      display: flex;
+      margin: -25px 12px 12px;
+      background: linear-gradient(135deg, #FFF7E6 0%, #FFF1DC 100%);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      border-left: 4px solid var(--warning-orange);
+      position: relative;
+      z-index: 10;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .warning-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--warning-orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .warning-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .warning-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .warning-item {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
+    .dot.red { background: var(--danger-red); }
+    .dot.orange { background: var(--warning-orange); }
+    .dot.yellow { background: #FADB14; }
+
+    /* Navigation Pills */
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      overflow-x: auto;
+      position: sticky;
+      top: 0;
+      background: var(--bg-light);
+      z-index: 100;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-pills::-webkit-scrollbar { display: none; }
+
+    .pill {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      background: var(--bg-white);
+      border-radius: 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .pill.active, .pill:hover {
+      background: var(--primary-red);
+      color: #FFF;
+      box-shadow: 0 2px 8px rgba(212, 54, 76, 0.3);
+    }
+
+    /* Section Styles */
+    .section {
+      margin: 12px;
+      padding-top: 10px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 16px;
+      font-weight: 700;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .diet-icon { background: linear-gradient(135deg, #52C41A 0%, #389E0D 100%); }
+    .snack-icon { background: linear-gradient(135deg, #FA8C16 0%, #D46B08 100%); }
+    .drink-icon { background: linear-gradient(135deg, #722ED1 0%, #531DAB 100%); }
+    .rest-icon { background: linear-gradient(135deg, #1890FF 0%, #096DD9 100%); }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: block;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-light);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Plate Card - 新设计 */
+    .plate-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .plate-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .plate-pie {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #52C41A 0deg 180deg,
+        #FF7A94 180deg 270deg,
+        #FFB84D 270deg 360deg
+      );
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 0 0 4px rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+
+    .plate-pie::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .plate-pie::after {
+      content: '健康餐盘';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .plate-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-color {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .legend-color.green { background: linear-gradient(135deg, #52C41A, #389E0D); }
+    .legend-color.pink { background: linear-gradient(135deg, #FF7A94, #FF5C79); }
+    .legend-color.yellow { background: linear-gradient(135deg, #FFB84D, #FFA726); }
+
+    .legend-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .legend-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .legend-desc {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .plate-tip {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #F6FFED, #E8F5E0);
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: #389E0D;
+      border: 1px solid rgba(82, 196, 26, 0.2);
+    }
+
+    .tip-icon {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    /* Compare Card */
+    .compare-card {
+      display: flex;
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .compare-card.compact {
+      flex-direction: column;
+    }
+
+    .compare-card.compact .compare-divider {
+      width: 100%;
+      height: 1px;
+    }
+
+    .compare-column {
+      flex: 1;
+      padding: 14px;
+    }
+
+    .compare-column.good {
+      background: linear-gradient(180deg, #F6FFED 0%, #FFF 100%);
+    }
+
+    .compare-column.bad {
+      background: linear-gradient(180deg, #FFF2F0 0%, #FFF 100%);
+    }
+
+    .compare-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .check-icon, .cross-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+
+    .check-icon {
+      background: var(--success-green);
+      color: #FFF;
+    }
+
+    .cross-icon {
+      background: var(--danger-red);
+      color: #FFF;
+    }
+
+    .compare-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .compare-items {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .compare-item {
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding-left: 10px;
+      position: relative;
+    }
+
+    .compare-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .compare-divider {
+      width: 1px;
+      background: #F0F0F0;
+    }
+
+    /* Tips Card */
+    .tips-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .tips-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .tips-icon {
+      font-size: 16px;
+      margin-right: 6px;
+      color: var(--primary-gold);
+    }
+
+    .tips-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tips-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .tip-badge {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary-gold) 0%, #E8941A 100%);
+      color: #FFF;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .tip-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Cooking Compare */
+    .cooking-compare {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .cooking-good, .cooking-bad {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cooking-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .cooking-icon.steam {
+      background: linear-gradient(135deg, #E6F7FF 0%, #BAE7FF 100%);
+      color: #1890FF;
+    }
+
+    .cooking-icon.fry {
+      background: linear-gradient(135deg, #FFF2E8 0%, #FFD8BF 100%);
+      color: #FA541C;
+    }
+
+    .cooking-label {
+      font-size: 13px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .cooking-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    .cooking-badge.good {
+      background: #F6FFED;
+      color: var(--success-green);
+    }
+
+    .cooking-badge.bad {
+      background: #FFFBE6;
+      color: #D48806;
+    }
+
+    .vs {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-light);
+    }
+
+    /* Data Highlight Card */
+    .data-highlight-card {
+      background: linear-gradient(135deg, #FFF7E6 0%, #FFE7BA 100%);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .data-visual {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .hand-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .data-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: #D46B08;
+      display: block;
+    }
+
+    .data-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .data-note {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    /* Alcohol Limit Card */
+    .alcohol-limit-card {
+      background: linear-gradient(135deg, #F9F0FF 0%, #EFE0FF 100%);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .limit-header {
+      font-size: 14px;
+      color: #722ED1;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .limit-data {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .limit-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .limit-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFF;
+      margin-bottom: 6px;
+    }
+
+    .limit-item.male .limit-icon {
+      background: linear-gradient(135deg, #1890FF 0%, #096DD9 100%);
+    }
+
+    .limit-item.female .limit-icon {
+      background: linear-gradient(135deg, #EB2F96 0%, #C41D7F 100%);
+    }
+
+    .limit-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #531DAB;
+    }
+
+    .limit-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Drinks Card */
+    .drinks-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .drinks-title {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .drinks-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .drink-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .drink-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFF;
+      margin-bottom: 6px;
+    }
+
+    .drink-icon.baijiu {
+      background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%);
+      color: #666;
+    }
+
+    .drink-icon.wine {
+      background: linear-gradient(135deg, #722ED1 0%, #531DAB 100%);
+    }
+
+    .drink-icon.beer {
+      background: linear-gradient(135deg, #FAAD14 0%, #D48806 100%);
+    }
+
+    .drink-name {
+      font-size: 12px;
+      color: var(--text-primary);
+      font-weight: 500;
+      display: block;
+    }
+
+    .drink-amount {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-red);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .drink-desc {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* Steps Card */
+    .steps-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .steps-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--primary-red) 0%, #A01E32 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-time {
+      font-size: 13px;
+      color: var(--primary-red);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .step-action {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .warning-banner {
+      margin-top: 12px;
+      background: linear-gradient(135deg, #FFF1F0 0%, #FFCCC7 100%);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    .warning-text {
+      font-size: 14px;
+      color: var(--danger-red);
+      font-weight: 600;
+    }
+
+    /* Smoke Free Card */
+    .smoke-free-card {
+      background: linear-gradient(135deg, #FFF1F0 0%, #FFCCC7 100%);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+
+    .smoke-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .no-smoke-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--danger-red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .smoke-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .smoke-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .smoke-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+    }
+
+    .smoke-num {
+      width: 18px;
+      height: 18px;
+      background: var(--danger-red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .smoke-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Sleep Card */
+    .sleep-card {
+      background: linear-gradient(135deg, #E6F7FF 0%, #BAE7FF 100%);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .moon-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .sleep-data {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .sleep-hours {
+      font-size: 36px;
+      font-weight: 700;
+      color: #096DD9;
+    }
+
+    .sleep-unit {
+      font-size: 16px;
+      color: #1890FF;
+    }
+
+    .sleep-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* Expert Card */
+    .expert-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+      border-left: 4px solid #1890FF;
+    }
+
+    .expert-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .expert-avatar {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #1890FF 0%, #096DD9 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .expert-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .expert-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .expert-text .highlight {
+      color: var(--danger-red);
+      font-weight: 600;
+    }
+
+    /* Summary Card */
+    .summary-card {
+      margin: 12px;
+      background: linear-gradient(135deg, #52C41A 0%, #389E0D 100%);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .summary-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFF;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .summary-text {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    /* References */
+    .references {
+      margin: 12px;
+      padding: 12px;
+      background: #FAFAFA;
+      border-radius: var(--radius-md);
+    }
+
+    .ref-header {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .ref-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ref-item {
+      font-size: 11px;
+      color: var(--text-light);
+      line-height: 1.5;
+      display: block;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 30px 12px 20px;
+      text-align: center;
+    }
+
+    .footer-decoration {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+      margin: 0 auto 12px;
+    }
+
+    .footer-text {
+      font-size: 14px;
+      color: var(--primary-red);
+      font-weight: 500;
+      display: block;
+    }
+
+    .footer-year {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary-gold);
+      margin-top: 6px;
+      letter-spacing: 4px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Banner -->
+  <div class="hero-section">
+    <div class="hero-decoration"></div>
+    <div class="hero-content">
+      <span class="hero-badge">健康过年</span>
+      <h1 class="hero-title">6招教你春节</h1>
+      <p class="hero-subtitle">吃好喝好，远离节日病</p>
+      <div class="hero-tags">
+        <span class="tag">急性胰腺炎</span>
+        <span class="tag">消化道疾病</span>
+        <span class="tag">心脑血管</span>
+      </div>
+    </div>
+    <div class="hero-lantern left"></div>
+    <div class="hero-lantern right"></div>
+  </div>
+
+  <!-- 警示卡片 -->
+  <div class="warning-card">
+    <div class="warning-icon">!</div>
+    <div class="warning-content">
+      <div class="warning-title">节日病高发预警</div>
+      <div class="warning-list">
+        <div class="warning-item">
+          <span class="dot red"></span>
+          <span>急性胰腺炎：暴饮暴食 + 烈性酒</span>
+        </div>
+        <div class="warning-item">
+          <span class="dot orange"></span>
+          <span>消化道疾病：过量饮酒、辛辣刺激</span>
+        </div>
+        <div class="warning-item">
+          <span class="dot yellow"></span>
+          <span>心脑血管急症：情绪激动、熬夜疲劳</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 章节导航 -->
+  <nav class="nav-pills">
+    <button class="pill active" onclick="scrollToSection('diet')">饮食篇</button>
+    <button class="pill" onclick="scrollToSection('snack')">零食篇</button>
+    <button class="pill" onclick="scrollToSection('drink')">饮酒篇</button>
+    <button class="pill" onclick="scrollToSection('rest')">作息篇</button>
+  </nav>
+
+  <!-- 一、饮食篇 -->
+  <section class="section" id="diet">
+    <div class="section-header">
+      <div class="section-icon diet-icon">1</div>
+      <div>
+        <span class="section-title">饮食篇</span>
+        <span class="section-desc">美味与健康兼得</span>
+      </div>
+    </div>
+
+    <!-- 健康餐盘 - 新设计 -->
+    <div class="plate-card">
+      <div class="plate-container">
+        <div class="plate-pie"></div>
+        <div class="plate-legend">
+          <div class="legend-item">
+            <div class="legend-color green">50%</div>
+            <div class="legend-text">
+              <span class="legend-name">深绿蔬菜</span>
+              <span class="legend-desc">菠菜、西兰花等</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color pink">25%</div>
+            <div class="legend-text">
+              <span class="legend-name">优质蛋白</span>
+              <span class="legend-desc">鱼虾、去皮鸡肉</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color yellow">25%</div>
+            <div class="legend-text">
+              <span class="legend-name">杂粮主食</span>
+              <span class="legend-desc">糙米、燕麦等</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-tip">
+        <span class="tip-icon">&#128161;</span>
+        <span>蔬菜体积应占餐盘的 1/2，深绿色蔬菜最佳</span>
+      </div>
+    </div>
+
+    <!-- 食材推荐对比 -->
+    <div class="compare-card">
+      <div class="compare-column good">
+        <div class="compare-header">
+          <span class="check-icon">&#10003;</span>
+          <span class="compare-title">推荐选择</span>
+        </div>
+        <div class="compare-items">
+          <div class="compare-item">清蒸鲈鱼、白灼虾</div>
+          <div class="compare-item">去皮鸡鸭肉、瘦肉</div>
+          <div class="compare-item">菠菜、西兰花</div>
+        </div>
+      </div>
+      <div class="compare-divider"></div>
+      <div class="compare-column bad">
+        <div class="compare-header">
+          <span class="cross-icon">&#10005;</span>
+          <span class="compare-title">尽量避免</span>
+        </div>
+        <div class="compare-items">
+          <div class="compare-item">红烧肉、动物内脏</div>
+          <div class="compare-item">预制菜（多添加剂）</div>
+          <div class="compare-item">过量红肉</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 调味烹饪技巧 -->
+    <div class="tips-card">
+      <div class="tips-header">
+        <span class="tips-icon">&#9733;</span>
+        <span class="tips-title">烹饪小贴士</span>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <span class="tip-badge">减盐</span>
+          <span class="tip-text">出锅再放盐，多用醋、柠檬汁提鲜</span>
+        </div>
+        <div class="tip-item">
+          <span class="tip-badge">减糖</span>
+          <span class="tip-text">利用红枣、枸杞天然甜味替代白糖</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 烹饪方式对比 -->
+    <div class="cooking-compare">
+      <div class="cooking-good">
+        <div class="cooking-icon steam">&#9732;</div>
+        <span class="cooking-label">蒸煮炖焯</span>
+        <span class="cooking-badge good">推荐</span>
+      </div>
+      <span class="vs">VS</span>
+      <div class="cooking-bad">
+        <div class="cooking-icon fry">&#9888;</div>
+        <span class="cooking-label">油炸油焖</span>
+        <span class="cooking-badge bad">慎用</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 二、零食篇 -->
+  <section class="section" id="snack">
+    <div class="section-header">
+      <div class="section-icon snack-icon">2</div>
+      <div>
+        <span class="section-title">零食篇</span>
+        <span class="section-desc">点到为止</span>
+      </div>
+    </div>
+
+    <!-- 坚果限量卡片 -->
+    <div class="data-highlight-card">
+      <div class="data-visual">
+        <div class="hand-icon">&#9995;</div>
+        <div>
+          <span class="data-number">1小把</span>
+          <span class="data-label">坚果每日限量</span>
+        </div>
+      </div>
+      <span class="data-note">约15-25克，选择原味为佳</span>
+    </div>
+
+    <!-- 零食推荐对比 -->
+    <div class="compare-card compact">
+      <div class="compare-column good">
+        <div class="compare-header">
+          <span class="check-icon">&#10003;</span>
+          <span class="compare-title">健康之选</span>
+        </div>
+        <div class="compare-items">
+          <div class="compare-item">原味坚果（核桃、开心果）</div>
+          <div class="compare-item">新鲜水果（每日两拳头大小）</div>
+          <div class="compare-item">无糖酸奶</div>
+        </div>
+      </div>
+      <div class="compare-divider"></div>
+      <div class="compare-column bad">
+        <div class="compare-header">
+          <span class="cross-icon">&#10005;</span>
+          <span class="compare-title">隐形杀手</span>
+        </div>
+        <div class="compare-items">
+          <div class="compare-item">盐焗、奶油味坚果</div>
+          <div class="compare-item">糖果糕点</div>
+          <div class="compare-item">含糖饮料</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 三、饮酒篇 -->
+  <section class="section" id="drink">
+    <div class="section-header">
+      <div class="section-icon drink-icon">3</div>
+      <div>
+        <span class="section-title">饮酒篇</span>
+        <span class="section-desc">情谊深，浅酌更养生</span>
+      </div>
+    </div>
+
+    <!-- 酒精限量数据 -->
+    <div class="alcohol-limit-card">
+      <div class="limit-header">每日酒精上限</div>
+      <div class="limit-data">
+        <div class="limit-item male">
+          <span class="limit-icon">&#9794;</span>
+          <span class="limit-value">25g</span>
+          <span class="limit-label">男性</span>
+        </div>
+        <div class="limit-item female">
+          <span class="limit-icon">&#9792;</span>
+          <span class="limit-value">15g</span>
+          <span class="limit-label">女性</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 酒类换算 -->
+    <div class="drinks-card">
+      <div class="drinks-title">男性标准换算参考</div>
+      <div class="drinks-grid">
+        <div class="drink-item">
+          <div class="drink-icon baijiu">&#127862;</div>
+          <span class="drink-name">38度白酒</span>
+          <span class="drink-amount">~75ml</span>
+          <span class="drink-desc">约一两半</span>
+        </div>
+        <div class="drink-item">
+          <div class="drink-icon wine">&#127863;</div>
+          <span class="drink-name">12度红酒</span>
+          <span class="drink-amount">~200ml</span>
+          <span class="drink-desc">约一小杯</span>
+        </div>
+        <div class="drink-item">
+          <div class="drink-icon beer">&#127866;</div>
+          <span class="drink-name">5度啤酒</span>
+          <span class="drink-amount">~500ml</span>
+          <span class="drink-desc">约一瓶</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 解酒方案步骤 -->
+    <div class="steps-card">
+      <div class="steps-title">家庭护胃方案</div>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div>
+            <span class="step-time">饮酒前</span>
+            <span class="step-action">喝一杯牛奶或酸奶，给胃铺层"保护膜"</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div>
+            <span class="step-time">饮酒中</span>
+            <span class="step-action">多喝白开水，加速酒精代谢</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div>
+            <span class="step-time">饮酒后</span>
+            <span class="step-action">喝蜂蜜水、小米粥暖胃</span>
+          </div>
+        </div>
+      </div>
+      <div class="warning-banner">
+        <span class="warning-text">&#9888; 切忌浓茶解酒！</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 四、作息篇 -->
+  <section class="section" id="rest">
+    <div class="section-header">
+      <div class="section-icon rest-icon">4</div>
+      <div>
+        <span class="section-title">作息与环境</span>
+        <span class="section-desc">规律生活，平和心态</span>
+      </div>
+    </div>
+
+    <!-- 无烟环境 -->
+    <div class="smoke-free-card">
+      <div class="smoke-header">
+        <div class="no-smoke-icon">&#128683;</div>
+        <span class="smoke-title">打造无烟环境</span>
+      </div>
+      <div class="smoke-steps">
+        <div class="smoke-step">
+          <span class="smoke-num">1</span>
+          <span class="smoke-text">明确客厅、卧室禁止吸烟</span>
+        </div>
+        <div class="smoke-step">
+          <span class="smoke-num">2</span>
+          <span class="smoke-text">引导亲友至阳台或户外吸烟</span>
+        </div>
+        <div class="smoke-step">
+          <span class="smoke-num">3</span>
+          <span class="smoke-text">聚会区域开启空气净化器</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 睡眠建议 -->
+    <div class="sleep-card">
+      <span class="moon-icon">&#127769;</span>
+      <div class="sleep-data">
+        <span class="sleep-hours">7-8</span>
+        <span class="sleep-unit">小时</span>
+      </div>
+      <span class="sleep-label">每日黄金睡眠</span>
+    </div>
+
+    <!-- 专家建议 -->
+    <div class="expert-card">
+      <div class="expert-header">
+        <div class="expert-avatar">&#128105;&#8205;&#9877;</div>
+        <span class="expert-title">医生建议</span>
+      </div>
+      <p class="expert-text">有心脑血管病史的老人，打牌看比赛要<span class="highlight">避免情绪大起大落</span>。久坐每1小时起身活动5-10分钟。</p>
+    </div>
+  </section>
+
+  <!-- 总结卡片 -->
+  <div class="summary-card">
+    <div class="summary-icon">&#10004;</div>
+    <div>
+      <span class="summary-title">健康年，最好的礼物</span>
+      <span class="summary-text">通过智慧的饮食和作息，让欢乐延续，给家人和自己最好的新年礼物。</span>
+    </div>
+  </div>
+
+  <!-- 参考文献 -->
+  <div class="references">
+    <div class="ref-header">参考文献</div>
+    <div class="ref-list">
+      <span class="ref-item">[1] 中华医学会消化病学分会. 中国急性胰腺炎诊治指南(2021)</span>
+      <span class="ref-item">[2] 中国心血管健康与疾病报告编写组. 2022概要</span>
+      <span class="ref-item">[3] 中国营养学会. 中国居民膳食指南(2022)</span>
+    </div>
+  </div>
+
+  <!-- 底部装饰 -->
+  <footer class="footer">
+    <div class="footer-decoration"></div>
+    <span class="footer-text">祝您新春快乐，阖家健康</span>
+    <span class="footer-year">2026</span>
+  </footer>
+
+  <script>
+    // 导航滚动
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+
+      // 更新导航高亮
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // 滚动监听自动高亮
+    const sections = ['diet', 'snack', 'drink', 'rest'];
+    const pills = document.querySelectorAll('.pill');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section.getBoundingClientRect().top <= 150) {
+          current = id;
+        }
+      });
+
+      pills.forEach((pill, i) => {
+        pill.classList.toggle('active', sections[i] === current);
+      });
+    });
+  </script>
+
+</body>
+</html>
